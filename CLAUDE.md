@@ -12,6 +12,8 @@ Laravel 12 + Vue 3 (Inertia) + Tailwind POS for a **clothing store** (one busine
 - Reuse components in `resources/js/Components` (DataTable, Pagination, FormField, SelectInput, Toggle, Card, PageHeader, ConfirmModal, VariantPicker, BarcodeSvg…) and `composables/useCrudModal.js`. Add new menu items in `resources/js/navigation.js`.
 - Services throw `DomainException` for business-rule errors (rendered as a toast globally). Document numbers via `DocumentNumberService`.
 - Multipart Inertia forms with nested arrays need `queryStringArrayFormat: 'indices'`.
+- GST math: `app/Support/Gst/GstCalculator.php` and `resources/js/Pos/gst.js` must stay identical. `Modal.vue` must not use native `<dialog>` (breaks scanners).
+- Run tests on MySQL too before committing a phase (see docs/03-getting-started.md). Commit locally per phase; never push.
 
 ## Before finishing a change
 - `php artisan test`, `./vendor/bin/pint`, `npm run build` must pass.

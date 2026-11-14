@@ -68,5 +68,22 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-022 · Single address per contact — 2026-11-16
 **Decision:** address fields live on `contacts`; the planned `contact_addresses` table is deferred until delivery/shipping is needed.
 
+### D-023 · One GST calculator, mirrored in the browser — 2026-11-17
+**Decision:** `App\Support\Gst\GstCalculator` is authoritative; `resources/js/Pos/gst.js` re-implements it with BigInt paise for the live preview. Checkout sends `expected_total` and the server refuses a mismatch. **Consequences:** instant, exact totals on screen; any change to tax logic must be made in both files (a fuzz comparison script lives in the dev notes).
+
+### D-024 · GST invoice number format — 2026-11-17 (resolves open question)
+**Decision:** `{prefix}{branch code}/{FY like 2627}/{sequence}`, padded to fill 16 characters, e.g. `BR1/2627/0000001`; credit notes `CN{branch}/…`. Invoice prefix optional (≤4 chars), branch code ≤6 chars; generation refuses numbers over 16 characters.
+
+### D-025 · Price-based GST decided per piece after discounts — 2026-11-17
+**Decision:** for inclusive prices the lower rate is used to back out the per-piece taxable value; if that exceeds the limit the higher rate applies. Bill discounts are allocated to lines first. **Consequences:** discounted premium items can drop to 5%; behaviour in the ₹2,625–₹2,950 inclusive band follows the "lower-rate test" (documented in GST rules).
+
+### D-026 · Exchange credit as a payment method — 2026-11-17
+**Decision:** a return with refund method `exchange` creates a credit note whose value is used once, in full, as a payment on a bill (any excess is given back as change). Works for walk-in customers, unlike store credit on account.
+
+### D-027 · Credit notes round cumulatively — 2026-11-17
+**Decision:** each credit note's total = round(all returned line totals for the invoice so far) − totals already refunded. Prevents ₹1 over-refunds when pieces are returned one at a time.
+
+### D-028 · No native `<dialog>` for modals — 2026-11-17
+**Context:** after a modal `<dialog>` closed, Chrome kept typed input away from the programmatically focused POS search box until a mouse click — barcode scans were lost. **Decision:** the shared `Modal` component is a teleported fixed overlay; the POS also refocuses the search box after printing and on window focus.
+
 ### Open questions
-- Exact invoice number format within GST's 16-character limit (proposed: `BR1/25-26/00123`) — decide in Phase 3.

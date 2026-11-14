@@ -121,8 +121,8 @@ const destroy = () => {
                     <FormField label="Branch name" :error="form.errors.name" required>
                         <TextInput v-model="form.name" autofocus />
                     </FormField>
-                    <FormField label="Code" :error="form.errors.code" hint="Short code used in invoice numbers, e.g. BR1" required>
-                        <TextInput v-model="form.code" maxlength="10" class="uppercase" />
+                    <FormField label="Code" :error="form.errors.code" hint="Up to 6 letters/digits, used in invoice numbers, e.g. BR1" required>
+                        <TextInput v-model="form.code" maxlength="6" class="uppercase" />
                     </FormField>
                     <FormField label="State" :error="form.errors.state_code" required>
                         <SelectInput v-model="form.state_code" :options="states" />

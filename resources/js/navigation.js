@@ -5,6 +5,8 @@ import {
     BanknotesIcon,
     BuildingOffice2Icon,
     BuildingStorefrontIcon,
+    CalculatorIcon,
+    ComputerDesktopIcon,
     ChartBarIcon,
     Cog6ToothIcon,
     CubeIcon,
@@ -29,7 +31,7 @@ export const navigation = [
     {
         items: [
             { label: 'Dashboard', route: 'dashboard', icon: HomeIcon, permission: 'dashboard.view' },
-            { label: 'POS Billing', icon: ShoppingCartIcon, permission: 'pos.access', soon: 'Phase 3' },
+            { label: 'POS Billing', route: 'pos.terminal', active: 'pos.*', icon: ShoppingCartIcon, permission: 'pos.access' },
         ],
     },
     {
@@ -52,7 +54,8 @@ export const navigation = [
     {
         label: 'Orders',
         items: [
-            { label: 'Sales', icon: ReceiptPercentIcon, permission: 'sales.view', soon: 'Phase 4' },
+            { label: 'Sales', route: 'sales.index', active: 'sales.*', icon: ReceiptPercentIcon, permission: 'sales.view' },
+            { label: 'Register Shifts', route: 'register-sessions.index', active: 'register-sessions.*', icon: ComputerDesktopIcon, permission: 'pos.register.manage' },
             { label: 'Purchases', icon: TruckIcon, permission: 'purchases.view', soon: 'Phase 4' },
             { label: 'Quotations', icon: DocumentTextIcon, permission: 'quotations.manage', soon: 'Phase 4' },
         ],
@@ -81,6 +84,7 @@ export const navigation = [
         items: [
             { label: 'Users', route: 'users.index', active: 'users.*', icon: UserGroupIcon, permission: 'users.view' },
             { label: 'Roles & Permissions', route: 'roles.index', active: 'roles.*', icon: ShieldCheckIcon, permission: 'roles.manage' },
+            { label: 'Registers', route: 'settings.registers.index', active: 'settings.registers.*', icon: CalculatorIcon, permission: 'settings.manage' },
             { label: 'Branches', route: 'settings.branches.index', active: 'settings.branches.*', icon: BuildingOffice2Icon, permission: 'settings.manage' },
             { label: 'Settings', route: 'settings.business.edit', active: 'settings.business.*', icon: Cog6ToothIcon, permission: 'settings.manage' },
         ],

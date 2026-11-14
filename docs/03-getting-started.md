@@ -34,6 +34,8 @@ All demo users have password **`password`** and POS PIN **`1234`**.
 | cashier@pos.test | Cashier | Main Store |
 | stock@pos.test | Stock Keeper | Main Store |
 
+Demo registers: Main Store has Counter 1 and Counter 2, City Mall Outlet has Counter 1. Log in as `cashier@pos.test`, open **POS Billing**, open Counter 1 with a float and start scanning (barcodes are on the product pages and labels).
+
 Demo contacts: customers (some with birthdays coming up, a Gold Members group, an out-of-state boutique on wholesale pricing), suppliers with opening payables, and the built-in Walk-in Customer.
 
 The seeder also creates GST rates (incl. the price-based *Garments* rate), clothing units, size/colour lists and a demo apparel catalog (15 products / 73 size-colour variants across Men, Women, Kids, Accessories and Fabrics) with stock in both branches.

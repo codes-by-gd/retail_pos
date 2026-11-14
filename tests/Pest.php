@@ -70,3 +70,5 @@ function makeVariant(array $variant = [], array $product = [], ?Branch $branch =
 
     return $v;
 }
+
+require_once __DIR__.'/Support/PosHelpers.php';

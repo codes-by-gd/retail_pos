@@ -28,7 +28,7 @@ class SettingsService
         'business.logo' => null,
         'business.financial_year_start' => '04-01',   // MM-DD, Indian FY starts 1 April
         'business.currency_symbol' => '₹',
-        'invoice.prefix' => 'INV',
+        'invoice.prefix' => '',                       // optional, ≤ 4 chars: GST invoice numbers max 16 chars
         'invoice.footer' => 'Thank you for shopping with us!',
         'invoice.terms' => null,
         'tax.prices_include_tax' => true,
@@ -36,6 +36,9 @@ class SettingsService
         'pos.allow_negative_stock' => false,
         'pos.beep_on_scan' => true,
         'pos.receipt_size' => '80mm',                 // 58mm | 80mm | a4
+        'pos.print_after_sale' => true,
+        'pos.accept_card' => true,
+        'pos.accept_upi' => true,
     ];
 
     private ?array $loaded = null;

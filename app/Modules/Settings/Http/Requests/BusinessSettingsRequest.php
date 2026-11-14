@@ -35,7 +35,7 @@ class BusinessSettingsRequest extends FormRequest
             'business.phone' => ['nullable', 'string', 'max:20'],
             'business.email' => ['nullable', 'email', 'max:150'],
             'business.financial_year_start' => ['required', 'regex:/^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/'],
-            'invoice.prefix' => ['required', 'string', 'max:10', 'regex:/^[A-Za-z0-9\-]+$/'],
+            'invoice.prefix' => ['nullable', 'string', 'max:4', 'regex:/^[A-Za-z0-9\-]+$/'],
             'invoice.footer' => ['nullable', 'string', 'max:500'],
             'invoice.terms' => ['nullable', 'string', 'max:2000'],
             'tax.prices_include_tax' => ['required', 'boolean'],
@@ -43,6 +43,9 @@ class BusinessSettingsRequest extends FormRequest
             'pos.allow_negative_stock' => ['required', 'boolean'],
             'pos.beep_on_scan' => ['required', 'boolean'],
             'pos.receipt_size' => ['required', Rule::in(['58mm', '80mm', 'a4'])],
+            'pos.print_after_sale' => ['required', 'boolean'],
+            'pos.accept_card' => ['required', 'boolean'],
+            'pos.accept_upi' => ['required', 'boolean'],
         ];
     }
 

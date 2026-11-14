@@ -1,6 +1,6 @@
 # Orders
 
-**Status:** ⏳ planned (Phase 4)
+**Status:** 🚧 Phase 3 delivered the sales list (search, dates, cashier filters, totals), invoice view, reprint and returns via the POS. ⏳ The rest is Phase 4.
 **Purpose:** Back-office view of all sales and the purchase cycle.
 
 ## Features

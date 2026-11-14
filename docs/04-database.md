@@ -10,9 +10,9 @@ Conventions: `id` big-int primary keys, `timestamps()` on every business table, 
 | `settings` | ✅ | `key` (unique, dotted e.g. `business.gstin`), `value` JSON. Defaults in `SettingsService::DEFAULTS`. |
 | `branches` | ✅ | `name`, `code` (unique, used in document numbers), `gstin` (optional, falls back to business), `state_code`, address fields, `is_active`, soft deletes |
 | `branch_user` | ✅ | pivot `branch_id` + `user_id` — which branches a user can work in |
-| `registers` | ⏳ P3 | `branch_id`, `name`, `is_active` |
-| `register_sessions` | ⏳ P3 | `register_id`, `user_id`, `opened_at`, `opening_cash`, `closed_at`, `counted_cash`, `expected_cash`, `difference` |
-| `cash_movements` | ⏳ P3 | `register_session_id`, `type` (in/out), `amount`, `reason` |
+| `registers` | ✅ | `branch_id`, `name` (unique per branch), `is_active` |
+| `register_sessions` | ✅ | shift: `register_id`, `branch_id`, `opened_by`, `opened_at`, `opening_cash`, `status` (open/closed), `closed_by`, `closed_at`, `expected_cash`, `counted_cash`, `difference` |
+| `cash_movements` | ✅ | `register_session_id`, `type` (in/out), `amount`, `reason`, `user_id` |
 | `document_sequences` | ✅ | `branch_id`, `type` (ADJ, TRF, later INV…), `financial_year` ("26-27"), `last_number` — row locked while numbering |
 
 ## Users & access
@@ -52,15 +52,16 @@ Conventions: `id` big-int primary keys, `timestamps()` on every business table, 
 | `contact_ledger_entries` | ✅ | append-only account ledger: `contact_id`, `branch_id`, `date`, `type` (see `LedgerEntryType`), `debit`, `credit`, `reference_type/id` (morph to sale, payment, purchase…), `note`, `user_id`, `created_at`. Balance = Σdebit − Σcredit (+ = receivable, − = payable) |
 | `contact_addresses` | ⏳ | multiple shipping addresses — not needed for counter retail yet; one address lives on `contacts` |
 
-## Sales (Phases 3–4)
+## Sales (Phase 3)
 | Table | Status | Notes |
 |---|---|---|
-| `sales` | ⏳ | `invoice_no`, `branch_id`, `register_session_id`, `customer_id`, `user_id`, `place_of_supply` (state), totals: `subtotal`, `discount`, `taxable_value`, `cgst`, `sgst`, `igst`, `cess`, `round_off`, `grand_total`, `paid`, `status`, `payment_status` |
-| `sale_items` | ⏳ | snapshot per line: `product_variant_id`, `name`, `hsn_code`, `quantity`, `unit_price`, `discount`, `taxable_value`, `gst_rate`, `cgst`, `sgst`, `igst`, `cess`, `line_total`, `unit_cost` (for profit) |
-| `sale_payments` | ⏳ | `method` (cash/card/upi/credit…), `amount`, `reference` |
-| `held_carts` | ⏳ | parked bills: `user_id`, `branch_id`, `payload` JSON |
-| `sale_returns` (+`_items`) | ⏳ | credit notes, linked to original sale |
-| `quotations` (+`_items`) | ⏳ | convertible to a sale |
+| `sales` | ✅ | `invoice_no` (≤16 chars, unique), `branch_id`, `register_session_id`, `customer_id`, `user_id` (cashier), `sold_at`; customer snapshot (`customer_name`, `customer_phone`, `customer_gstin`, `place_of_supply`, `is_inter_state`, `price_type`); totals (`subtotal`, `line_discount_total`, `bill_discount_type/value/total`, `taxable_total`, `cgst/sgst/igst/cess_total`, `round_off`, `grand_total`); `paid_total`, `change_given`, `account_amount`; `status` (completed/cancelled), `payment_status` (paid/partial/due), `note` |
+| `sale_items` | ✅ | snapshot per line: `product_variant_id`, `product_name`, `variant_name`, `sku`, `hsn_code`, `unit`, `price_includes_tax`, `mrp`, `list_price`, `unit_price`, `quantity`, `returned_quantity`, `discount_type/value`, `line_discount`, `bill_discount_share`, `taxable_value`, `gst_rate` (applied), `cgst`, `sgst`, `igst`, `cess_rate`, `cess`, `line_total`, `unit_cost` (avg cost at sale → profit) |
+| `sale_payments` | ✅ | `method` (cash/card/upi/account/exchange), `amount` (as tendered), `reference`, `sale_return_id` (exchange credit used) |
+| `sale_returns` | ✅ | credit note: `credit_note_no`, `sale_id`, `branch_id`, `register_session_id`, `customer_id`, `user_id`, `returned_at`, tax totals, `round_off`, `total`, `refund_method` (cash/card/upi/account/exchange), `used_in_sale_id` (exchange credit), `reason` |
+| `sale_return_items` | ✅ | `sale_item_id`, `product_variant_id`, `quantity`, `restock`, `taxable_value`, `cgst`, `sgst`, `igst`, `cess`, `line_total` |
+| `held_carts` | ✅ | parked bills: `branch_id`, `user_id`, `label`, `payload` JSON |
+| `quotations` (+`_items`) | ⏳ P4 | convertible to a sale |
 
 ## Purchases (Phase 4)
 | Table | Status | Notes |

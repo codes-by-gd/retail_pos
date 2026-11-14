@@ -8,8 +8,8 @@ Each page follows the same structure: **Status · Purpose · Features · Screens
 | [Users](users.md) | 0 | ✅ core done |
 | [Inventory](inventory.md) | 1 | ✅ done |
 | [Contacts](contacts.md) | 2 | ✅ done |
-| [POS billing](pos-billing.md) | 3 | ⏳ |
-| [Orders](orders.md) | 4 | ⏳ |
+| [POS billing](pos-billing.md) | 3 | ✅ done |
+| [Orders](orders.md) | 4 | 🚧 sales list & invoice view done; rest in Phase 4 |
 | [Dashboard](dashboard.md) | 5 | 🚧 low-stock KPI live, rest placeholder |
 | [Reports](reports.md) | 5 | ⏳ |
 | [Notifications](notifications.md) | 6 | ⏳ |

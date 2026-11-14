@@ -27,6 +27,11 @@ class DatabaseSeeder extends Seeder
         $main = Branch::firstOrCreate(['code' => 'BR1'], ['name' => 'Main Store', 'state_code' => '24', 'city' => 'Vadodara']);
         $second = Branch::firstOrCreate(['code' => 'BR2'], ['name' => 'City Mall Outlet', 'state_code' => '24', 'city' => 'Vadodara']);
 
+        foreach ([$main, $second] as $branch) {
+            $branch->registers()->firstOrCreate(['name' => 'Counter 1']);
+        }
+        $main->registers()->firstOrCreate(['name' => 'Counter 2']);
+
         $users = [
             ['Admin', 'admin@pos.test', 'Admin', [$main->id, $second->id]],
             ['Store Manager', 'manager@pos.test', 'Manager', [$main->id, $second->id]],

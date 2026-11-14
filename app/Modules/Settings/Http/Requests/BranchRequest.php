@@ -29,7 +29,7 @@ class BranchRequest extends FormRequest
 
         return [
             'name' => ['required', 'string', 'max:100'],
-            'code' => ['required', 'string', 'max:10', 'regex:/^[A-Z0-9]+$/', Rule::unique('branches', 'code')->ignore($branch)],
+            'code' => ['required', 'string', 'max:6', 'regex:/^[A-Z0-9]+$/', Rule::unique('branches', 'code')->ignore($branch)],
             'gstin' => ['nullable', 'string', new Gstin],
             'state_code' => ['required', Rule::in(IndianStates::codes())],
             'address' => ['nullable', 'string', 'max:255'],

@@ -69,7 +69,7 @@ final class Permissions
     public const DEFAULT_ROLES = [
         'Manager' => ['*', '!roles.manage', '!settings.manage'],
         'Cashier' => [
-            'dashboard.view', 'pos.access', 'pos.discount', 'pos.register.manage',
+            'dashboard.view', 'pos.access', 'pos.discount', 'pos.returns', 'pos.register.manage',
             'products.view', 'sales.view', 'customers.view', 'customers.manage',
         ],
         'Stock Keeper' => [

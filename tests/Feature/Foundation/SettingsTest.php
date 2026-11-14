@@ -8,7 +8,7 @@ function validSettings(array $overrides = []): array
         'business' => ['name' => 'Acme Mart', 'state_code' => '24', 'financial_year_start' => '04-01', 'gstin' => ''],
         'invoice' => ['prefix' => 'INV'],
         'tax' => ['prices_include_tax' => true, 'round_off' => true],
-        'pos' => ['allow_negative_stock' => false, 'beep_on_scan' => true, 'receipt_size' => '80mm'],
+        'pos' => ['allow_negative_stock' => false, 'beep_on_scan' => true, 'receipt_size' => '80mm', 'print_after_sale' => true, 'accept_card' => true, 'accept_upi' => true],
     ], $overrides);
 }
 

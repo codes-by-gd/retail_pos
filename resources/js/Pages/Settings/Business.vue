@@ -36,6 +36,9 @@ const form = useForm({
         allow_negative_stock: !!pos.allow_negative_stock,
         beep_on_scan: !!pos.beep_on_scan,
         receipt_size: pos.receipt_size,
+        print_after_sale: !!pos.print_after_sale,
+        accept_card: !!pos.accept_card,
+        accept_upi: !!pos.accept_upi,
     },
 });
 
@@ -95,7 +98,11 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
 
             <Card title="Invoice" description="Numbering and text printed on bills.">
                 <div class="grid gap-4 md:grid-cols-2">
-                    <FormField label="Invoice prefix" :error="form.errors['invoice.prefix']" hint="Keep it short: GST invoice numbers are limited to 16 characters." required>
+                    <FormField
+                        label="Invoice prefix (optional)"
+                        :error="form.errors['invoice.prefix']"
+                        hint="Up to 4 characters. Numbers look like BR1/2627/00001 (GST allows max 16 characters)."
+                    >
                         <TextInput v-model="form.invoice.prefix" maxlength="10" />
                     </FormField>
                     <FormField label="Receipt footer" :error="form.errors['invoice.footer']">
@@ -127,6 +134,9 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
                             description="Stock can go below zero."
                         />
                         <Toggle v-model="form.pos.beep_on_scan" label="Beep on barcode scan" />
+                        <Toggle v-model="form.pos.print_after_sale" label="Print receipt after each sale" />
+                        <Toggle v-model="form.pos.accept_card" label="Accept card payments" />
+                        <Toggle v-model="form.pos.accept_upi" label="Accept UPI payments" />
                         <FormField label="Default receipt size" :error="form.errors['pos.receipt_size']">
                             <SelectInput v-model="form.pos.receipt_size" :options="receiptSizes" />
                         </FormField>

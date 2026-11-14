@@ -23,7 +23,8 @@ class BranchController extends Controller
 
     public function store(BranchRequest $request): RedirectResponse
     {
-        Branch::create($request->validated());
+        $branch = Branch::create($request->validated());
+        $branch->registers()->create(['name' => 'Counter 1']);
 
         return back()->with('success', 'Branch created.');
     }

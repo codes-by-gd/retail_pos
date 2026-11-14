@@ -8,8 +8,8 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 | 1 | Catalog & inventory: categories, brands, units, GST rates, products & variants, barcodes, stock ledger, adjustments, transfers, label printing, CSV import/export | ✅ Done (2026-11-15) |
 | 1.1 | Clothing-store adaptation: size/colour variants, price-based garment GST, article no. & fabric, apparel masters & demo data | ✅ Done (2026-11-15) |
 | 2 | Contacts: customers, suppliers, groups, addresses, ledgers | ✅ Done (2026-11-16) |
-| 3 | ⏳ **Next** — **POS billing panel**: registers & sessions, fast search/scan, cart, GST calculator, split payments, hold/recall, receipts, returns, keyboard shortcuts, PIN switch | ⏳ |
-| 4 | Orders: sales list/cancel/reprint, quotations, purchase orders → GRN → bill, supplier payments, purchase returns, dues | ⏳ |
+| 3 | ✅ Done (2026-11-17) — **POS billing panel**: registers & sessions, fast search/scan, cart, GST calculator, split payments, hold/recall, receipts, returns, keyboard shortcuts, PIN switch | ⏳ |
+| 4 | ⏳ **Next** — Orders: sales list/cancel/reprint, quotations, purchase orders → GRN → bill, supplier payments, purchase returns, dues | ⏳ |
 | 5 | Dashboard KPIs & charts; sales, profit, stock, register, outstanding and GST reports; Excel/PDF export | ⏳ |
 | 6 | Notifications, expenses, audit log viewer, backups, performance pass | ⏳ |
 
@@ -58,6 +58,17 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 - [x] CSV import/export; JSON search + quick-add for the POS
 - [x] Tests: 121 passing; screens checked in headless Chrome
 - Later: loyalty points, birthday WhatsApp/SMS, multiple shipping addresses
+
+## Phase 3 checklist
+- [x] Registers, shifts (open/join/close), cash in/out, Z-report with cash reconciliation
+- [x] GST calculator (server) + exact JS mirror (fuzz-tested on 2,000 carts); price-based garment GST per piece after discounts
+- [x] Full-screen billing: scan/search with size-colour chips, cart editing, customer lookup/quick-add, group pricing & discounts, bill discount
+- [x] Split payments: cash with change, card, UPI, on account (credit limit / store credit), exchange credit
+- [x] Hold/recall, PIN cashier switch, keyboard shortcuts, scanner-safe focus handling
+- [x] Returns & exchanges with credit notes (cash, card, UPI, store credit, exchange); damaged items not restocked
+- [x] GST invoice numbers ≤ 16 chars; thermal 80/58 mm receipts, A4 tax invoice with HSN summary & amount in words, credit notes
+- [x] Sales list and invoice view with reprint
+- [x] Tests: 159 passing on SQLite **and** MySQL; full cashier flow verified in headless Chrome
 
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

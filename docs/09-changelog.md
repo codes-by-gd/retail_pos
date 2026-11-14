@@ -1,5 +1,17 @@
 # 09 · Changelog
 
+## Phase 3 — POS billing (2026-11-17)
+- Registers & shifts: opening float, join an open shift, cash in/out, close with cash count, printable Z-report.
+- `GstCalculator` (server) and `Pos/gst.js` (browser) — identical results to the paisa; price-based garment GST decided per piece after discounts; CGST/SGST vs IGST from customer state; rupee round-off.
+- Billing screen: barcode scan, grouped size/colour search, cart editing with permission-checked price override and discounts, customer lookup & quick add, automatic group pricing/discount, bill discount, split payments (cash/card/UPI/on account/exchange credit), hold & recall, PIN cashier switch, keyboard shortcuts.
+- Returns & exchanges with credit notes; exchange credit applied to the next bill; store credit on account; cash/card/UPI refunds.
+- GST-compliant invoice numbers (≤16 chars: `BR1/2627/00001`), credit notes `CNBR1/2627/00001`.
+- Printing: 80/58 mm receipts, A4 tax invoice with HSN summary and amount in words, credit notes.
+- Sales list and invoice view; dashboard roadmap updated.
+- Cashier role now includes `pos.returns`. Settings: invoice prefix optional (≤4), branch code ≤6, accept card/UPI, print after sale.
+- Fixes found while testing: cumulative rounding so piece-by-piece returns never over-refund; `lines` is a MySQL reserved word; the shared Modal no longer uses `<dialog>` (Chrome kept keyboard input from the scanner field after a dialog closed).
+- 159 automated tests (SQLite and MySQL).
+
 ## Phase 2 — Customers & suppliers (2026-11-16)
 - Contacts module: customers, suppliers and "both", with codes (CUS-00001 / SUP-00001) and a built-in Walk-in Customer.
 - Indian phone normalisation; unique phone required for customers; GSTIN validation fills and checks the state.

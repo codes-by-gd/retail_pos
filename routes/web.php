@@ -19,6 +19,14 @@ use App\Modules\Inventory\Http\Controllers\StockTransferController;
 use App\Modules\Inventory\Http\Controllers\TaxRateController;
 use App\Modules\Inventory\Http\Controllers\UnitController;
 use App\Modules\Inventory\Http\Controllers\VariantSearchController;
+use App\Modules\Pos\Http\Controllers\CheckoutController;
+use App\Modules\Pos\Http\Controllers\HeldCartController;
+use App\Modules\Pos\Http\Controllers\PosController;
+use App\Modules\Pos\Http\Controllers\RegisterController;
+use App\Modules\Pos\Http\Controllers\RegisterSessionController;
+use App\Modules\Pos\Http\Controllers\ReturnController;
+use App\Modules\Sales\Http\Controllers\PrintController;
+use App\Modules\Sales\Http\Controllers\SaleController;
 use App\Modules\Settings\Http\Controllers\BranchController;
 use App\Modules\Settings\Http\Controllers\BusinessSettingsController;
 use App\Modules\Users\Http\Controllers\RoleController;
@@ -75,6 +83,37 @@ Route::middleware('auth')->group(function () {
     });
     Route::get('/labels', [LabelController::class, 'index'])->middleware('can:labels.print')->name('labels.index');
 
+    // POS billing
+    Route::middleware('can:pos.access')->prefix('pos')->name('pos.')->group(function () {
+        Route::get('/', [PosController::class, 'terminal'])->name('terminal');
+        Route::post('/register/open', [PosController::class, 'openRegister'])->name('register.open');
+        Route::post('/register/leave', [PosController::class, 'leaveRegister'])->name('register.leave');
+        Route::post('/unlock', [PosController::class, 'unlock'])->name('unlock');
+        Route::post('/checkout', CheckoutController::class)->name('checkout');
+        Route::get('/held', [HeldCartController::class, 'index'])->name('held.index');
+        Route::post('/held', [HeldCartController::class, 'store'])->name('held.store');
+        Route::delete('/held/{heldCart}', [HeldCartController::class, 'destroy'])->name('held.destroy');
+        Route::get('/exchange-credit', [ReturnController::class, 'exchangeCredit'])->name('exchange-credit');
+        Route::middleware('can:pos.returns')->group(function () {
+            Route::get('/returns/lookup', [ReturnController::class, 'lookup'])->name('returns.lookup');
+            Route::post('/returns', [ReturnController::class, 'store'])->name('returns.store');
+        });
+        Route::post('/cash-movements', [RegisterSessionController::class, 'cashMovement'])->middleware('can:pos.register.manage')->name('cash-movements.store');
+    });
+    Route::middleware('can:pos.register.manage')->group(function () {
+        Route::get('/register-sessions', [RegisterSessionController::class, 'index'])->name('register-sessions.index');
+        Route::get('/register-sessions/{registerSession}', [RegisterSessionController::class, 'show'])->name('register-sessions.show');
+        Route::post('/register-sessions/{registerSession}/close', [RegisterSessionController::class, 'close'])->name('register-sessions.close');
+    });
+
+    // Sales (list/invoice; cancellation in Phase 4)
+    Route::middleware('can:sales.view')->group(function () {
+        Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
+        Route::get('/sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
+    });
+    Route::get('/sales/{sale}/print', [PrintController::class, 'sale'])->middleware('can:sales.view')->name('sales.print');
+    Route::get('/sale-returns/{saleReturn}/print', [PrintController::class, 'saleReturn'])->middleware('can:sales.view')->name('sale-returns.print');
+
     // Contacts — customers and suppliers share controllers; `kind` comes from the route.
     foreach (['customer' => 'customers', 'supplier' => 'suppliers'] as $kind => $plural) {
         Route::prefix($plural)->name("{$plural}.")->group(function () use ($kind, $plural) {
@@ -119,6 +158,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/business', [BusinessSettingsController::class, 'edit'])->name('business.edit');
         Route::put('/business', [BusinessSettingsController::class, 'update'])->name('business.update');
         Route::resource('branches', BranchController::class)->only(['index', 'store', 'update', 'destroy']);
+        Route::resource('registers', RegisterController::class)->only(['index', 'store', 'update', 'destroy']);
     });
 });
 

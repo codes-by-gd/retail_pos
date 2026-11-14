@@ -30,7 +30,8 @@ This page describes how the system applies Indian GST. Billing logic (Phase 3) a
 - **Tax invoice** for registered (B2B) buyers: GSTIN of both parties, HSN, taxable value and tax per rate.
 - **Bill of supply / retail invoice** for walk-in customers.
 - **Credit note** for returns, **debit note** for purchase returns.
-- Invoice numbers are unique per branch and **financial year** (starts 1 April by default), max 16 characters, e.g. `BR1/25-26/000123`.
+- Invoice numbers are unique per branch and **financial year** (starts 1 April by default), max 16 characters: `{prefix}{branch}/{2627}/{seq}`, e.g. `BR1/2627/0000001`; credit notes `CNBR1/2627/00001`.
+- Implementation: `GstCalculator` (server, authoritative) and `resources/js/Pos/gst.js` (browser preview). Per line: gross → line discount → share of bill discount → rate test → taxable/GST; CGST = ½ GST rounded half-up, SGST = remainder; bill rounded to the rupee.
 
 ## Reports (Phase 5)
 - GSTR-1 style: B2B invoices, B2C large/small, credit/debit notes, **HSN summary**.

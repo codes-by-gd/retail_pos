@@ -11,6 +11,7 @@ enum LedgerEntryType: string
     case Purchase = 'purchase';               // credit: we owe the supplier
     case PurchaseReturn = 'purchase_return';  // debit
     case PaymentMade = 'payment_made';        // debit
+    case Refund = 'refund';                   // debit: money paid back to a customer
     case Adjustment = 'adjustment';
 
     public function label(): string
@@ -23,6 +24,7 @@ enum LedgerEntryType: string
             self::Purchase => 'Purchase',
             self::PurchaseReturn => 'Purchase return',
             self::PaymentMade => 'Payment made',
+            self::Refund => 'Refund',
             self::Adjustment => 'Adjustment',
         };
     }

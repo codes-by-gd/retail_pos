@@ -44,7 +44,7 @@ The JSON item search (`variants.search`) is allowed for any of `products.view`, 
 |---|---|
 | Admin | Everything (implicit) |
 | Manager | Everything except `roles.manage` and `settings.manage` |
-| Cashier | `dashboard.view`, `pos.access`, `pos.discount`, `pos.register.manage`, `products.view`, `sales.view`, `customers.view`, `customers.manage` |
+| Cashier | `dashboard.view`, `pos.access`, `pos.discount`, `pos.returns`, `pos.register.manage`, `products.view`, `sales.view`, `customers.view`, `customers.manage` |
 | Stock Keeper | `dashboard.view`, `products.*`, `catalog.manage`, `stock.*`, `labels.print`, `purchases.*`, `suppliers.*`, `reports.inventory` |
 
 Default roles are filled only when first created, so changes made in the UI are never overwritten by re-seeding.
