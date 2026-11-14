@@ -21,6 +21,7 @@ const emit = defineEmits(['close', 'complete']);
 const cart = useCartStore();
 const payments = ref([]); // { method, amount, reference, sale_return_id, label }
 const cashInput = ref(null);
+const root = ref(null);
 const cnNumber = ref('');
 const localError = ref('');
 
@@ -46,7 +47,8 @@ watch(
             method: 'exchange', amount: r.total, reference: r.credit_note_no, sale_return_id: r.id, label: `Exchange ${r.credit_note_no}`,
         }));
         await nextTick();
-        cashInput.value?.focus();
+        // Focus inside the dialog so Enter completes the sale even before a payment row exists.
+        (cashInput.value ?? root.value)?.focus();
     },
 );
 
@@ -59,6 +61,7 @@ const add = (method, amount = remaining.value) => {
 const cashTender = (note) => add('cash', note);
 const exactCash = () => add('cash', remaining.value);
 const addAccount = () => {
+    if (remaining.value <= 0) return (localError.value = 'The bill is already fully paid.');
     const amount = Math.min(remaining.value, Math.max(0, accountRoom.value));
     if (amount <= 0) return (localError.value = 'No credit available for this customer.');
     add('account', amount);
@@ -88,7 +91,7 @@ defineExpose({ complete });
 
 <template>
     <Modal :show="show" max-width="2xl" :closeable="!processing" @close="emit('close')">
-        <div class="grid gap-0 sm:grid-cols-2" @keydown.enter.prevent="complete">
+        <div ref="root" tabindex="-1" class="grid grid-cols-1 gap-0 outline-none sm:grid-cols-2" @keydown.enter.prevent="complete">
             <!-- left: totals & tenders -->
             <div class="bg-gray-50 p-6">
                 <p class="text-sm text-gray-500">Amount to pay</p>
@@ -96,27 +99,34 @@ defineExpose({ complete });
                 <p class="mt-1 text-xs text-gray-500">{{ cart.count }} items · {{ cart.customer?.name }}</p>
 
                 <div class="mt-5 space-y-2">
-                    <div v-for="(p, i) in payments" :key="i" class="flex items-center gap-2 rounded-md bg-white p-2 shadow-sm">
-                        <span class="w-36 shrink-0 break-all text-sm font-medium text-gray-700">{{ p.label }}</span>
-                        <input
-                            v-model.number="p.amount"
-                            :ref="(el) => p.method === 'cash' && (cashInput = el)"
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            :readonly="p.method === 'exchange'"
-                            class="w-28 rounded-md border-gray-300 py-1 text-right text-sm tabular-nums focus:border-indigo-500 focus:ring-indigo-500"
-                            @focus="$event.target.select()"
-                        />
-                        <input
-                            v-if="['card', 'upi'].includes(p.method)"
-                            v-model="p.reference"
-                            type="text"
-                            placeholder="Ref / last 4"
-                            class="min-w-0 flex-1 rounded-md border-gray-300 py-1 text-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        />
-                        <span v-else class="flex-1" />
-                        <button type="button" class="text-gray-400 hover:text-red-600" @click="payments.splice(i, 1)"><XMarkIcon class="h-4 w-4" /></button>
+                    <!-- Two-line card so long labels / references never push the remove button out of view -->
+                    <div v-for="(p, i) in payments" :key="i" class="rounded-md bg-white p-2 shadow-sm">
+                        <div class="flex items-start justify-between gap-2">
+                            <span class="min-w-0 break-words text-sm font-medium text-gray-700">{{ p.label }}</span>
+                            <button type="button" class="shrink-0 rounded p-0.5 text-gray-400 hover:bg-red-50 hover:text-red-600" title="Remove" @click="payments.splice(i, 1)">
+                                <XMarkIcon class="h-4 w-4" />
+                            </button>
+                        </div>
+                        <div class="mt-1.5 flex gap-2">
+                            <input
+                                v-model.number="p.amount"
+                                :ref="(el) => p.method === 'cash' && (cashInput = el)"
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                :readonly="p.method === 'exchange'"
+                                aria-label="Amount"
+                                class="min-w-0 flex-1 rounded-md border-gray-300 py-1 text-right text-sm tabular-nums focus:border-indigo-500 focus:ring-indigo-500 read-only:bg-gray-50"
+                                @focus="$event.target.select()"
+                            />
+                            <input
+                                v-if="['card', 'upi'].includes(p.method)"
+                                v-model="p.reference"
+                                type="text"
+                                :placeholder="p.method === 'upi' ? 'UPI ref no.' : 'Card last 4 / slip'"
+                                class="min-w-0 flex-1 rounded-md border-gray-300 py-1 text-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            />
+                        </div>
                     </div>
                 </div>
 

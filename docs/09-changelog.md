@@ -1,5 +1,20 @@
 # 09 · Changelog
 
+## Bug-fix pass before Phase 4 (2026-11-17)
+Reported by the user:
+- **Held bill lost its customer on recall** — `validated()` drops payload keys without rules when nested rules exist; customer, bill discount, note and total were discarded. All payload keys now validated; pending exchange credits are parked with the bill; customer balance/credit/group refreshed on recall.
+- **Payment dialog: UPI/card row overflowed** and hid the remove button — rows are now two-line cards; dialog focuses itself so Enter completes the sale immediately.
+
+Found in the audit (automated layout sweep at 1366/1024/390 px, scripted flows, before/after data snapshots of every edit form):
+- Walk-in customer could be saved with a state (contact form pre-filled the branch state), which would bill walk-in sales as IGST at other-state branches — walk-in is now always intra-state; form only pre-fills state for new contacts.
+- Branches with sales/stock/register history could be deleted — now blocked (deactivate instead).
+- Dashboard showed ₹0 "today's sales" although sales exist — today's sales, bills and average bill are now live (links respect permissions; local date, not UTC).
+- Stock ledger now links sale and return movements to their invoice.
+- "On account" said "No credit available" when the bill was already fully paid.
+- Phone layouts: modals sized to the screen and clip instead of scrolling sideways; card headers wrap; contact statement fits.
+- Flaky user-search test made deterministic; held-cart test tolerant of MySQL JSON key order.
+- 164 tests passing on SQLite and MySQL; layout sweep, cashier flow, held-bill flow and form round-trips all clean.
+
 ## Phase 3 — POS billing (2026-11-17)
 - Registers & shifts: opening float, join an open shift, cash in/out, close with cash count, printable Z-report.
 - `GstCalculator` (server) and `Pos/gst.js` (browser) — identical results to the paisa; price-based garment GST decided per piece after discounts; CGST/SGST vs IGST from customer state; rupee round-off.

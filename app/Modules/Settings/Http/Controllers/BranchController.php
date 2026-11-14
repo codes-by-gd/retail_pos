@@ -3,6 +3,9 @@
 namespace App\Modules\Settings\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Inventory\Models\StockMovement;
+use App\Modules\Pos\Models\RegisterSession;
+use App\Modules\Sales\Models\Sale;
 use App\Modules\Settings\Http\Requests\BranchRequest;
 use App\Modules\Settings\Models\Branch;
 use App\Support\Gst\IndianStates;
@@ -48,7 +51,15 @@ class BranchController extends Controller
             return back()->with('error', 'You cannot delete the only branch.');
         }
 
-        // Later phases will also block deletion when the branch has stock or sales.
+        // A branch with history must stay (deactivate it instead) so reports and documents keep their branch.
+        $hasHistory = Sale::where('branch_id', $branch->id)->exists()
+            || StockMovement::where('branch_id', $branch->id)->exists()
+            || RegisterSession::where('branch_id', $branch->id)->exists();
+        if ($hasHistory) {
+            return back()->with('error', "{$branch->name} has sales, stock or register history. Deactivate it instead.");
+        }
+
+        $branch->registers()->delete();
         $branch->delete();
 
         return back()->with('success', 'Branch deleted.');

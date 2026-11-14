@@ -113,7 +113,8 @@ class CheckoutService
                 $this->fail('bill_discount_value', 'You are not allowed to give discounts.');
             }
 
-            $placeOfSupply = $customer->state_code ?: $branch->state_code;
+            // Counter sales to walk-in customers are always supplied in the branch's own state.
+            $placeOfSupply = (! $customer->is_walk_in && $customer->state_code) ? $customer->state_code : $branch->state_code;
             $interState = $placeOfSupply !== $branch->state_code;
             $calc = GstCalculator::calculate($calcLines, $billType ? ['type' => $billType, 'value' => $billValue] : null, $interState, (bool) settings('tax.round_off'));
             $totals = $calc['totals'];

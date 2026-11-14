@@ -8,7 +8,7 @@ defineProps({
 
 <template>
     <section class="rounded-lg border border-gray-200 bg-white shadow-sm">
-        <header v-if="title || $slots.actions" class="flex items-start justify-between gap-4 border-b border-gray-100 px-5 py-4">
+        <header v-if="title || $slots.actions" class="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-gray-100 px-5 py-4">
             <div>
                 <h3 class="text-sm font-semibold text-gray-900">{{ title }}</h3>
                 <p v-if="description" class="mt-0.5 text-xs text-gray-500">{{ description }}</p>

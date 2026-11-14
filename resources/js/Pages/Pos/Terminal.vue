@@ -114,9 +114,11 @@ const hold = async () => {
         : `${cart.customer.name} · ${cart.items.length} items`;
     try {
         if (cart.heldCartId) await axios.delete(route('pos.held.destroy', cart.heldCartId)).catch(() => {});
-        const { data } = await axios.post(route('pos.held.store'), { label, payload: cart.snapshot() });
+        // Exchange credits belong to this customer's bill — park them with it.
+        const { data } = await axios.post(route('pos.held.store'), { label, payload: { ...cart.snapshot(), exchangeCredits: exchangeCredits.value } });
         held.value = data.count;
         cart.clear(walkInCustomer);
+        exchangeCredits.value = [];
         flash(`Bill held: ${label}`);
     } catch (e) {
         flash(apiError(e));
@@ -126,7 +128,9 @@ const hold = async () => {
 const recall = async (h) => {
     if (!cart.isEmpty && !window.confirm('Replace the current bill with the held bill?')) return;
     cart.restore(h.payload, h.id);
+    exchangeCredits.value = h.payload.exchangeCredits ?? [];
     modal.value = null;
+    refreshCustomer();
     // Refresh prices, GST and stock in case they changed while the bill was parked.
     const ids = cart.items.map((i) => i.variant_id);
     if (!ids.length) return;
@@ -140,6 +144,23 @@ const recall = async (h) => {
             gst_rate: v.gst_rate, gst_cess: v.gst_cess, gst_threshold: v.gst_threshold, gst_rate_above: v.gst_rate_above, stock: v.stock,
         });
     });
+};
+
+/** Balance, credit limit and group may have changed while the bill was parked. */
+const refreshCustomer = async () => {
+    const c = cart.customer;
+    if (!c || c.is_walk_in) return cart.setCustomer(c ?? walkInCustomer);
+    try {
+        const { data } = await axios.get(route('contacts.search'), { params: { q: c.code ?? c.phone, kind: 'customer' } });
+        const fresh = data.data.find((x) => x.id === c.id);
+        if (fresh) {
+            const keepDiscount = { ...cart.billDiscount };
+            cart.customer = fresh;
+            cart.billDiscount = keepDiscount;
+        }
+    } catch {
+        /* keep the held copy */
+    }
 };
 
 const clearBill = () => {

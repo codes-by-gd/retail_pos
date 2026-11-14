@@ -26,10 +26,17 @@ class HeldCartController extends Controller
 
     public function store(Request $request): JsonResponse
     {
+        // Every top-level key of the payload needs a rule: with nested rules present, validated()
+        // drops keys that have none (that silently lost the customer on recall).
         $data = $request->validate([
             'label' => ['required', 'string', 'max:100'],
             'payload' => ['required', 'array'],
             'payload.items' => ['required', 'array', 'min:1', 'max:300'],
+            'payload.customer' => ['nullable', 'array'],
+            'payload.billDiscount' => ['nullable', 'array'],
+            'payload.note' => ['nullable', 'string', 'max:255'],
+            'payload.exchangeCredits' => ['nullable', 'array'],
+            'payload.total' => ['nullable', 'numeric'],
         ], ['payload.items.required' => 'The bill is empty.']);
 
         $cart = HeldCart::create([...$data, 'branch_id' => current_branch()->id(), 'user_id' => $request->user()->id]);

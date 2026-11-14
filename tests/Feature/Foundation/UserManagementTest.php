@@ -77,8 +77,8 @@ it('stops an admin from demoting or deactivating themselves', function () {
 
 it('filters the user list by search term', function () {
     $admin = userWithRole('Admin');
-    User::factory()->create(['name' => 'Zara Shah']);
+    User::factory()->create(['name' => 'Qwyzx Shah']);
 
-    $this->actingAs($admin)->get(route('users.index', ['search' => 'Zara']))
-        ->assertInertia(fn ($page) => $page->has('users.data', 1)->where('users.data.0.name', 'Zara Shah'));
+    $this->actingAs($admin)->get(route('users.index', ['search' => 'Qwyzx']))
+        ->assertInertia(fn ($page) => $page->has('users.data', 1)->where('users.data.0.name', 'Qwyzx Shah'));
 });

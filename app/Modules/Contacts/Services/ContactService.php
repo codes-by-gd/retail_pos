@@ -40,7 +40,7 @@ class ContactService
             $attributes = Arr::only($data, self::FIELDS);
             if ($contact->is_walk_in) {
                 // The counter customer stays a customer and stays active.
-                $attributes = [...$attributes, 'type' => Contact::CUSTOMER, 'is_active' => true];
+                $attributes = [...$attributes, 'type' => Contact::CUSTOMER, 'is_active' => true, 'state_code' => null, 'gstin' => null];
             }
             $contact->update([...$attributes, 'credit_limit' => $data['credit_limit'] ?? 0]);
 

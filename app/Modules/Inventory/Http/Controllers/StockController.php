@@ -9,6 +9,8 @@ use App\Modules\Inventory\Models\ProductVariant;
 use App\Modules\Inventory\Models\StockAdjustment;
 use App\Modules\Inventory\Models\StockMovement;
 use App\Modules\Inventory\Models\StockTransfer;
+use App\Modules\Sales\Models\Sale;
+use App\Modules\Sales\Models\SaleReturn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -127,6 +129,8 @@ class StockController extends Controller
         return match ($m->reference_type) {
             (new StockAdjustment)->getMorphClass() => route('stock-adjustments.show', $m->reference_id),
             (new StockTransfer)->getMorphClass() => route('stock-transfers.show', $m->reference_id),
+            (new Sale)->getMorphClass() => auth()->user()->can('sales.view') ? route('sales.show', $m->reference_id) : null,
+            (new SaleReturn)->getMorphClass() => auth()->user()->can('sales.view') && $m->reference ? route('sales.show', $m->reference->sale_id) : null,
             default => null,
         };
     }

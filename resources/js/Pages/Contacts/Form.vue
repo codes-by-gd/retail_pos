@@ -33,7 +33,8 @@ const form = useForm({
     alt_phone: props.contact?.alt_phone ?? '',
     email: props.contact?.email ?? '',
     gstin: props.contact?.gstin ?? '',
-    state_code: props.contact?.state_code ?? props.defaultStateCode,
+    // Only new contacts start with the branch state; never invent a state for an existing contact.
+    state_code: props.contact ? props.contact.state_code : props.defaultStateCode,
     address: props.contact?.address ?? '',
     city: props.contact?.city ?? '',
     pincode: props.contact?.pincode ?? '',
@@ -109,7 +110,7 @@ const submit = () => {
                 </div>
             </Card>
 
-            <Card title="Address & GST" description="The state decides CGST + SGST (same state) or IGST (other state) on bills.">
+            <Card v-if="!walkIn" title="Address & GST" description="The state decides CGST + SGST (same state) or IGST (other state) on bills.">
                 <div class="grid gap-4 sm:grid-cols-2">
                     <FormField label="GSTIN" :error="form.errors.gstin" hint="For business customers & suppliers. Fills the state.">
                         <TextInput v-model="form.gstin" maxlength="15" class="uppercase" />

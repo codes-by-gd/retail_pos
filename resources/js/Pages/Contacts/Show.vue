@@ -116,9 +116,9 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
         <Card class="mt-6" title="Account statement" :padded="false">
             <template #actions>
                 <div class="no-print flex items-center gap-2">
-                    <TextInput v-model="period.from" type="date" class="!w-40 !py-1.5" aria-label="From" />
+                    <TextInput v-model="period.from" type="date" class="!w-36 !py-1.5" aria-label="From" />
                     <span class="text-gray-400">–</span>
-                    <TextInput v-model="period.to" type="date" class="!w-40 !py-1.5" aria-label="To" />
+                    <TextInput v-model="period.to" type="date" class="!w-36 !py-1.5" aria-label="To" />
                 </div>
             </template>
             <div class="overflow-x-auto">

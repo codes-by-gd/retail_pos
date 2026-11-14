@@ -3,16 +3,21 @@ import Card from '@/Components/Card.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { money } from '@/utils/format';
 import { BanknotesIcon, CubeIcon, ReceiptPercentIcon, ShoppingBagIcon } from '@heroicons/vue/24/outline';
+import { usePermissions } from '@/composables/usePermissions';
 import { Link } from '@inertiajs/vue3';
 
-const props = defineProps({ lowStock: { type: Number, default: 0 } });
+const { can } = usePermissions();
+const props = defineProps({
+    lowStock: { type: Number, default: 0 },
+    today: { type: Object, default: () => ({ bills: 0, total: 0, average: 0 }) },
+});
 
-// Sales KPIs are placeholders until Phase 5 (Dashboard & Reports); stock is live.
+// Today's figures for the current branch; charts and reports arrive in Phase 5.
 const kpis = [
-    { label: "Today's sales", value: money(0), icon: BanknotesIcon },
-    { label: 'Bills today', value: '0', icon: ReceiptPercentIcon },
-    { label: 'Average bill value', value: money(0), icon: ShoppingBagIcon },
-    { label: 'Low / out of stock items', value: String(props.lowStock), icon: CubeIcon, href: route('stock.index', { level: 'low' }) },
+    { label: "Today's sales", value: money(props.today.total), icon: BanknotesIcon, href: can('sales.view') ? route('sales.index', { from: new Date().toLocaleDateString('en-CA') }) : null },
+    { label: 'Bills today', value: String(props.today.bills), icon: ReceiptPercentIcon },
+    { label: 'Average bill value', value: money(props.today.average), icon: ShoppingBagIcon },
+    { label: 'Low / out of stock items', value: String(props.lowStock), icon: CubeIcon, href: can('products.view') ? route('stock.index', { level: 'low' }) : null },
 ];
 
 const roadmap = [
