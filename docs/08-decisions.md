@@ -1,0 +1,72 @@
+# 08 · Decision log
+
+Short records of significant decisions. Newest last. Format: context → decision → consequences.
+
+### D-001 · Laravel + Vue (Inertia) monolith — 2026-11-14
+**Context:** team works in PHP; POS screen must feel instant. **Decision:** Laravel 12 backend with Vue 3 pages via Inertia; small JSON endpoints only where the POS needs them (product search, checkout). **Consequences:** one codebase and deploy; a public API for a mobile app would be extra work later.
+
+### D-002 · Single business, multiple branches — 2026-11-14
+**Decision:** no multi-tenancy. Branch-owned data carries `branch_id`; users are assigned to branches. **Consequences:** simpler queries; SaaS would need a tenant layer later.
+
+### D-003 · Indian GST built in — 2026-11-14
+**Decision:** GST (CGST/SGST/IGST, HSN, GSTIN) is a core concept, not a plugin. See [GST rules](06-gst.md).
+
+### D-004 · Online only — 2026-11-14
+**Decision:** the POS needs a connection to the server (LAN or cloud). Offline PWA is a possible later phase.
+
+### D-005 · Permissions over roles — 2026-11-14
+**Decision:** code checks permissions (`can:products.manage`), never role names — except Admin, which bypasses checks. Catalogue in `App\Support\Permissions`. **Consequences:** shop owners can create custom roles without code changes.
+
+### D-006 · Module folders under `app/Modules` — 2026-11-14
+**Decision:** each business module keeps its models, services, controllers and requests together under `app/Modules/<Module>`. `User` stays in `app/Models` (Laravel auth default).
+
+### D-007 · Settings as key/value JSON — 2026-11-14
+**Decision:** a `settings` table with dotted keys, cached as one array, with defaults in code. **Consequences:** adding a setting needs no migration; settings are not type-checked by the DB, so Form Requests must validate them.
+
+### D-008 · No self-registration; accounts are never hard-deleted by users — 2026-11-14
+**Decision:** removed Breeze registration and "delete my account". Staff are deactivated (`is_active = false`) instead of deleted, because sales and stock movements will reference them.
+
+### D-009 · Sales are immutable — 2026-11-14
+**Decision:** completed sales and purchases are never edited; corrections are made via returns, credit/debit notes or cancellation (with audit log). Keeps GST records and stock ledger consistent.
+
+### D-010 · One stock service with a ledger — 2026-11-14
+**Decision:** every stock change goes through `StockService` in a DB transaction with row locks and writes a `stock_movements` row. Prevents overselling and keeps stock history auditable.
+
+### D-011 · Every sellable item is a variant — 2026-11-15
+**Decision:** a product always has ≥1 `product_variants` row; single products have one unnamed variant. Stock, barcodes, prices and (later) sale lines always point to a variant. **Consequences:** one code path for single and variable products; queries join through variants.
+
+### D-012 · Weighted average cost per branch — 2026-11-15
+**Context:** open question from Phase 0. **Decision:** weighted average, kept on `stock_levels.avg_cost` and recalculated on every costed inflow; outflows take the current average. Transfers carry the sender's average to the receiver. **Consequences:** simple and standard for Indian retail; FIFO would need cost layers (not planned). Only `StockService` would change if this is revisited.
+
+### D-013 · Document numbers `TYPE/BRANCH/FY/SEQ` — 2026-11-15
+**Decision:** internal documents use `ADJ/BR1/26-27/0001` from `document_sequences` (locked row, inside the document's transaction, so numbers are gap-free). GST invoices (Phase 3) still need a ≤16-character format — see open questions.
+
+### D-014 · Two-step stock transfers — 2026-11-15
+**Decision:** stock leaves the source on *send* (in transit) and enters the destination only when someone at that branch *receives* it; the sender can cancel while in transit. **Consequences:** goods on the road are not counted in either branch; receiving requires switching to the destination branch.
+
+### D-015 · CSV (not Excel) for import/export; browser printing for labels — 2026-11-15
+**Decision:** native CSV via `fgetcsv/fputcsv` instead of adding `maatwebsite/excel`; labels rendered with JsBarcode and printed with mm-exact print CSS instead of server PDFs. **Consequences:** no extra dependencies, works with any printer the OS knows; .xlsx can be added later if users need it.
+
+### D-016 · Business-rule exceptions become flash errors — 2026-11-15
+**Decision:** `DomainException` and `InsufficientStockException` are rendered globally (`bootstrap/app.php`) as "back with error" (or JSON 422). Services throw; controllers stay free of try/catch.
+
+### D-017 · Clothing store focus; variants from attributes — 2026-11-15
+**Context:** the business is a clothing store. **Decision:** variants are defined by attribute values (`attributes`, `attribute_values`, pivot to variants) instead of free-text names; `product_variants.name` is a denormalised label ("Navy / 40") rebuilt when values are renamed. Several size systems are separate attributes (Size, Shirt Size, Waist, Kids Age) rather than one long list. **Consequences:** size/colour reports and stock matrices are possible; a product varies by at most 3 attributes.
+
+### D-018 · Price-based GST on the tax rate — 2026-11-15
+**Decision:** `tax_rates.threshold_amount` + `rate_above` express "x% up to ₹N per piece, y% above"; the rate actually applied is decided per sale line from the per-piece taxable value after discount (Phase 3) and snapshotted. **Consequences:** one product setting covers cheap and premium items of the same type; the threshold is data, so a future change in law is a settings edit.
+
+### D-019 · Phase 1 migrations edited in place — 2026-11-15
+**Decision:** because nothing had been committed or deployed, the clothing changes were folded into the original Phase 1 migrations instead of new alter-table migrations. From the first commit / deployment onward, schema changes must be new migrations.
+
+### D-020 · One contacts table with an append-only ledger — 2026-11-16
+**Decision:** customers and suppliers share `contacts` (`type` customer/supplier/both). Money owed is an append-only `contact_ledger_entries` table (Σdebit − Σcredit), mirroring the stock ledger; documents in Phases 3–4 post entries, only the opening balance is editable. **Consequences:** balances and statements are simple sums; a contact who is both customer and supplier has a single net balance.
+
+### D-021 · Phone is the customer key — 2026-11-16
+**Decision:** phone numbers are normalised to digits (strip +91 / leading 0 / punctuation) and unique; required for customers (not for suppliers or the walk-in). **Consequences:** fast counter lookup and no duplicate customers; a customer without a phone is billed as walk-in.
+
+### D-022 · Single address per contact — 2026-11-16
+**Decision:** address fields live on `contacts`; the planned `contact_addresses` table is deferred until delivery/shipping is needed.
+
+### Open questions
+- Exact invoice number format within GST's 16-character limit (proposed: `BR1/25-26/00123`) — decide in Phase 3.
