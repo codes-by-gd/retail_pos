@@ -19,8 +19,10 @@ class BusinessSettingsController extends Controller
                 'invoice' => settings()->group('invoice'),
                 'tax' => settings()->group('tax'),
                 'pos' => settings()->group('pos'),
+                'alerts' => settings()->group('alerts'),
             ],
             'states' => IndianStates::options(),
+            'mailConfigured' => ! in_array(config('mail.default'), ['log', 'array'], true),
         ]);
     }
 

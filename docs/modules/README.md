@@ -10,7 +10,7 @@ Each page follows the same structure: **Status · Purpose · Features · Screens
 | [Contacts](contacts.md) | 2 | ✅ done |
 | [POS billing](pos-billing.md) | 3 | ✅ done |
 | [Orders](orders.md) | 4 | ✅ done |
-| [Dashboard](dashboard.md) | 5 | 🚧 low-stock KPI live, rest placeholder |
-| [Reports](reports.md) | 5 | ⏳ |
-| [Notifications](notifications.md) | 6 | ⏳ |
-| [Expenses](expenses.md) | 6 | ⏳ |
+| [Dashboard](dashboard.md) | 5 | ✅ done |
+| [Reports](reports.md) | 5–6 | ✅ done |
+| [Notifications](notifications.md) | 6 | ✅ done |
+| [Expenses](expenses.md) | 6 | ✅ done |

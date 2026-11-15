@@ -55,6 +55,7 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
 
         Auth::user()->forceFill(['last_login_at' => now()])->saveQuietly();
+        activity()->causedBy(Auth::user())->withProperties(['ip' => $this->ip()])->log('Logged in');
     }
 
     /**

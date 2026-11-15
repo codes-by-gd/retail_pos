@@ -1,6 +1,6 @@
 # Settings
 
-**Status:** ✅ core done (Phase 0) · remaining items ⏳ in later phases
+**Status:** ✅ done (Phases 0–6) · logo upload and template designer ⏳ later
 **Purpose:** Business identity, branches and the defaults every other module reads.
 
 ## Features
@@ -12,10 +12,11 @@
 - ✅ Branches: create/edit/delete, code, state, optional own GSTIN, active flag
 - ✅ Current-branch switcher in the top bar
 - ⏳ Logo upload (P3, for receipts)
-- ⏳ Cash registers per branch (P3)
-- ⏳ Payment methods enable/disable & custom methods (P3)
+- ✅ Cash registers per branch (Phase 3)
+- ✅ Card / UPI on or off at the POS (Phase 3) · ⏳ custom payment methods later
 - ⏳ Receipt / label template designer (P1, P3)
-- ⏳ SMTP / SMS settings (P6), database backup download (P6)
+- ✅ Alerts: large-discount % and cash-difference limits, email on/off (Phase 6; SMTP itself in `.env`) · ⏳ SMS later
+- ✅ Database backups: back up now, nightly with retention, download/delete (Phase 6, route `settings.backups.index`)
 
 ## Screens
 | Screen | Route | Page |

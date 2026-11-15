@@ -8,6 +8,8 @@ use App\Modules\Contacts\Http\Controllers\ContactImportController;
 use App\Modules\Contacts\Http\Controllers\ContactPaymentController;
 use App\Modules\Contacts\Http\Controllers\ContactSearchController;
 use App\Modules\Contacts\Http\Controllers\CustomerGroupController;
+use App\Modules\Expenses\Http\Controllers\ExpenseCategoryController;
+use App\Modules\Expenses\Http\Controllers\ExpenseController;
 use App\Modules\Inventory\Http\Controllers\AttributeController;
 use App\Modules\Inventory\Http\Controllers\BrandController;
 use App\Modules\Inventory\Http\Controllers\CategoryController;
@@ -20,6 +22,7 @@ use App\Modules\Inventory\Http\Controllers\StockTransferController;
 use App\Modules\Inventory\Http\Controllers\TaxRateController;
 use App\Modules\Inventory\Http\Controllers\UnitController;
 use App\Modules\Inventory\Http\Controllers\VariantSearchController;
+use App\Modules\Notifications\Http\Controllers\NotificationController;
 use App\Modules\Pos\Http\Controllers\CheckoutController;
 use App\Modules\Pos\Http\Controllers\HeldCartController;
 use App\Modules\Pos\Http\Controllers\PosController;
@@ -32,8 +35,10 @@ use App\Modules\Reports\Http\Controllers\ReportController;
 use App\Modules\Sales\Http\Controllers\PrintController;
 use App\Modules\Sales\Http\Controllers\QuotationController;
 use App\Modules\Sales\Http\Controllers\SaleController;
+use App\Modules\Settings\Http\Controllers\BackupController;
 use App\Modules\Settings\Http\Controllers\BranchController;
 use App\Modules\Settings\Http\Controllers\BusinessSettingsController;
+use App\Modules\Users\Http\Controllers\ActivityController;
 use App\Modules\Users\Http\Controllers\RoleController;
 use App\Modules\Users\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -208,8 +213,37 @@ Route::middleware('auth')->group(function () {
         Route::resource('roles', RoleController::class)->except('show');
     });
 
+    // Expenses (static paths before {expense})
+    Route::middleware('can:expenses.manage')->group(function () {
+        Route::resource('expenses/categories', ExpenseCategoryController::class)->only(['index', 'store', 'update', 'destroy'])
+            ->names('expense-categories')->parameters(['categories' => 'expenseCategory']);
+        Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
+        Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.store');
+        Route::put('/expenses/{expense}', [ExpenseController::class, 'update'])->name('expenses.update');
+        Route::delete('/expenses/{expense}', [ExpenseController::class, 'destroy'])->name('expenses.destroy');
+        Route::get('/expenses/{expense}/attachment', [ExpenseController::class, 'attachment'])->name('expenses.attachment');
+    });
+
+    // Notifications — every user, own notifications only
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/summary', [NotificationController::class, 'summary'])->name('summary');
+        Route::post('/read-all', [NotificationController::class, 'readAll'])->name('read-all');
+        Route::delete('/read', [NotificationController::class, 'clearRead'])->name('clear-read');
+        Route::put('/preferences', [NotificationController::class, 'preferences'])->name('preferences');
+        Route::get('/{id}/open', [NotificationController::class, 'open'])->name('open');
+        Route::post('/{id}/toggle', [NotificationController::class, 'toggle'])->name('toggle');
+    });
+
+    Route::get('/activity', [ActivityController::class, 'index'])->middleware('can:activity.view')->name('activity.index');
+
     // Settings
     Route::middleware('can:settings.manage')->prefix('settings')->name('settings.')->group(function () {
+        Route::get('/backups', [BackupController::class, 'index'])->name('backups.index');
+        Route::post('/backups', [BackupController::class, 'store'])->name('backups.store');
+        Route::put('/backups/settings', [BackupController::class, 'settings'])->name('backups.settings');
+        Route::get('/backups/{name}', [BackupController::class, 'download'])->name('backups.download')->where('name', '[A-Za-z0-9.\-]+');
+        Route::delete('/backups/{name}', [BackupController::class, 'destroy'])->name('backups.destroy')->where('name', '[A-Za-z0-9.\-]+');
         Route::get('/business', [BusinessSettingsController::class, 'edit'])->name('business.edit');
         Route::put('/business', [BusinessSettingsController::class, 'update'])->name('business.update');
         Route::resource('branches', BranchController::class)->only(['index', 'store', 'update', 'destroy']);

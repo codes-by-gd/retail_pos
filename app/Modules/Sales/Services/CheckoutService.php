@@ -10,6 +10,7 @@ use App\Modules\Contacts\Services\PaymentService;
 use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Models\ProductVariant;
 use App\Modules\Inventory\Services\StockService;
+use App\Modules\Notifications\Services\Alerts;
 use App\Modules\Pos\Models\HeldCart;
 use App\Modules\Pos\Models\RegisterSession;
 use App\Modules\Pos\Services\RegisterService;
@@ -214,6 +215,8 @@ class CheckoutService
             if (! empty($data['held_cart_id'])) {
                 HeldCart::where('id', $data['held_cart_id'])->where('branch_id', $branch->id)->delete();
             }
+
+            rescue(fn () => app(Alerts::class)->bigDiscount($sale, $user));
 
             return $sale;
         });

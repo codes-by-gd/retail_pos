@@ -53,7 +53,7 @@
 - ⏳ Batch & expiry tracking (schema not yet created)
 - ⏳ Multiple images per product
 - ⏳ Excel (.xlsx) import/export (CSV today)
-- ⏳ Print labels straight from a purchase (Phase 4)
+- ✅ Print labels straight from a purchase (Phase 4)
 
 ## Screens
 | Screen | Route | Page |

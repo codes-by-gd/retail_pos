@@ -9,6 +9,7 @@ function validSettings(array $overrides = []): array
         'invoice' => ['prefix' => 'INV'],
         'tax' => ['prices_include_tax' => true, 'round_off' => true],
         'pos' => ['allow_negative_stock' => false, 'beep_on_scan' => true, 'receipt_size' => '80mm', 'print_after_sale' => true, 'accept_card' => true, 'accept_upi' => true],
+        'alerts' => ['discount_percent' => 15, 'cash_difference' => 50, 'email_enabled' => false],
     ], $overrides);
 }
 
@@ -24,7 +25,8 @@ it('saves business settings', function () {
 
     app(SettingsService::class)->flush();
     expect(settings('business.name'))->toBe('Acme Mart')
-        ->and(settings('pos.receipt_size'))->toBe('80mm');
+        ->and(settings('pos.receipt_size'))->toBe('80mm')
+        ->and((float) settings('alerts.discount_percent'))->toBe(15.0);
 });
 
 it('validates the GSTIN', function () {

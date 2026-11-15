@@ -4,6 +4,8 @@ namespace App\Modules\Pos\Services;
 
 use App\Models\User;
 use App\Modules\Contacts\Models\ContactPayment;
+use App\Modules\Expenses\Models\Expense;
+use App\Modules\Notifications\Services\Alerts;
 use App\Modules\Pos\Models\CashMovement;
 use App\Modules\Pos\Models\Register;
 use App\Modules\Pos\Models\RegisterSession;
@@ -46,7 +48,11 @@ class RegisterService
             throw new \DomainException('Not enough cash in the drawer for this.');
         }
 
-        return $session->cashMovements()->create(['type' => $type, 'amount' => $amount, 'reason' => $reason, 'user_id' => $user->id]);
+        $movement = $session->cashMovements()->create(['type' => $type, 'amount' => $amount, 'reason' => $reason, 'user_id' => $user->id]);
+        activity()->causedBy($user)->performedOn($session)->withProperties(['type' => $type, 'amount' => (string) $amount, 'reason' => $reason])
+            ->log($type === 'in' ? 'Cash put into drawer' : 'Cash taken from drawer');
+
+        return $movement;
     }
 
     /**
@@ -76,9 +82,10 @@ class RegisterService
         // Cash received from customers / paid to suppliers through this drawer
         $payIn = $d(ContactPayment::where('register_session_id', $session->id)->where('direction', 'in')->sum('amount'));
         $payOut = $d(ContactPayment::where('register_session_id', $session->id)->where('direction', 'out')->sum('amount'));
+        $expenses = $d(Expense::where('register_session_id', $session->id)->sum('amount'));
 
         $expected = $d($session->opening_cash)->plus($cashSales)->minus($change)->minus($cashRefunds)->plus($cashIn)->minus($cashOut)
-            ->plus($payIn)->minus($payOut);
+            ->plus($payIn)->minus($payOut)->minus($expenses);
 
         return [
             'sales_count' => (clone $sales)->count(),
@@ -99,6 +106,7 @@ class RegisterService
             'cash_out' => (string) $cashOut,
             'payments_in' => (string) $payIn,
             'payments_out' => (string) $payOut,
+            'expenses' => (string) $expenses,
             'expected_cash' => (string) $expected,
         ];
     }
@@ -121,6 +129,11 @@ class RegisterService
                 'difference' => (string) $counted->minus($expected),
                 'closing_note' => $note,
             ]);
+
+            activity()->causedBy($user)->performedOn($session)
+                ->withProperties(['expected' => (string) $expected, 'counted' => (string) $counted, 'difference' => $session->difference])
+                ->log('Closed register shift');
+            app(Alerts::class)->cashDifference($session, $user);
 
             return $session;
         });

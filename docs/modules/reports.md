@@ -1,6 +1,6 @@
 # Reports
 
-**Status:** ✅ done (Phase 5, 2026-11-15) · expenses report ⏳ Phase 6
+**Status:** ✅ done (Phase 5, 2026-11-15; expenses and profit & loss added in Phase 6)
 **Purpose:** Answer "how is the business doing?", run the shop day to day (reorder list, dead stock, dues, cash differences) and produce GST returns data.
 
 ## Screens
@@ -29,6 +29,8 @@ Every report has: date presets (today, yesterday, this week/month/quarter, last 
 | Accounts & profit | Profit & margin (`profit`) | Net sales excl. GST, cost, gross profit, margin % — by article, item, category, brand, day, month, cashier, branch | `reports.financial` |
 | | Customer receivables (`receivables`) | Ledger balance, unpaid bills aged 0–30 / 31–60 / 61–90 / 90+, opening/on-account part, last payment | `reports.financial` |
 | | Supplier payables (`payables`) | Same for suppliers + overdue by payment terms | `reports.financial` |
+| | Profit & loss (`profit-loss`) | Net sales − cost of goods = gross profit; − expenses (excl. GST) ± stock adjustments at cost = net profit, with % of sales | `reports.financial` |
+| | Expenses (`expenses`) | By category, day, month or each entry; GST included and excl. GST | `reports.financial` |
 | | Register shifts (`register-shifts`) | Opening float, expected vs counted cash, difference, closing note | `reports.financial` |
 | GST | GSTR-1 (`gstr-1`) | 4A B2B, 5 B2C (large), 7 B2C (small, net of credit notes), 9B CDNR / CDNUR, 12 HSN summary (B2B & B2C tabs, UQC), 13 documents issued | `reports.financial` |
 | | GSTR-3B summary (`gstr-3b`) | 3.1 outward supplies net of credit notes, 3.2 inter-state to unregistered by state, 4 ITC (less debit notes), indicative net tax | `reports.financial` |

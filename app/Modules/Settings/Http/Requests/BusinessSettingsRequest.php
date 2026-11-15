@@ -46,6 +46,9 @@ class BusinessSettingsRequest extends FormRequest
             'pos.print_after_sale' => ['required', 'boolean'],
             'pos.accept_card' => ['required', 'boolean'],
             'pos.accept_upi' => ['required', 'boolean'],
+            'alerts.discount_percent' => ['sometimes', 'required', 'numeric', 'min:0', 'max:100'],
+            'alerts.cash_difference' => ['sometimes', 'required', 'numeric', 'min:0', 'max:1000000'],
+            'alerts.email_enabled' => ['sometimes', 'required', 'boolean'],
         ];
     }
 

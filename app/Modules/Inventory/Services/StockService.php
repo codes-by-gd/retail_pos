@@ -6,6 +6,7 @@ use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Models\ProductVariant;
 use App\Modules\Inventory\Models\StockLevel;
 use App\Modules\Inventory\Models\StockMovement;
+use App\Modules\Notifications\Services\Alerts;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Illuminate\Database\Eloquent\Model;
@@ -73,6 +74,12 @@ class StockService
             }
 
             $level->update(['quantity' => (string) $newQty, 'avg_cost' => (string) $newAvg]);
+
+            // Alert once when stock falls to/below the reorder level (not again while it stays there)
+            $reorder = BigDecimal::of($variant->reorder_level ?? 0);
+            if ($delta->isNegative() && $oldQty->isGreaterThan($reorder) && ! $newQty->isGreaterThan($reorder)) {
+                rescue(fn () => app(Alerts::class)->lowStock($variant, $branchId, $newQty));
+            }
 
             return StockMovement::create([
                 'product_variant_id' => $variant->id,

@@ -36,7 +36,7 @@
             </thead>
             <tbody>
                 @forelse ($section->rows as $row)
-                    <tr>
+                    <tr @if (in_array($row['kind'] ?? null, ['total', 'head', 'subtotal'])) style="font-weight: bold; background: #fafafa" @endif>
                         @foreach ($section->columns as $col)
                             <td class="{{ in_array($col['type'], ['money', 'qty', 'int', 'percent']) ? 'r' : '' }}">{{ $fmt($col, $row[$col['key']] ?? null) }}</td>
                         @endforeach

@@ -10,9 +10,9 @@
 - ✅ Roles list; create/edit roles with permissions grouped by module (select-all per group)
 - ✅ Inactive users cannot log in; last login time recorded
 - ✅ Changes to users and branches are written to the audit log
-- ⏳ POS lock screen & quick cashier switch with PIN (P3)
-- ⏳ Audit log viewer (P6)
-- ⏳ Per-user notification preferences (P6)
+- ✅ POS lock screen & quick cashier switch with PIN (Phase 3)
+- ✅ Audit log viewer (Phase 6): filters by user, record type, date and text; old → new values; logins and permission changes are logged (`activity.view`, route `activity.index`)
+- ✅ Per-user notification preferences (Phase 6) — see [Notifications](notifications.md)
 
 ## Screens
 | Screen | Route | Page |

@@ -6,6 +6,8 @@ import {
     BuildingOffice2Icon,
     BuildingStorefrontIcon,
     CalculatorIcon,
+    CircleStackIcon,
+    ClipboardDocumentListIcon,
     ComputerDesktopIcon,
     CreditCardIcon,
     ChartBarIcon,
@@ -72,7 +74,7 @@ export const navigation = [
         label: 'Finance',
         items: [
             { label: 'Payments', route: 'payments.index', active: 'payments.*', icon: CreditCardIcon, permission: 'payments.manage' },
-            { label: 'Expenses', icon: BanknotesIcon, permission: 'expenses.manage', soon: 'Phase 6' },
+            { label: 'Expenses', route: 'expenses.index', active: ['expenses.*', 'expense-categories.*'], icon: BanknotesIcon, permission: 'expenses.manage' },
             {
                 label: 'Reports',
                 route: 'reports.index',
@@ -90,6 +92,8 @@ export const navigation = [
             { label: 'Registers', route: 'settings.registers.index', active: 'settings.registers.*', icon: CalculatorIcon, permission: 'settings.manage' },
             { label: 'Branches', route: 'settings.branches.index', active: 'settings.branches.*', icon: BuildingOffice2Icon, permission: 'settings.manage' },
             { label: 'Settings', route: 'settings.business.edit', active: 'settings.business.*', icon: Cog6ToothIcon, permission: 'settings.manage' },
+            { label: 'Backups', route: 'settings.backups.index', active: 'settings.backups.*', icon: CircleStackIcon, permission: 'settings.manage' },
+            { label: 'Audit Log', route: 'activity.index', active: 'activity.*', icon: ClipboardDocumentListIcon, permission: 'activity.view' },
         ],
     },
 ];

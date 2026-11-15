@@ -1,4 +1,5 @@
 <script setup>
+import NotificationBell from '@/Components/NotificationBell.vue';
 import Dropdown from '@/Components/Dropdown.vue';
 import DropdownLink from '@/Components/DropdownLink.vue';
 import FlashMessages from '@/Components/FlashMessages.vue';
@@ -6,7 +7,6 @@ import { usePermissions } from '@/composables/usePermissions';
 import { navigation } from '@/navigation';
 import {
     Bars3Icon,
-    BellIcon,
     BuildingOffice2Icon,
     ChevronDownIcon,
     XMarkIcon,
@@ -121,9 +121,7 @@ router.on('navigate', () => (sidebarOpen.value = false));
                 </div>
                 <span v-else class="rounded bg-amber-50 px-2 py-1 text-xs text-amber-700">No branch assigned</span>
 
-                <button class="relative rounded-full p-1.5 text-gray-400 hover:text-gray-600" title="Notifications (Phase 6)">
-                    <BellIcon class="h-6 w-6" />
-                </button>
+                <NotificationBell />
 
                 <Dropdown align="right" width="48">
                     <template #trigger>

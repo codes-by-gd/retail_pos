@@ -16,7 +16,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([RolesAndPermissionsSeeder::class, DefaultCatalogSeeder::class, DefaultContactsSeeder::class]);
+        $this->call([RolesAndPermissionsSeeder::class, DefaultCatalogSeeder::class, DefaultContactsSeeder::class, DefaultExpenseCategoriesSeeder::class]);
 
         $gstin = '24AABCR1234A1Z';
         settings()->set([

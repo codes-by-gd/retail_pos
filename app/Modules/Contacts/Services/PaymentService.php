@@ -84,6 +84,10 @@ class PaymentService
             $left = $this->allocate($payment, $amount, $first);
             $payment->update(['unallocated' => (string) $left]);
 
+            activity()->causedBy($user)->performedOn($payment)->withProperties([
+                'contact' => $contact->name, 'amount' => (string) $payment->amount, 'mode' => $payment->method, 'reference' => $payment->reference_no,
+            ])->log($direction === ContactPayment::IN ? 'Payment received' : 'Payment made');
+
             return $payment->fresh('allocations');
         });
     }

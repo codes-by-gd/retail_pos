@@ -77,6 +77,16 @@ Conventions: `id` big-int primary keys, `timestamps()` on every business table, 
 | `contact_payments` | ✅ | `reference_no` (RCPT/PAY), `contact_id`, `branch_id`, `register_session_id` (cash through a drawer), `direction` (in/out), `method` (cash/upi/card/bank/cheque), `amount`, `unallocated`, `reference`, `date`, `note`, `user_id` |
 | `payment_allocations` | ✅ | `contact_payment_id`, `allocatable` (sale or purchase), `amount` |
 
+## Expenses & notifications (Phase 6)
+| Table | Purpose |
+|---|---|
+| `expense_categories` | name (unique), is_active |
+| `expenses` | `reference_no` (EXP/BR1/26-27/0001), branch, category, date, amount, gst_amount (included), method, reference, paid_to, note, `register_session_id` (cash from a drawer), `attachment_path` (private bill photo), user · index (branch_id, date) |
+| `notifications` | Laravel database notifications: uuid, notifiable (user), `data` JSON {type, title, body, url, level, key, branch}, read_at |
+| `users.notification_preferences` | JSON `{off: [types], email: [types]}` |
+
+Performance indexes added in Phase 6: `sale_returns (branch_id, returned_at)`, `contact_payments (branch_id, date)`, `purchases (branch_id, received_date)`, `purchase_returns (branch_id, date)`, `stock_movements (branch_id, created_at)`, `register_sessions (branch_id, opened_at)`, `sales (status, due_amount)`, `activity_log (created_at)`.
+
 ## Reports & dashboard (Phase 5)
 No new tables. Reports read the saved documents only: `sales`/`sale_items` (bill date, GST, `unit_cost` for profit), `sale_returns`/`sale_return_items` (credit-note date, `restock`), `sale_payments`, `contact_payments`, `purchases`/`purchase_items`, `purchase_returns`, `stock_levels`, `stock_movements`, `register_sessions` and the contact ledger. The `sales (branch_id, sold_at)` index carries most date-range queries.
 

@@ -47,6 +47,7 @@ class HandleInertiaRequests extends Middleware
                 'current' => current_branch()->get()?->only(['id', 'name', 'code', 'state_code']),
                 'available' => current_branch()->allowedFor($user)->map->only(['id', 'name', 'code'])->values(),
             ] : null,
+            'notifications' => fn () => $user ? ['unread' => $user->unreadNotifications()->count()] : null,
             'flash' => fn () => [
                 'success' => $request->session()->get('success'),
                 'error' => $request->session()->get('error'),

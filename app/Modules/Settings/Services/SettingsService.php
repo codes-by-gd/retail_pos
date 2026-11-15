@@ -39,6 +39,10 @@ class SettingsService
         'pos.print_after_sale' => true,
         'pos.accept_card' => true,
         'pos.accept_upi' => true,
+        'alerts.discount_percent' => 20,              // alert managers when a bill is discounted this much (0 = off)
+        'alerts.cash_difference' => 100,              // alert when a register closes this much short/excess
+        'alerts.email_enabled' => false,              // also email users who chose email (needs MAIL_* in .env)
+        'backup.keep_days' => 14,                     // nightly backups older than this are deleted
     ];
 
     private ?array $loaded = null;

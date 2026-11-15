@@ -11,7 +11,7 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 | 3 | ✅ Done (2026-11-17) — **POS billing panel**: registers & sessions, fast search/scan, cart, GST calculator, split payments, hold/recall, receipts, returns, keyboard shortcuts, PIN switch | ⏳ |
 | 4 | ✅ Done (2026-11-18) — Orders: sales list/cancel/reprint, quotations, purchase orders → GRN → bill, supplier payments, purchase returns, dues | ⏳ |
 | 5 | ✅ Done (2026-11-15) — Dashboard KPIs & charts; sales, profit, stock, register, outstanding and GST reports; Excel/PDF export | ⏳ |
-| 6 | ⏳ **Next** — Notifications, expenses, audit log viewer, backups, performance pass | ⏳ |
+| 6 | ✅ Done (2026-11-15) — Notifications, expenses, audit log viewer, backups, performance pass | ⏳ |
 
 ## Phase 0 checklist
 - [x] Laravel 12 + Breeze (Vue/Inertia) + Pest, Tailwind, Pinia, heroicons
@@ -89,6 +89,16 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 - [x] Dashboard: period & branch switch, KPIs vs previous period, net sales chart, payment modes, top articles/categories, drawers, dues, recent bills, low stock
 - [x] Demo trading history seeder (45 days, ~900 bills through the real services)
 - [x] Tests: 187 passing on SQLite and MySQL; every report page checked in Chrome at 3 screen sizes for Admin, Stock Keeper and Cashier
+
+## Phase 6 checklist
+- [x] Expenses: categories, branch entries with GST included, bill photo, cash from a register drawer (Z-report), lock after shift close; Expenses and Profit & loss reports; dashboard net profit
+- [x] Notifications: bell with unread count, notifications page, per-user preferences (in-app / email), alerts for low stock, cancellations, large discounts, cash differences, daily summary, supplier & customer dues, backup failures; de-duplication; scheduled `pos:daily-alerts`
+- [x] Audit log viewer with filters and old → new changes; logging added for logins, role permission changes, payments, register close and cash in/out, expenses, backups
+- [x] Backups: gzip mysqldump (no table locks) on demand and nightly (`pos:backup`), retention, download/delete, restore instructions
+- [x] Performance: indexes for every date-range query; reports < 30 ms and dashboard ≈ 130 ms on the demo data; production checklist in Getting started
+- [x] Tests: 202 passing on SQLite and MySQL; new pages checked in Chrome at 3 screen sizes for Admin, Manager, Cashier and Stock Keeper
+
+All planned phases are complete. Next candidates are in "Later / optional" below.
 
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

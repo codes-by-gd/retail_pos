@@ -37,7 +37,8 @@ const kpis = computed(() => {
     ];
     if (k.value.profit) {
         list.push({ label: 'Gross profit', value: money(k.value.profit.value), change: k.value.profit.change,
-            hint: k.value.profit.margin !== null ? `${number(k.value.profit.margin, 1)}% margin` : '' });
+            hint: [k.value.profit.margin !== null ? `${number(k.value.profit.margin, 1)}% margin` : '',
+                k.value.profit.expenses ? `net ${money(k.value.profit.value - k.value.profit.expenses)} after expenses` : ''].filter(Boolean).join(' · ') });
     }
     return list;
 });

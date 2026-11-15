@@ -113,4 +113,16 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-037 · One report framework for screen and exports — 2026-11-15
 **Decision:** reports return typed `Section`s (columns, rows, totals); the same sections render on screen and to Excel (openspout, one sheet per section), CSV (UTF-8 BOM) and PDF (dompdf, "Rs." because of fonts). Reports are aggregated in SQL and then merged in PHP; screen tables are capped at 1,000 rows, exports are complete.
 
+### D-038 · Alerts are synchronous database notifications — 2026-11-15
+**Decision:** alerts use Laravel's database channel (+ optional mail) sent immediately, no queue worker, so a small shop needs nothing but cron. Recipients come from permissions + branch assignment + personal preferences; a de-duplication key keeps one unread alert per subject. Alert code runs inside `rescue()` and can never fail a sale. **Trade-off:** email (if enabled) is sent during the request; switch `AlertNotification` to `ShouldQueue` if mail is slow.
+
+### D-039 · Low stock alerts on crossing, not on every sale — 2026-11-15
+**Decision:** an alert fires only when a stock decrease takes an item from above to at/below its reorder level, and not again while an unread alert for that item/branch exists. Out-of-stock with reorder level 0 counts.
+
+### D-040 · Expenses paid from a drawer lock with the shift — 2026-11-15
+**Decision:** cash expenses can come out of an open register drawer (they reduce expected cash, like cash-out); once that shift is closed the expense can't be edited or deleted, so Z-reports never change. GST on expenses is recorded for information and excluded from profit, but not claimed as ITC by the system.
+
+### D-041 · Backups as gzip SQL dumps, restore from the CLI — 2026-11-15
+**Decision:** `mysqldump --single-transaction` (no locks during billing), password via `MYSQL_PWD`, files only under `storage/app/backups` with a strict file-name pattern (no path traversal). Restoring replaces all data, so there is no restore button — it is a documented server command.
+
 ### Open questions

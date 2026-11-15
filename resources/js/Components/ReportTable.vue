@@ -68,7 +68,7 @@ const hasTotals = computed(() => props.section.rows.length && Object.keys(props.
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 bg-white">
-                    <tr v-for="(row, i) in rows" :key="i" class="hover:bg-gray-50">
+                    <tr v-for="(row, i) in rows" :key="i" class="hover:bg-gray-50" :class="{ 'bg-gray-50 font-semibold text-gray-900': ['total', 'head'].includes(row.kind), 'font-medium': row.kind === 'subtotal' }">
                         <td
                             v-for="(col, ci) in section.columns"
                             :key="col.key"
@@ -76,10 +76,11 @@ const hasTotals = computed(() => props.section.rows.length && Object.keys(props.
                             :class="[
                                 NUMERIC.includes(col.type) ? 'whitespace-nowrap text-right tabular-nums' : '',
                                 ci === 0 ? 'font-medium text-gray-900' : 'text-gray-700',
+                                ci === 0 && String(row[col.key] ?? '').startsWith('   ') ? 'pl-8' : '',
                                 negative(col, row[col.key]) ? '!text-red-700' : '',
                                 ['date', 'datetime'].includes(col.type) || (ci === 0 && String(row[col.key] ?? '').length <= 16) ? 'whitespace-nowrap' : '',
                             ]"
-                        >{{ show(col, row[col.key]) }}</td>
+                        >{{ row.kind === 'head' && row[col.key] == null ? '' : show(col, row[col.key]) }}</td>
                     </tr>
                     <tr v-if="!section.rows.length">
                         <td :colspan="section.columns.length" class="px-3 py-8 text-center text-gray-500">Nothing for these filters.</td>

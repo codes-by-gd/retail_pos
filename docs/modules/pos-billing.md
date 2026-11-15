@@ -18,7 +18,7 @@
 - ✅ Registers (counters) per branch; a new branch gets "Counter 1" automatically
 - ✅ Open a shift with an opening float, or join the shift already open on a register (one open shift per register)
 - ✅ Cash in / out with reason (float top-up, petty expenses, bank deposit) — can't take out more than is in the drawer
-- ✅ Close with counted cash → expected vs counted difference; printable **Z-report** (bills, sales, discounts, GST, payments by method, change, refunds, cash drawer)
+- ✅ Close with counted cash → expected vs counted difference; printable **Z-report** (bills, sales, discounts, GST, payments by method, change, refunds, cash drawer incl. customer/supplier payments and expenses paid from the drawer); managers are alerted about large differences
 
 **Billing screen**
 - ✅ Full-screen, keyboard-first: **F2** search · **F4** customer · **F6** bill discount · **F8** hold · **F9** pay · **F10** returns · **Enter** completes / starts the next sale

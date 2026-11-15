@@ -24,7 +24,8 @@ app/
 ├─ Http/Controllers/            # App-wide controllers (Dashboard, BranchSwitch, Profile, Auth)
 ├─ Http/Middleware/HandleInertiaRequests.php   # Props shared with every page
 ├─ Models/User.php
-├─ Modules/<Module>/            # One folder per business module
+├─ Modules/<Module>/            # One folder per business module: Settings, Users, Inventory, Contacts, Pos, Sales,
+│                               #   Purchases, Reports, Expenses, Notifications
 │   ├─ Models/
 │   ├─ Services/ or Actions/    # Business logic lives here
 │   └─ Http/Controllers, Http/Requests
@@ -57,6 +58,8 @@ tests/Unit, tests/Feature/<Area>/
 - **Stock:** every change goes through one `StockService`, inside a DB transaction with row locks, and writes a `stock_movements` ledger row.
 - **Business-rule errors:** services throw `DomainException` / `InsufficientStockException`; `bootstrap/app.php` turns them into a "back with error" toast (or JSON 422). No try/catch in controllers.
 - **Document numbers:** `DocumentNumberService::next('ADJ', $branch)` inside the saving transaction → `ADJ/BR1/26-27/0001`.
+- **Alerts:** business code calls `app(Alerts::class)->…` (wrapped in `rescue()`); `Notifier` picks recipients by permission + branch + preferences and de-duplicates by key. Alert failures never break a sale.
+- **Scheduled jobs** live in `routes/console.php` (`pos:daily-alerts`, `pos:backup`).
 - **Reports:** `app/Modules/Reports` — `ReportRegistry` lists the reports; each returns typed sections that drive the screen and Excel/CSV/PDF exports; `SalesFacts` holds the shared sale/return line queries (also used by the dashboard). See [modules/reports.md](modules/reports.md).
 - **POS money logic:** `GstCalculator` ⟷ `Pos/gst.js` must stay identical. Checkout/returns live in `app/Modules/Sales/Services`; registers in `app/Modules/Pos`.
 - **Modals:** `Components/Modal.vue` is a teleported overlay, *not* a native `<dialog>` (see D-028). Don't switch back.

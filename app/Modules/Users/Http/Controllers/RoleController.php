@@ -58,8 +58,15 @@ class RoleController extends Controller
         abort_if($role->name === Permissions::ADMIN_ROLE, 403, 'The Admin role cannot be edited.');
 
         $data = $this->validated($request, $role);
+        $before = $role->permissions->pluck('name')->all();
         $role->update(['name' => $data['name']]);
         $role->syncPermissions($data['permissions']);
+        $after = $data['permissions'];
+        activity()->causedBy($request->user())->performedOn($role)->withProperties(array_filter([
+            'role' => $role->name,
+            'added' => implode(', ', array_diff($after, $before)),
+            'removed' => implode(', ', array_diff($before, $after)),
+        ]))->log('Changed role permissions');
 
         return to_route('roles.index')->with('success', 'Role updated.');
     }

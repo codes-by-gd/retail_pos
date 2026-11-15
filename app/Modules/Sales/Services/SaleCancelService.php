@@ -7,6 +7,7 @@ use App\Modules\Contacts\Enums\LedgerEntryType;
 use App\Modules\Contacts\Services\ContactLedgerService;
 use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Services\StockService;
+use App\Modules\Notifications\Services\Alerts;
 use App\Modules\Pos\Models\RegisterSession;
 use App\Modules\Sales\Models\Sale;
 use App\Modules\Sales\Models\SalePayment;
@@ -78,6 +79,7 @@ class SaleCancelService
             ]);
 
             activity()->causedBy($user)->performedOn($sale)->withProperties(['invoice' => $sale->invoice_no, 'total' => $sale->grand_total, 'reason' => $reason])->log('Sale cancelled');
+            rescue(fn () => app(Alerts::class)->saleCancelled($sale, $user));
 
             return $sale;
         });

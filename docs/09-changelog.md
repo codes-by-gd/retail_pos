@@ -1,5 +1,16 @@
 # 09 · Changelog
 
+## Phase 6 — Expenses, notifications, audit log, backups (2026-11-15)
+- Expenses module: categories, entries with GST included, bill photos, cash paid from a register drawer (shown in the Z-report, locked after the shift closes), filters and category totals.
+- New reports: Expenses and Profit & loss (net sales − cost − expenses − stock written off). Dashboard profit card shows net profit after expenses.
+- Notifications: top-bar bell, notifications page, per-user preferences with optional email; alerts for low stock, bill cancellations, large discounts, cash short/excess, daily sales summary, supplier bills due, old customer dues and backup failures; scheduled `pos:daily-alerts`.
+- Audit log viewer (filters, old → new values); now also logs logins, role permission changes, payments, register close and cash in/out, expenses and backups.
+- Database backups: on demand and nightly (`pos:backup`), retention setting, download/delete; gzip mysqldump with `--single-transaction`.
+- Performance: indexes on all date-range lookups used by reports and lists; timings documented; production checklist (cron, backups, mail, optimize).
+- Fixes: bell dropdown stays on screen on phones; expense bill photos download with a valid file name.
+- Demo data: daily/monthly expenses; past alerts marked as read.
+- 202 tests (SQLite and MySQL).
+
 ## Phase 5 — Dashboard & reports (2026-11-15)
 - Reports module with 22 reports in four groups (sales, inventory & purchases, accounts & profit, GST), each filterable by date preset/range, branch or GSTIN and options, with totals, sortable columns, charts and Excel/CSV/PDF export.
 - GSTR-1 (B2B, B2C large/small, credit notes, HSN summary with UQC, documents issued) and GSTR-3B summary (outward tax net of credit notes, inter-state B2C, ITC from registered suppliers less debit notes).

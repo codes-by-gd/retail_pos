@@ -71,6 +71,7 @@ const refundLabels = { cash: 'Cash refunds', card: 'Card refunds', upi: 'UPI ref
                     <div class="flex justify-between"><dt>− Cash out</dt><dd class="tabular-nums">{{ money(summary.cash_out) }}</dd></div>
                     <div v-if="Number(summary.payments_in)" class="flex justify-between"><dt>+ Customer payments</dt><dd class="tabular-nums">{{ money(summary.payments_in) }}</dd></div>
                     <div v-if="Number(summary.payments_out)" class="flex justify-between"><dt>− Supplier payments</dt><dd class="tabular-nums">{{ money(summary.payments_out) }}</dd></div>
+                    <div v-if="Number(summary.expenses)" class="flex justify-between"><dt>− Expenses paid</dt><dd class="tabular-nums">{{ money(summary.expenses) }}</dd></div>
                     <div class="flex justify-between border-t border-gray-200 pt-2 text-base font-semibold"><dt>Expected</dt><dd class="tabular-nums">{{ money(summary.expected_cash) }}</dd></div>
                     <template v-if="session.status === 'closed'">
                         <div class="flex justify-between"><dt>Counted</dt><dd class="tabular-nums">{{ money(session.counted_cash) }}</dd></div>

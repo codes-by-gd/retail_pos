@@ -31,8 +31,10 @@ The catalogue lives in [`app/Support/Permissions.php`](../app/Support/Permission
 | Expenses | `expenses.manage` | Expenses |
 | Reports | `reports.sales` · `reports.inventory` · `reports.financial` | Report groups: sales; inventory & purchases; financial = profit, dues, register shifts & GST. Any one opens the Reports menu (gate `reports.any`). Dashboard profit needs `reports.financial` |
 | Users | `users.view` · `users.manage` · `roles.manage` | Users and roles |
-| Settings | `settings.manage` | Business settings & branches |
-| | `activity.view` | Audit log |
+| Settings | `settings.manage` | Business settings, branches, registers, alert limits, **database backups** |
+| | `activity.view` | Audit log (who did what; logins, permission changes, cancellations, cash, payments, expenses, price edits) |
+
+Alerts follow permissions too: see the table in [Notifications](modules/notifications.md#alerts). Everyone can open their own notifications and preferences.
 
 Contacts: a "both" contact needs `customers.manage` **and** `suppliers.manage` to create or edit. Contact search: `customers.view`/`pos.access` (customers), `suppliers.view`/`purchases.manage` (suppliers); quick-add needs `customers.manage`.
 

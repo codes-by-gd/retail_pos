@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Modules\Contacts\Models\Contact;
 use App\Modules\Contacts\Models\ContactPayment;
 use App\Modules\Contacts\Services\PaymentService;
+use App\Modules\Expenses\Models\ExpenseCategory;
+use App\Modules\Expenses\Services\ExpenseService;
 use App\Modules\Inventory\Models\ProductVariant;
 use App\Modules\Pos\Models\Register;
 use App\Modules\Pos\Services\RegisterService;
@@ -81,6 +83,7 @@ class DemoSalesSeeder extends Seeder
                 }
 
                 $session = $registers->open($register, $cashier, 2000);
+                $this->expenses($branch, $bi, $day, $session, $manager, $cashier);
 
                 $bills = ($bi === 0 ? mt_rand(6, 11) : mt_rand(3, 6)) + ($weekend ? 4 : 0);
                 $bills = (int) round($bills * ($diwali ? 2.2 : 1));
@@ -129,7 +132,39 @@ class DemoSalesSeeder extends Seeder
             }
         }
         Carbon::setTestNow();
+        // History alerts count as seen; only today's stay unread in the bell
+        DB::table('notifications')->whereNull('read_at')->where('created_at', '<', $realNow->copy()->startOfDay())->update(['read_at' => $realNow]);
         $this->command?->info(Sale::count().' demo bills created'.($this->failed ? ", {$this->failed} skipped" : ''));
+    }
+
+    /** Typical running costs: rent & salaries monthly (bank), electricity, staff tea daily from the drawer, packaging, courier. */
+    private function expenses(Branch $branch, int $bi, Carbon $day, $session, User $manager, User $cashier): void
+    {
+        $service = app(ExpenseService::class);
+        $cat = fn (string $name) => ExpenseCategory::where('name', $name)->value('id');
+        $add = function (string $category, float $amount, string $method, array $extra = [], ?User $by = null) use ($service, $cat, $branch, $day, $manager) {
+            Carbon::setTestNow($day->copy()->setTime(mt_rand(11, 18), mt_rand(0, 59)));
+            rescue(fn () => $service->create(['expense_category_id' => $cat($category), 'date' => $day->toDateString(), 'amount' => $amount, 'method' => $method, ...$extra],
+                $branch, $by ?? $manager), report: false);
+        };
+        $big = $bi === 0;
+
+        if ($day->day === 1) {
+            $add('Rent', $big ? 45000 : 28000, 'bank', ['paid_to' => $big ? 'Mehta Estates' : 'City Mall Management', 'reference' => 'NEFT'.mt_rand(100000, 999999)]);
+            $add('Salaries & wages', $big ? 62000 : 36000, 'bank', ['paid_to' => 'Staff salaries', 'note' => 'Previous month']);
+        }
+        if ($day->day === 10) {
+            $amount = $big ? mt_rand(6500, 8500) : mt_rand(4000, 5500);
+            $add('Electricity', $amount, 'upi', ['paid_to' => 'MGVCL', 'gst_amount' => 0, 'reference' => 'BILL'.mt_rand(10000, 99999)]);
+            $add('Internet & phone', 1179, 'upi', ['paid_to' => 'Airtel', 'gst_amount' => 179.85]);
+        }
+        if ($day->isMonday()) {
+            $add('Packaging (bags, hangers, tags)', $big ? 2360 : 1180, 'upi', ['paid_to' => 'Shree Packaging', 'gst_amount' => $big ? 360 : 180]);
+        }
+        if (mt_rand(1, 100) <= 15) {
+            $add('Transport & courier', mt_rand(150, 600), 'cash', ['paid_to' => 'Local courier', 'register_session_id' => $session->id]);
+        }
+        $add('Staff tea & refreshments', mt_rand(6, 12) * 10, 'cash', ['paid_to' => 'Tea stall', 'register_session_id' => $session->id], $cashier);
     }
 
     private function loadStock(Branch $branch): void

@@ -42,6 +42,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'pin' => 'hashed',
             'is_active' => 'boolean',
+            'notification_preferences' => 'array',
         ];
     }
 
@@ -58,6 +59,16 @@ class User extends Authenticatable
     public function scopeActive(Builder $query): Builder
     {
         return $query->where('is_active', true);
+    }
+
+    /** Preferences: ['off' => [types switched off], 'email' => [types also sent by email]]. */
+    public function wantsNotification(string $type, string $channel = 'app'): bool
+    {
+        $prefs = $this->notification_preferences ?? [];
+
+        return $channel === 'mail'
+            ? in_array($type, $prefs['email'] ?? [], true) && ! in_array($type, $prefs['off'] ?? [], true)
+            : ! in_array($type, $prefs['off'] ?? [], true);
     }
 
     public function getActivitylogOptions(): LogOptions

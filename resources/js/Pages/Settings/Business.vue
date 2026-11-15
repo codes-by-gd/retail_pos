@@ -13,9 +13,10 @@ import { useForm } from '@inertiajs/vue3';
 const props = defineProps({
     settings: { type: Object, required: true },
     states: { type: Array, required: true },
+    mailConfigured: { type: Boolean, default: false },
 });
 
-const { business, invoice, tax, pos } = props.settings;
+const { business, invoice, tax, pos, alerts } = props.settings;
 
 const form = useForm({
     business: {
@@ -39,6 +40,11 @@ const form = useForm({
         print_after_sale: !!pos.print_after_sale,
         accept_card: !!pos.accept_card,
         accept_upi: !!pos.accept_upi,
+    },
+    alerts: {
+        discount_percent: Number(alerts?.discount_percent ?? 20),
+        cash_difference: Number(alerts?.cash_difference ?? 100),
+        email_enabled: !!alerts?.email_enabled,
     },
 });
 
@@ -143,6 +149,21 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
                     </div>
                 </Card>
             </div>
+
+            <Card title="Alerts" description="When managers get a notification. Each person chooses which alerts they want on their Notifications page.">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <FormField label="Large discount alert (%)" :error="form.errors['alerts.discount_percent']" hint="Total discount on a bill at or above this. 0 = off.">
+                        <TextInput v-model.number="form.alerts.discount_percent" type="number" min="0" max="100" step="0.5" />
+                    </FormField>
+                    <FormField label="Cash short / excess alert (₹)" :error="form.errors['alerts.cash_difference']" hint="When a register closes with at least this difference.">
+                        <TextInput v-model.number="form.alerts.cash_difference" type="number" min="0" step="1" />
+                    </FormField>
+                    <div>
+                        <Toggle v-model="form.alerts.email_enabled" label="Also send alerts by email"
+                            :description="mailConfigured ? 'To users who switch email on for an alert.' : 'Email is not set up on the server (MAIL_* in .env) — alerts stay in the app.'" />
+                    </div>
+                </div>
+            </Card>
 
             <div class="flex justify-end">
                 <PrimaryButton :disabled="form.processing">Save settings</PrimaryButton>

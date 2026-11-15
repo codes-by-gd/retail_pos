@@ -5,7 +5,7 @@
 
 ## Features
 - ✅ Period: Today · Yesterday · Last 7 days · Last 30 days · This month; **This branch / All branches** (when the user has more than one branch)
-- ✅ KPI cards with change vs the previous period of the same length: **net sales** (bills incl. GST − returns), bills, average bill, pieces sold (net of returns), **gross profit & margin** (only with `reports.financial`)
+- ✅ KPI cards with change vs the previous period of the same length: **net sales** (bills incl. GST − returns), bills, average bill, pieces sold (net of returns), **gross profit & margin** and net profit after expenses (only with `reports.financial`)
 - ✅ Net sales chart — by hour for one day, by day otherwise (tooltip: date, amount, bills)
 - ✅ Payment modes (cash after change, UPI, card, on account, exchange) with share %
 - ✅ Top 5 articles and categories by net sales

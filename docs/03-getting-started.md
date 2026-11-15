@@ -74,3 +74,15 @@ DB_CONNECTION=mysql DB_DATABASE=pos_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_P
 | `npm run build` | Production build of the frontend |
 | `php artisan db:seed --class=RolesAndPermissionsSeeder` | Sync new permissions into the database (safe to re-run) |
 | `php artisan migrate:fresh --seed` | Rebuild the database with demo data (**deletes all data**) |
+| `php artisan pos:daily-alerts [--date=Y-m-d]` | Send the end-of-day summary and due-payment alerts now |
+| `php artisan pos:backup` | Back up the database to `storage/app/backups` (and delete old ones) |
+
+## Production
+
+- **Scheduler (required for daily alerts and nightly backups)** — add one cron line:
+  `* * * * * cd /path/to/pos && php artisan schedule:run >> /dev/null 2>&1`
+  Jobs: `pos:daily-alerts` 21:45, `pos:backup` 23:30 (see `routes/console.php`). No queue worker is needed: notifications are sent immediately.
+- **Backups** need `mysqldump` on the server (MySQL client tools). Files are gzip SQL in `storage/app/backups` (outside the web root, git-ignored); copy them off the server regularly. Restore: `gunzip -c pos-….sql.gz | mysql -u root -p pos`. Retention is set on the Backups page (default 14 days).
+- **Email alerts**: set `MAIL_MAILER`, `MAIL_HOST`, … in `.env`, then switch on *Settings → Business → Alerts → Also send by email*; each user chooses which alerts to receive by email.
+- **Performance**: `APP_ENV=production`, `APP_DEBUG=false`, `php artisan optimize` (config/route/view cache) after each deploy, PHP OPcache on, `npm run build`. On the demo data (~900 bills) every report over a full financial year runs in under 30 ms and the dashboard in about 130 ms.
+- Expense bill photos are stored in `storage/app/private/expenses` and served only to users with `expenses.manage`.

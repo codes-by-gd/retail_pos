@@ -5,11 +5,13 @@ namespace App\Modules\Reports;
 use App\Models\User;
 use App\Modules\Reports\Reports\DeadStockReport;
 use App\Modules\Reports\Reports\DimensionSalesReport;
+use App\Modules\Reports\Reports\ExpensesReport;
 use App\Modules\Reports\Reports\Gstr1Report;
 use App\Modules\Reports\Reports\Gstr3bReport;
 use App\Modules\Reports\Reports\LowStockReport;
 use App\Modules\Reports\Reports\OutstandingReport;
 use App\Modules\Reports\Reports\PaymentModesReport;
+use App\Modules\Reports\Reports\ProfitLossReport;
 use App\Modules\Reports\Reports\PurchaseRegisterReport;
 use App\Modules\Reports\Reports\RegisterShiftsReport;
 use App\Modules\Reports\Reports\Report;
@@ -43,12 +45,14 @@ class ReportRegistry
             new PurchaseRegisterReport,
             new PurchaseRegisterReport(bySupplier: true),
 
+            new ProfitLossReport,
             new DimensionSalesReport('profit', 'Profit & margin', 'Gross profit and margin % by article, category, brand, day…', [
                 'product' => ['Article', 'Article'], 'variant' => ['Size / colour (SKU)', 'Item'], 'category' => ['Category', 'Category'],
                 'brand' => ['Brand', 'Brand'], 'day' => ['Day', 'Date'], 'month' => ['Month', 'Month'], 'cashier' => ['Cashier', 'Cashier'], 'branch' => ['Branch', 'Branch'],
             ], profit: true),
             new OutstandingReport,
             new OutstandingReport(payables: true),
+            new ExpensesReport,
             new RegisterShiftsReport,
 
             new Gstr1Report,
