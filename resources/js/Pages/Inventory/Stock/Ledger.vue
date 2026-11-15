@@ -49,7 +49,7 @@ const columns = [
         />
 
         <Card :padded="false">
-            <div class="grid gap-3 border-b border-gray-100 p-4 sm:grid-cols-4">
+            <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 sm:grid-cols-4">
                 <div v-if="variant" class="flex items-center justify-between gap-2 rounded-md bg-indigo-50 px-3 py-2 text-sm sm:col-span-1">
                     <span class="truncate font-medium text-indigo-800" :title="variant.name">{{ variant.name }}</span>
                     <button class="text-indigo-500 hover:text-indigo-700" title="Show all items" @click="filters.variant_id = null">

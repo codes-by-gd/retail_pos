@@ -37,7 +37,7 @@ const refundLabels = { cash: 'Cash refunds', card: 'Card refunds', upi: 'UPI ref
             </template>
         </PageHeader>
 
-        <div class="grid gap-6 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <Card title="Sales" class="lg:col-span-2">
                 <dl class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
                     <div><dt class="text-gray-500">Bills</dt><dd class="text-xl font-semibold">{{ summary.sales_count }}</dd></div>
@@ -69,6 +69,8 @@ const refundLabels = { cash: 'Cash refunds', card: 'Card refunds', upi: 'UPI ref
                     <div class="flex justify-between"><dt>− Cash refunds</dt><dd class="tabular-nums">{{ money(summary.cash_refunds) }}</dd></div>
                     <div class="flex justify-between"><dt>+ Cash in</dt><dd class="tabular-nums">{{ money(summary.cash_in) }}</dd></div>
                     <div class="flex justify-between"><dt>− Cash out</dt><dd class="tabular-nums">{{ money(summary.cash_out) }}</dd></div>
+                    <div v-if="Number(summary.payments_in)" class="flex justify-between"><dt>+ Customer payments</dt><dd class="tabular-nums">{{ money(summary.payments_in) }}</dd></div>
+                    <div v-if="Number(summary.payments_out)" class="flex justify-between"><dt>− Supplier payments</dt><dd class="tabular-nums">{{ money(summary.payments_out) }}</dd></div>
                     <div class="flex justify-between border-t border-gray-200 pt-2 text-base font-semibold"><dt>Expected</dt><dd class="tabular-nums">{{ money(summary.expected_cash) }}</dd></div>
                     <template v-if="session.status === 'closed'">
                         <div class="flex justify-between"><dt>Counted</dt><dd class="tabular-nums">{{ money(session.counted_cash) }}</dd></div>

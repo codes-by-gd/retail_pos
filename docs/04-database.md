@@ -55,21 +55,27 @@ Conventions: `id` big-int primary keys, `timestamps()` on every business table, 
 ## Sales (Phase 3)
 | Table | Status | Notes |
 |---|---|---|
-| `sales` | ✅ | `invoice_no` (≤16 chars, unique), `branch_id`, `register_session_id`, `customer_id`, `user_id` (cashier), `sold_at`; customer snapshot (`customer_name`, `customer_phone`, `customer_gstin`, `place_of_supply`, `is_inter_state`, `price_type`); totals (`subtotal`, `line_discount_total`, `bill_discount_type/value/total`, `taxable_total`, `cgst/sgst/igst/cess_total`, `round_off`, `grand_total`); `paid_total`, `change_given`, `account_amount`; `status` (completed/cancelled), `payment_status` (paid/partial/due), `note` |
+| `sales` | ✅ | (+ Phase 4: `due_amount`, `cancelled_at`, `cancelled_by`, `cancel_reason`) `invoice_no` (≤16 chars, unique), `branch_id`, `register_session_id`, `customer_id`, `user_id` (cashier), `sold_at`; customer snapshot (`customer_name`, `customer_phone`, `customer_gstin`, `place_of_supply`, `is_inter_state`, `price_type`); totals (`subtotal`, `line_discount_total`, `bill_discount_type/value/total`, `taxable_total`, `cgst/sgst/igst/cess_total`, `round_off`, `grand_total`); `paid_total`, `change_given`, `account_amount`; `status` (completed/cancelled), `payment_status` (paid/partial/due), `note` |
 | `sale_items` | ✅ | snapshot per line: `product_variant_id`, `product_name`, `variant_name`, `sku`, `hsn_code`, `unit`, `price_includes_tax`, `mrp`, `list_price`, `unit_price`, `quantity`, `returned_quantity`, `discount_type/value`, `line_discount`, `bill_discount_share`, `taxable_value`, `gst_rate` (applied), `cgst`, `sgst`, `igst`, `cess_rate`, `cess`, `line_total`, `unit_cost` (avg cost at sale → profit) |
 | `sale_payments` | ✅ | `method` (cash/card/upi/account/exchange), `amount` (as tendered), `reference`, `sale_return_id` (exchange credit used) |
 | `sale_returns` | ✅ | credit note: `credit_note_no`, `sale_id`, `branch_id`, `register_session_id`, `customer_id`, `user_id`, `returned_at`, tax totals, `round_off`, `total`, `refund_method` (cash/card/upi/account/exchange), `used_in_sale_id` (exchange credit), `reason` |
 | `sale_return_items` | ✅ | `sale_item_id`, `product_variant_id`, `quantity`, `restock`, `taxable_value`, `cgst`, `sgst`, `igst`, `cess`, `line_total` |
 | `held_carts` | ✅ | parked bills: `branch_id`, `user_id`, `label`, `payload` JSON |
-| `quotations` (+`_items`) | ⏳ P4 | convertible to a sale |
+| `quotations` / `quotation_items` | ✅ | `reference_no`, customer (id or typed name/phone), place of supply, dates, `status` (draft/sent/accepted/rejected/converted), bill discount, GST totals like `sales`; items snapshot with discounts and computed GST |
 
 ## Purchases (Phase 4)
 | Table | Status | Notes |
 |---|---|---|
-| `purchase_orders` (+`_items`) | ⏳ | ordered quantities, expected date |
-| `purchases` (+`_items`) | ⏳ | GRN/bill: supplier invoice no., received quantities, cost, GST input |
-| `purchase_payments` | ⏳ | payments to suppliers |
-| `purchase_returns` (+`_items`) | ⏳ | debit notes |
+| `purchase_orders` / `purchase_order_items` | ✅ | `reference_no`, `branch_id`, `supplier_id`, dates, `status` (draft/ordered/partially_received/received/cancelled), `estimated_total`; items `quantity`, `received_quantity`, `unit_cost` |
+| `purchases` | ✅ | goods receipt + supplier bill: `reference_no`, `supplier_id`, `purchase_order_id`, `supplier_invoice_no/date`, `received_date`, place of supply, GST totals, `other_charges`, `round_off`, `grand_total`, `paid_amount`, `due_amount`, `payment_status` |
+| `purchase_items` | ✅ | snapshot, `quantity`, `returned_quantity`, `unit_cost` (excl. GST), discount, taxable, GST split, `line_total`, `landed_unit_cost` (stock cost) |
+| `purchase_returns` / `purchase_return_items` | ✅ | debit notes: totals; items `quantity` and amounts |
+
+## Payments (Phase 4)
+| Table | Status | Notes |
+|---|---|---|
+| `contact_payments` | ✅ | `reference_no` (RCPT/PAY), `contact_id`, `branch_id`, `register_session_id` (cash through a drawer), `direction` (in/out), `method` (cash/upi/card/bank/cheque), `amount`, `unallocated`, `reference`, `date`, `note`, `user_id` |
+| `payment_allocations` | ✅ | `contact_payment_id`, `allocatable` (sale or purchase), `amount` |
 
 ## Other
 | Table | Status | Notes |

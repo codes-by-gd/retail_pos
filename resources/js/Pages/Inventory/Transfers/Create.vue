@@ -41,7 +41,7 @@ const submit = () =>
 
         <form v-else class="space-y-6" @submit.prevent="submit">
             <Card>
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="Send to" :error="form.errors.to_branch_id" required>
                         <SelectInput v-model="form.to_branch_id" :options="destinations" placeholder="Choose branch…" />
                     </FormField>

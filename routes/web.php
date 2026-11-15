@@ -5,6 +5,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Modules\Contacts\Http\Controllers\ContactController;
 use App\Modules\Contacts\Http\Controllers\ContactImportController;
+use App\Modules\Contacts\Http\Controllers\ContactPaymentController;
 use App\Modules\Contacts\Http\Controllers\ContactSearchController;
 use App\Modules\Contacts\Http\Controllers\CustomerGroupController;
 use App\Modules\Inventory\Http\Controllers\AttributeController;
@@ -25,7 +26,10 @@ use App\Modules\Pos\Http\Controllers\PosController;
 use App\Modules\Pos\Http\Controllers\RegisterController;
 use App\Modules\Pos\Http\Controllers\RegisterSessionController;
 use App\Modules\Pos\Http\Controllers\ReturnController;
+use App\Modules\Purchases\Http\Controllers\PurchaseController;
+use App\Modules\Purchases\Http\Controllers\PurchaseOrderController;
 use App\Modules\Sales\Http\Controllers\PrintController;
+use App\Modules\Sales\Http\Controllers\QuotationController;
 use App\Modules\Sales\Http\Controllers\SaleController;
 use App\Modules\Settings\Http\Controllers\BranchController;
 use App\Modules\Settings\Http\Controllers\BusinessSettingsController;
@@ -111,6 +115,49 @@ Route::middleware('auth')->group(function () {
         Route::get('/sales', [SaleController::class, 'index'])->name('sales.index');
         Route::get('/sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
     });
+    Route::post('/sales/{sale}/cancel', [SaleController::class, 'cancel'])->middleware('can:sales.cancel')->name('sales.cancel');
+
+    // Quotations
+    Route::middleware('can:quotations.manage')->group(function () {
+        Route::get('/quotations', [QuotationController::class, 'index'])->name('quotations.index');
+        Route::get('/quotations/create', [QuotationController::class, 'create'])->name('quotations.create');
+        Route::post('/quotations', [QuotationController::class, 'store'])->name('quotations.store');
+        Route::get('/quotations/{quotation}', [QuotationController::class, 'show'])->name('quotations.show');
+        Route::get('/quotations/{quotation}/edit', [QuotationController::class, 'edit'])->name('quotations.edit');
+        Route::put('/quotations/{quotation}', [QuotationController::class, 'update'])->name('quotations.update');
+        Route::delete('/quotations/{quotation}', [QuotationController::class, 'destroy'])->name('quotations.destroy');
+        Route::post('/quotations/{quotation}/status', [QuotationController::class, 'status'])->name('quotations.status');
+        Route::post('/quotations/{quotation}/convert', [QuotationController::class, 'convert'])->middleware('can:pos.access')->name('quotations.convert');
+        Route::get('/quotations/{quotation}/print', [QuotationController::class, 'print'])->name('quotations.print');
+    });
+
+    // Purchasing
+    Route::middleware('can:purchases.manage')->group(function () {
+        Route::get('/purchase-orders/create', [PurchaseOrderController::class, 'create'])->name('purchase-orders.create');
+        Route::post('/purchase-orders', [PurchaseOrderController::class, 'store'])->name('purchase-orders.store');
+        Route::get('/purchase-orders/{purchaseOrder}/edit', [PurchaseOrderController::class, 'edit'])->name('purchase-orders.edit');
+        Route::put('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('purchase-orders.update');
+        Route::post('/purchase-orders/{purchaseOrder}/status', [PurchaseOrderController::class, 'status'])->name('purchase-orders.status');
+        Route::get('/purchases/create', [PurchaseController::class, 'create'])->name('purchases.create');
+        Route::post('/purchases', [PurchaseController::class, 'store'])->name('purchases.store');
+        Route::post('/purchases/{purchase}/returns', [PurchaseController::class, 'storeReturn'])->name('purchases.returns.store');
+    });
+    Route::middleware('can:purchases.view')->group(function () {
+        Route::get('/purchase-orders', [PurchaseOrderController::class, 'index'])->name('purchase-orders.index');
+        Route::get('/purchase-orders/{purchaseOrder}', [PurchaseOrderController::class, 'show'])->name('purchase-orders.show');
+        Route::get('/purchase-orders/{purchaseOrder}/print', [PurchaseOrderController::class, 'print'])->name('purchase-orders.print');
+        Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases.index');
+        Route::get('/purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
+        Route::get('/purchase-returns/{purchaseReturn}/print', [PurchaseController::class, 'printReturn'])->name('purchase-returns.print');
+    });
+
+    // Payments to / from contacts
+    Route::middleware('can:payments.manage')->group(function () {
+        Route::get('/payments', [ContactPaymentController::class, 'index'])->name('payments.index');
+        Route::post('/contacts/{contact}/payments', [ContactPaymentController::class, 'store'])->name('contacts.payments.store');
+        Route::get('/payments/{contactPayment}/print', [ContactPaymentController::class, 'print'])->name('payments.print');
+    });
+
     Route::get('/sales/{sale}/print', [PrintController::class, 'sale'])->middleware('can:sales.view')->name('sales.print');
     Route::get('/sale-returns/{saleReturn}/print', [PrintController::class, 'saleReturn'])->middleware('can:sales.view')->name('sale-returns.print');
 

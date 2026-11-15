@@ -13,7 +13,11 @@ use Illuminate\Http\Request;
  */
 class VariantSearchController extends Controller
 {
-    public const ABILITIES = ['products.view', 'stock.adjust', 'stock.transfer', 'labels.print', 'pos.access'];
+    public const ABILITIES = ['products.view', 'stock.adjust', 'stock.transfer', 'labels.print', 'pos.access', 'purchases.manage', 'quotations.manage'];
+
+    /** Relations present() needs — eager-load these. */
+    public const WITH = ['product:id,name,article_no,brand_id,unit_id,tax_rate_id,track_stock,hsn_code,price_includes_tax', 'product.unit:id,short_name,allow_decimal',
+        'product.brand:id,name', 'product.taxRate:id,rate,cess_rate,threshold_amount,rate_above', 'barcodes:id,product_variant_id,barcode', 'stockHere'];
 
     public function __invoke(Request $request): JsonResponse
     {
@@ -32,8 +36,7 @@ class VariantSearchController extends Controller
         $query = ProductVariant::query()
             ->active()
             ->whereHas('product', fn ($p) => $p->where('is_active', true))
-            ->with(['product:id,name,article_no,brand_id,unit_id,tax_rate_id,track_stock,hsn_code,price_includes_tax', 'product.unit:id,short_name,allow_decimal',
-                'product.brand:id,name', 'product.taxRate:id,rate,cess_rate,threshold_amount,rate_above', 'barcodes:id,product_variant_id,barcode', 'stockHere']);
+            ->with(self::WITH);
 
         if (! empty($data['ids'])) {
             $variants = $query->whereIn('id', $data['ids'])->get();
@@ -59,32 +62,38 @@ class VariantSearchController extends Controller
         }
 
         return response()->json([
-            'data' => $variants->map(fn (ProductVariant $v) => [
-                'id' => $v->id,
-                'product_id' => $v->product_id,
-                'name' => $v->fullName(),
-                'product_name' => $v->product->name,
-                'variant_name' => $v->name,
-                'article_no' => $v->product->article_no,
-                'brand' => $v->product->brand?->name,
-                'sku' => $v->sku,
-                'barcode' => $v->barcodes->first()?->barcode,
-                'barcodes' => $v->barcodes->pluck('barcode'),
-                'mrp' => $v->mrp !== null ? (float) $v->mrp : null,
-                'selling_price' => (float) $v->selling_price,
-                'purchase_price' => (float) $v->purchase_price,
-                'wholesale_price' => $v->wholesale_price !== null ? (float) $v->wholesale_price : null,
-                'price_includes_tax' => $v->product->price_includes_tax,
-                'gst_cess' => (float) $v->product->taxRate->cess_rate,
-                'unit' => $v->product->unit->short_name,
-                'allow_decimal' => $v->product->unit->allow_decimal,
-                'gst_rate' => (float) $v->product->taxRate->rate,
-                'gst_threshold' => $v->product->taxRate->threshold_amount !== null ? (float) $v->product->taxRate->threshold_amount : null,
-                'gst_rate_above' => $v->product->taxRate->rate_above !== null ? (float) $v->product->taxRate->rate_above : null,
-                'track_stock' => $v->product->track_stock,
-                'stock' => (float) ($v->stockHere?->quantity ?? 0),
-                'avg_cost' => (float) ($v->stockHere?->avg_cost ?? 0),
-            ])->values(),
+            'data' => $variants->map(fn (ProductVariant $v) => self::present($v))->values(),
         ]);
+    }
+
+    /** Item as the POS cart, label printing and purchase forms expect it. */
+    public static function present(ProductVariant $v): array
+    {
+        return [
+            'id' => $v->id,
+            'product_id' => $v->product_id,
+            'name' => $v->fullName(),
+            'product_name' => $v->product->name,
+            'variant_name' => $v->name,
+            'article_no' => $v->product->article_no,
+            'brand' => $v->product->brand?->name,
+            'sku' => $v->sku,
+            'barcode' => $v->barcodes->first()?->barcode,
+            'barcodes' => $v->barcodes->pluck('barcode'),
+            'mrp' => $v->mrp !== null ? (float) $v->mrp : null,
+            'selling_price' => (float) $v->selling_price,
+            'purchase_price' => (float) $v->purchase_price,
+            'wholesale_price' => $v->wholesale_price !== null ? (float) $v->wholesale_price : null,
+            'price_includes_tax' => $v->product->price_includes_tax,
+            'gst_cess' => (float) $v->product->taxRate->cess_rate,
+            'unit' => $v->product->unit->short_name,
+            'allow_decimal' => $v->product->unit->allow_decimal,
+            'gst_rate' => (float) $v->product->taxRate->rate,
+            'gst_threshold' => $v->product->taxRate->threshold_amount !== null ? (float) $v->product->taxRate->threshold_amount : null,
+            'gst_rate_above' => $v->product->taxRate->rate_above !== null ? (float) $v->product->taxRate->rate_above : null,
+            'track_stock' => $v->product->track_stock,
+            'stock' => (float) ($v->stockHere?->quantity ?? 0),
+            'avg_cost' => (float) ($v->stockHere?->avg_cost ?? 0),
+        ];
     }
 }

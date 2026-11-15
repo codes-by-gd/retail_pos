@@ -82,7 +82,7 @@ const columns = computed(() => [
         </PageHeader>
 
         <Card :padded="false">
-            <div class="grid gap-3 border-b border-gray-100 p-4 md:grid-cols-4">
+            <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 md:grid-cols-4">
                 <SearchInput v-model="filters.search" placeholder="Name, phone, code or GSTIN…" />
                 <SelectInput v-if="isCustomer" v-model="filters.group_id" :options="groups" placeholder="All groups" />
                 <SelectInput v-model="filters.balance" :options="balanceOptions" placeholder="Any balance" />

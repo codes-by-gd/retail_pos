@@ -38,6 +38,8 @@ Contacts: a "both" contact needs `customers.manage` **and** `suppliers.manage` t
 
 The JSON item search (`variants.search`) is allowed for any of `products.view`, `stock.adjust`, `stock.transfer`, `labels.print`, `pos.access`.
 
+Phase 4: cancelling bills needs `sales.cancel`; converting a quotation to a POS bill needs `quotations.manage` **and** `pos.access`; recording payments (also "payment now" on a purchase) needs `payments.manage`.
+
 ## Default roles
 
 | Role | Permissions |

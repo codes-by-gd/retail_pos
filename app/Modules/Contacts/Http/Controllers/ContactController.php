@@ -5,9 +5,12 @@ namespace App\Modules\Contacts\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\Contacts\Http\Requests\ContactRequest;
 use App\Modules\Contacts\Models\Contact;
+use App\Modules\Contacts\Models\ContactPayment;
 use App\Modules\Contacts\Models\CustomerGroup;
 use App\Modules\Contacts\Services\ContactLedgerService;
 use App\Modules\Contacts\Services\ContactService;
+use App\Modules\Purchases\Models\Purchase;
+use App\Modules\Sales\Models\Sale;
 use App\Support\Gst\IndianStates;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
@@ -112,6 +115,9 @@ class ContactController extends Controller
             ],
             'statement' => $this->ledger->statement($contact, $period['from'] ?? null, $period['to'] ?? null),
             'period' => ['from' => $period['from'] ?? null, 'to' => $period['to'] ?? null],
+            'unpaidBills' => $this->unpaidBills($contact, $kind),
+            'registers' => ContactPaymentController::openSessions(),
+            'paymentMethods' => collect(ContactPayment::METHODS)->map(fn ($label, $value) => compact('value', 'label'))->values(),
         ]);
     }
 
@@ -144,6 +150,25 @@ class ContactController extends Controller
         $this->contacts->delete($contact);
 
         return to_route($this->kind($request).'s.index')->with('success', "{$contact->name} deleted.");
+    }
+
+    /** Bills with an amount still due: sales for customers, purchases for suppliers. */
+    private function unpaidBills(Contact $contact, string $kind): array
+    {
+        if ($contact->is_walk_in) {
+            return [];
+        }
+
+        return $kind === Contact::CUSTOMER
+            ? Sale::where('customer_id', $contact->id)->where('status', 'completed')->where('due_amount', '>', 0)->orderBy('sold_at')
+                ->get(['id', 'invoice_no', 'sold_at', 'grand_total', 'due_amount'])
+                ->map(fn ($s) => ['id' => $s->id, 'number' => $s->invoice_no, 'date' => $s->sold_at->toDateString(), 'total' => (float) $s->grand_total,
+                    'due' => (float) $s->due_amount, 'url' => route('sales.show', $s)])->all()
+            : Purchase::where('supplier_id', $contact->id)->where('due_amount', '>', 0)->orderBy('received_date')
+                ->get(['id', 'reference_no', 'supplier_invoice_no', 'received_date', 'grand_total', 'due_amount'])
+                ->map(fn ($p) => ['id' => $p->id, 'number' => $p->supplier_invoice_no ?: $p->reference_no, 'date' => $p->received_date->toDateString(),
+                    'total' => (float) $p->grand_total, 'due' => (float) $p->due_amount, 'url' => route('purchases.show', $p),
+                    'overdue' => $contact->payment_terms_days !== null && $p->received_date->copy()->addDays($contact->payment_terms_days)->isPast()])->all();
     }
 
     private function kind(Request $request): string

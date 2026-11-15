@@ -9,7 +9,9 @@ import TextInput from '@/Components/TextInput.vue';
 import { usePermissions } from '@/composables/usePermissions';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { date, money } from '@/utils/format';
-import { PencilSquareIcon, PrinterIcon } from '@heroicons/vue/24/outline';
+import PaymentFormModal from '@/Components/PaymentFormModal.vue';
+import { BanknotesIcon, PencilSquareIcon, PrinterIcon } from '@heroicons/vue/24/outline';
+import { Link } from '@inertiajs/vue3';
 import { router } from '@inertiajs/vue3';
 import { computed, reactive, ref, watch } from 'vue';
 
@@ -18,7 +20,14 @@ const props = defineProps({
     contact: { type: Object, required: true },
     statement: { type: Object, required: true },
     period: { type: Object, required: true },
+    unpaidBills: { type: Array, default: () => [] },
+    registers: { type: Array, default: () => [] },
+    paymentMethods: { type: Array, default: () => [] },
 });
+const paying = ref(false);
+const direction = computed(() => (props.kind === 'customer' ? 'in' : 'out'));
+const unpaidTotal = computed(() => props.unpaidBills.reduce((s, b) => s + b.due, 0));
+const suggested = computed(() => Math.max(unpaidTotal.value, direction.value === 'in' ? props.contact.balance : -props.contact.balance, 0));
 
 const { can } = usePermissions();
 const plural = computed(() => `${props.kind}s`);
@@ -51,6 +60,14 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
                 >
                     <PrinterIcon class="h-4 w-4" /> Print statement
                 </button>
+                <button
+                    v-if="can('payments.manage') && !contact.is_walk_in"
+                    type="button"
+                    class="no-print inline-flex items-center gap-2 rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 shadow-sm hover:bg-indigo-100"
+                    @click="paying = true"
+                >
+                    <BanknotesIcon class="h-4 w-4" /> {{ kind === 'customer' ? 'Receive payment' : 'Pay supplier' }}
+                </button>
                 <DangerButton v-if="can(`${plural}.manage`) && !contact.is_walk_in" class="no-print" @click="deleting = true">Delete</DangerButton>
                 <ButtonLink v-if="can(`${plural}.manage`)" :href="route(`${plural}.edit`, contact.id)" class="no-print">
                     <PencilSquareIcon class="h-4 w-4" /> Edit
@@ -58,7 +75,7 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
             </template>
         </PageHeader>
 
-        <div class="grid gap-6 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
                 <p class="text-sm text-gray-500">Balance</p>
                 <p
@@ -79,7 +96,7 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
             </div>
 
             <Card class="lg:col-span-2" title="Details">
-                <dl class="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-3">
+                <dl class="grid grid-cols-1 gap-x-6 gap-y-3 text-sm sm:grid-cols-3">
                     <div><dt class="text-gray-500">Phone</dt><dd class="font-medium tabular-nums">{{ contact.phone ?? '—' }}<span v-if="contact.alt_phone" class="block text-gray-500">{{ contact.alt_phone }}</span></dd></div>
                     <div><dt class="text-gray-500">Email</dt><dd class="break-all font-medium">{{ contact.email ?? '—' }}</dd></div>
                     <div><dt class="text-gray-500">GSTIN</dt><dd class="font-mono font-medium">{{ contact.gstin ?? '—' }}</dd></div>
@@ -112,6 +129,19 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
                 </dl>
             </Card>
         </div>
+
+        <Card v-if="unpaidBills.length" class="mt-6" :title="`Unpaid bills (${unpaidBills.length})`" :description="`Total due ${money(unpaidTotal)}`" :padded="false">
+            <table class="w-full text-sm">
+                <tbody class="divide-y divide-gray-100">
+                    <tr v-for="b in unpaidBills" :key="b.id">
+                        <td class="px-4 py-2"><Link :href="b.url" class="font-mono text-indigo-600 hover:text-indigo-800">{{ b.number }}</Link></td>
+                        <td class="px-4 py-2 text-gray-500">{{ date(b.date) }}<span v-if="b.overdue" class="ml-2 rounded bg-red-50 px-1.5 text-xs text-red-700">overdue</span></td>
+                        <td class="px-4 py-2 text-right text-gray-500">of {{ money(b.total) }}</td>
+                        <td class="px-4 py-2 text-right font-medium tabular-nums">{{ money(b.due) }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </Card>
 
         <Card class="mt-6" title="Account statement" :padded="false">
             <template #actions>
@@ -165,6 +195,17 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
                 </table>
             </div>
         </Card>
+
+        <PaymentFormModal
+            v-if="!contact.is_walk_in"
+            :show="paying"
+            :contact="{ id: contact.id, name: contact.company_name || contact.name }"
+            :direction="direction"
+            :suggested="suggested"
+            :methods="paymentMethods"
+            :registers="registers"
+            @close="paying = false"
+        />
 
         <ConfirmModal
             :show="deleting"

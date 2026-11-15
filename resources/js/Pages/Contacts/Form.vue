@@ -83,7 +83,7 @@ const submit = () => {
 
         <form class="max-w-4xl space-y-6" @submit.prevent="submit">
             <Card title="Contact">
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="Name" :error="form.errors.name" required>
                         <TextInput v-model="form.name" autofocus />
                     </FormField>
@@ -111,7 +111,7 @@ const submit = () => {
             </Card>
 
             <Card v-if="!walkIn" title="Address & GST" description="The state decides CGST + SGST (same state) or IGST (other state) on bills.">
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="GSTIN" :error="form.errors.gstin" hint="For business customers & suppliers. Fills the state.">
                         <TextInput v-model="form.gstin" maxlength="15" class="uppercase" />
                     </FormField>
@@ -131,7 +131,7 @@ const submit = () => {
             </Card>
 
             <Card v-if="isCustomer && !walkIn" title="Customer details">
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="Customer group" :error="form.errors.customer_group_id" hint="Decides retail/wholesale price and member discount.">
                         <SelectInput v-model="form.customer_group_id" :options="groups" placeholder="— None —" />
                     </FormField>
@@ -148,7 +148,7 @@ const submit = () => {
             </Card>
 
             <Card v-if="isSupplier" title="Supplier details">
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="Payment terms (days)" :error="form.errors.payment_terms_days" hint="e.g. 30 = pay within 30 days of the bill.">
                         <TextInput v-model="form.payment_terms_days" type="number" min="0" max="365" />
                     </FormField>
@@ -156,7 +156,7 @@ const submit = () => {
             </Card>
 
             <Card v-if="!walkIn" title="Opening balance & notes">
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="Opening balance (₹)" :error="form.errors.opening_balance" hint="Amount outstanding before using this system.">
                         <div class="flex gap-2">
                             <TextInput v-model="form.opening_balance" type="number" min="0" step="0.01" />

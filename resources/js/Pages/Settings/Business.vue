@@ -57,7 +57,7 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
 
         <form class="space-y-6" @submit.prevent="submit">
             <Card title="Business profile" description="Shown on receipts and GST invoices.">
-                <div class="grid gap-4 md:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormField label="Business / store name" :error="form.errors['business.name']" required>
                         <TextInput v-model="form.business.name" />
                     </FormField>
@@ -97,7 +97,7 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
             </Card>
 
             <Card title="Invoice" description="Numbering and text printed on bills.">
-                <div class="grid gap-4 md:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormField
                         label="Invoice prefix (optional)"
                         :error="form.errors['invoice.prefix']"
@@ -114,7 +114,7 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
                 </div>
             </Card>
 
-            <div class="grid gap-6 lg:grid-cols-2">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
                 <Card title="Tax">
                     <div class="space-y-4">
                         <Toggle

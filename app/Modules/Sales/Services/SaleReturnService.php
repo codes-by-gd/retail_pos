@@ -5,6 +5,7 @@ namespace App\Modules\Sales\Services;
 use App\Models\User;
 use App\Modules\Contacts\Enums\LedgerEntryType;
 use App\Modules\Contacts\Services\ContactLedgerService;
+use App\Modules\Contacts\Services\PaymentService;
 use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Services\StockService;
 use App\Modules\Pos\Models\RegisterSession;
@@ -139,7 +140,13 @@ class SaleReturnService
                 'total' => (string) $total,
             ]);
 
-            if (! $sale->customer->is_walk_in) {
+            // Store credit first settles what is still unpaid on this bill.
+            if ($refundMethod === 'account' && BigDecimal::of($sale->due_amount)->isPositive()) {
+                PaymentService::reduceDue($sale, BigDecimal::min($total, BigDecimal::of($sale->due_amount)), false);
+            }
+
+            // Exchange credit is a voucher (it posts when spent), so it doesn't touch the account here.
+            if (! $sale->customer->is_walk_in && $refundMethod !== 'exchange') {
                 $this->ledger->record($sale->customer, LedgerEntryType::SaleReturn, credit: (string) $total, reference: $return,
                     note: "Credit note {$return->credit_note_no} for {$sale->invoice_no}", branchId: $branch->id);
                 if (in_array($refundMethod, ['cash', 'card', 'upi'], true)) {

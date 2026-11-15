@@ -4,11 +4,13 @@ namespace App\Modules\Sales\Models;
 
 use App\Models\User;
 use App\Modules\Contacts\Models\Contact;
+use App\Modules\Contacts\Models\PaymentAllocation;
 use App\Modules\Pos\Models\RegisterSession;
 use App\Modules\Settings\Models\Branch;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /** A completed bill. Immutable: corrections happen through returns (credit notes) or cancellation. */
 class Sale extends Model
@@ -36,6 +38,8 @@ class Sale extends Model
         'paid_total' => 'decimal:2',
         'change_given' => 'decimal:2',
         'account_amount' => 'decimal:2',
+        'due_amount' => 'decimal:2',
+        'cancelled_at' => 'datetime',
     ];
 
     public function items(): HasMany
@@ -51,6 +55,16 @@ class Sale extends Model
     public function returns(): HasMany
     {
         return $this->hasMany(SaleReturn::class);
+    }
+
+    public function allocations(): MorphMany
+    {
+        return $this->morphMany(PaymentAllocation::class, 'allocatable');
+    }
+
+    public function canceller(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 
     public function customer(): BelongsTo

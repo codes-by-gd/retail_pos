@@ -53,7 +53,7 @@ const columns = [
         </p>
 
         <Card class="mb-6">
-            <dl class="grid gap-4 text-sm sm:grid-cols-4">
+            <dl class="grid grid-cols-1 gap-4 text-sm sm:grid-cols-4">
                 <div><dt class="text-gray-500">From</dt><dd class="font-medium">{{ transfer.from }}</dd></div>
                 <div><dt class="text-gray-500">To</dt><dd class="font-medium">{{ transfer.to }}</dd></div>
                 <div>

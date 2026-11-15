@@ -49,7 +49,7 @@ const submit = () => {
 
         <form class="max-w-3xl space-y-6" @submit.prevent="submit">
             <Card title="Account">
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="Full name" :error="form.errors.name" required>
                         <TextInput v-model="form.name" autofocus />
                     </FormField>
@@ -91,7 +91,7 @@ const submit = () => {
 
                     <FormField label="Branches" :error="form.errors.branch_ids" :required="!isAdminRole">
                         <p v-if="isAdminRole" class="mb-2 text-xs text-gray-500">Admins can access every branch.</p>
-                        <div class="grid gap-2 sm:grid-cols-2">
+                        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
                             <label
                                 v-for="b in branches"
                                 :key="b.id"

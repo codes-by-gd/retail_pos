@@ -57,7 +57,8 @@
 - **Stock** leaves at sale (`StockMovementType::Sale`, at average cost — saved on the line for profit) and returns at the original cost on a restocked return.
 - **Invoice numbers**: `{prefix}{branch}/{FY}/{seq}` within GST's 16 characters, gap-free per branch and FY (`DocumentNumberService::gstNumber`); credit notes use their own sequence.
 - **Returns** refund the proportional share of each line; the last remaining pieces take exactly what is left, and rupee rounding is cumulative per invoice — returning pieces one by one never refunds more than was paid.
-- Completed sales are immutable; cancellation arrives in Phase 4.
+- Completed sales are immutable; a bill can be cancelled only in its open shift (see [Orders](orders.md)).
+- Exchange credit notes are vouchers: they post to no account when issued and credit whoever spends them (D-029).
 
 ## Permissions
 `pos.access` (billing), `pos.discount`, `pos.price_override`, `pos.returns`, `pos.register.manage` (open/close, cash in/out, shift history). Viewing/printing sales: `sales.view`.

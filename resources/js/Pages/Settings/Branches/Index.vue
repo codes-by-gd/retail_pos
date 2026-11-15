@@ -117,7 +117,7 @@ const destroy = () => {
         <Modal :show="showForm" max-width="2xl" @close="showForm = false">
             <form class="p-6" @submit.prevent="submit">
                 <h3 class="mb-4 text-base font-semibold text-gray-900">{{ editing ? 'Edit branch' : 'New branch' }}</h3>
-                <div class="grid gap-4 sm:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <FormField label="Branch name" :error="form.errors.name" required>
                         <TextInput v-model="form.name" autofocus />
                     </FormField>

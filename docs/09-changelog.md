@@ -1,5 +1,14 @@
 # 09 · Changelog
 
+## Phase 4 — Orders, purchasing & payments (2026-11-18)
+- Sales: payment/cancel filters, due amounts, cancel bill (same open shift, nothing returned or paid later) with full reversal; payments received later shown on the invoice.
+- Payments: receive from customers / pay suppliers (cash, UPI, card, bank, cheque), optional register drawer, oldest-bill-first allocation, RCPT/PAY numbering, A4 receipts, payments list; unpaid bills on contact pages.
+- Quotations: create/edit with live GST, statuses, validity, A4 print, convert to a POS bill.
+- Purchasing: purchase orders, goods receipt with supplier bill (GST/IGST, freight → landed cost, weighted-average stock, optional cost-price update, part payment), partial PO receiving, debit notes, print tags per piece received.
+- Ledger fix: exchange credit notes are vouchers — no account entry at return; they credit whoever spends them (fixes named customers using a walk-in's credit note).
+- UX: POS opens a converted quotation even if the register had to be opened first; phone layouts fixed for responsive grids (explicit single column) and wide tables.
+- 180 tests (SQLite and MySQL).
+
 ## Bug-fix pass before Phase 4 (2026-11-17)
 Reported by the user:
 - **Held bill lost its customer on recall** — `validated()` drops payload keys without rules when nested rules exist; customer, bill discount, note and total were discarded. All payload keys now validated; pending exchange credits are parked with the bill; customer balance/credit/group refreshed on recall.

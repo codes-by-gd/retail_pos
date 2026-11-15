@@ -44,7 +44,7 @@ const notes = {
             </template>
         </PageHeader>
 
-        <div class="grid gap-6 lg:grid-cols-2">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <Card title="Upload">
                 <form class="space-y-4" @submit.prevent="submit">
                     <input

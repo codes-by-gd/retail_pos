@@ -207,9 +207,9 @@ const submit = () => {
         <PageHeader :title="editing ? `Edit ${product.name}` : 'New product'" />
 
         <form class="space-y-6" @submit.prevent="submit">
-            <div class="grid gap-6 lg:grid-cols-3">
+            <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
                 <Card title="Details" class="lg:col-span-2">
-                    <div class="grid gap-4 sm:grid-cols-2">
+                    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <FormField class="sm:col-span-2" label="Product name" :error="form.errors.name" required>
                             <TextInput v-model="form.name" autofocus placeholder="e.g. Slim Fit Formal Shirt" />
                         </FormField>
@@ -297,7 +297,7 @@ const submit = () => {
                 <InputError :message="form.errors.variants" class="mb-3" />
 
                 <!-- Single item (sarees, fabric by metre, accessories, services) -->
-                <div v-if="!isVariable" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div v-if="!isVariable" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     <FormField label="Purchase price (₹)" :error="err(0, 'purchase_price')" required>
                         <TextInput v-model="single.purchase_price" type="number" step="0.01" min="0" />
                     </FormField>
@@ -380,7 +380,7 @@ const submit = () => {
 
                     <div v-if="selection.length" class="rounded-md bg-gray-50 p-4">
                         <p class="mb-2 text-sm font-medium text-gray-700">2. Default prices for new combinations</p>
-                        <div class="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-6">
                             <FormField label="Purchase ₹"><TextInput v-model="defaults.purchase_price" type="number" step="0.01" min="0" /></FormField>
                             <FormField label="MRP ₹"><TextInput v-model="defaults.mrp" type="number" step="0.01" min="0" /></FormField>
                             <FormField label="Selling ₹"><TextInput v-model="defaults.selling_price" type="number" step="0.01" min="0" /></FormField>

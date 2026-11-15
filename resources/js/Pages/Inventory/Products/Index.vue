@@ -84,7 +84,7 @@ const columns = computed(() => [
         </PageHeader>
 
         <Card :padded="false">
-            <div class="grid gap-3 border-b border-gray-100 p-4 md:grid-cols-4">
+            <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 md:grid-cols-4">
                 <SearchInput v-model="filters.search" class="md:col-span-1" placeholder="Name, article no., SKU or barcode…" />
                 <SelectInput v-model="filters.category_id" :options="categories" placeholder="All categories" />
                 <SelectInput v-model="filters.brand_id" :options="brands" placeholder="All brands" />

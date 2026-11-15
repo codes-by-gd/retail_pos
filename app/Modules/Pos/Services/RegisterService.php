@@ -3,6 +3,7 @@
 namespace App\Modules\Pos\Services;
 
 use App\Models\User;
+use App\Modules\Contacts\Models\ContactPayment;
 use App\Modules\Pos\Models\CashMovement;
 use App\Modules\Pos\Models\Register;
 use App\Modules\Pos\Models\RegisterSession;
@@ -72,7 +73,12 @@ class RegisterService
         $cashSales = $d($byMethod->get(SalePayment::CASH)?->total);
         $cashRefunds = $d($refunds->get(SalePayment::CASH)?->total);
 
-        $expected = $d($session->opening_cash)->plus($cashSales)->minus($change)->minus($cashRefunds)->plus($cashIn)->minus($cashOut);
+        // Cash received from customers / paid to suppliers through this drawer
+        $payIn = $d(ContactPayment::where('register_session_id', $session->id)->where('direction', 'in')->sum('amount'));
+        $payOut = $d(ContactPayment::where('register_session_id', $session->id)->where('direction', 'out')->sum('amount'));
+
+        $expected = $d($session->opening_cash)->plus($cashSales)->minus($change)->minus($cashRefunds)->plus($cashIn)->minus($cashOut)
+            ->plus($payIn)->minus($payOut);
 
         return [
             'sales_count' => (clone $sales)->count(),
@@ -91,6 +97,8 @@ class RegisterService
             'cash_refunds' => (string) $cashRefunds,
             'cash_in' => (string) $cashIn,
             'cash_out' => (string) $cashOut,
+            'payments_in' => (string) $payIn,
+            'payments_out' => (string) $payOut,
             'expected_cash' => (string) $expected,
         ];
     }

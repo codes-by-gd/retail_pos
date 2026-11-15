@@ -88,6 +88,25 @@ class Contact extends Model
         return (string) BigDecimal::of((string) $raw)->toScale(2, RoundingMode::HALF_UP);
     }
 
+    /** Customer as the POS cart expects it. Uses a preloaded `balance` column when present. */
+    public static function forPos(self $c): array
+    {
+        return [
+            'id' => $c->id,
+            'code' => $c->code,
+            'name' => $c->name,
+            'company_name' => $c->company_name,
+            'phone' => $c->phone,
+            'gstin' => $c->gstin,
+            'state_code' => $c->is_walk_in ? null : $c->state_code,
+            'balance' => (float) ($c->getAttributes()['balance'] ?? $c->balance()),
+            'credit_limit' => (float) $c->credit_limit,
+            'price_type' => $c->group?->price_type ?? 'retail',
+            'discount_percent' => (float) ($c->group?->discount_percent ?? 0),
+            'is_walk_in' => $c->is_walk_in,
+        ];
+    }
+
     public function stateName(): ?string
     {
         return IndianStates::name($this->state_code);

@@ -15,6 +15,8 @@ Laravel 12 + Vue 3 (Inertia) + Tailwind POS for a **clothing store** (one busine
 - GST math: `app/Support/Gst/GstCalculator.php` and `resources/js/Pos/gst.js` must stay identical. `Modal.vue` must not use native `<dialog>` (breaks scanners).
 - Laravel `validate()`/`validated()` silently drops array keys that have no rule once any nested rule exists — give every key you need a rule.
 - Walk-in customer: never has a state/GSTIN; sales to it are always intra-state.
+- Exchange credit notes are vouchers: no ledger entry when issued; they credit whoever spends them.
+- Responsive grids need an explicit `grid-cols-1` (otherwise wide content stretches the page on phones).
 - Run tests on MySQL too before committing a phase (see docs/03-getting-started.md). Commit locally per phase; never push.
 
 ## Before finishing a change

@@ -80,7 +80,7 @@ const submit = () =>
 
         <form class="space-y-6" @submit.prevent="submit">
             <Card>
-                <div class="grid gap-4 sm:grid-cols-3">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
                     <FormField label="Reason" :error="form.errors.reason" required>
                         <SelectInput v-model="form.reason" :options="reasons" />
                     </FormField>

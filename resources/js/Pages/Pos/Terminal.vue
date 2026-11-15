@@ -36,6 +36,7 @@ const props = defineProps({
     heldCount: { type: Number, default: 0 },
     lastSale: { type: Object, default: null },
     lockUsers: { type: Array, default: () => [] },
+    recallId: { type: Number, default: null },
 });
 
 const page = usePage();
@@ -213,6 +214,13 @@ onMounted(() => {
     window.addEventListener('focus', refocus);
     window.addEventListener('pos:refocus', refocus);
     search.value?.focus();
+    // Opened from "Convert quotation to bill": recall that held bill straight away.
+    if (props.recallId) {
+        axios.get(route('pos.held.index')).then(({ data }) => {
+            const h = data.data.find((x) => x.id === props.recallId);
+            if (h) recall(h);
+        });
+    }
 });
 onUnmounted(() => {
     window.removeEventListener('keydown', onKey);

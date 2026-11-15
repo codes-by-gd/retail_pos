@@ -25,7 +25,7 @@ const roadmap = [
     { phase: 'Phase 1', title: 'Catalog & inventory, barcodes, labels', done: true },
     { phase: 'Phase 2', title: 'Customers & suppliers', done: true },
     { phase: 'Phase 3', title: 'POS billing panel', done: true },
-    { phase: 'Phase 4', title: 'Sales, purchases & quotations' },
+    { phase: 'Phase 4', title: 'Sales, purchases & quotations', done: true },
     { phase: 'Phase 5', title: 'Dashboard & reports (incl. GST)' },
     { phase: 'Phase 6', title: 'Notifications, expenses, audit log' },
 ];
@@ -40,7 +40,7 @@ const roadmap = [
             </p>
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <component
                 :is="kpi.href ? Link : 'div'"
                 v-for="kpi in kpis"

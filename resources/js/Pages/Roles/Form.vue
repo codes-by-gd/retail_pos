@@ -50,7 +50,7 @@ const submit = () => (props.role ? form.put(route('roles.update', props.role.id)
 
             <Card title="Permissions" :description="`${form.permissions.length} selected`">
                 <InputError :message="form.errors.permissions" class="mb-3" />
-                <div class="grid gap-4 md:grid-cols-2">
+                <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <div v-for="(perms, group) in groups" :key="group" class="rounded-lg border border-gray-200">
                         <label class="flex cursor-pointer items-center gap-3 border-b border-gray-100 bg-gray-50 px-4 py-2.5">
                             <input

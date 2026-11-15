@@ -9,8 +9,8 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 | 1.1 | Clothing-store adaptation: size/colour variants, price-based garment GST, article no. & fabric, apparel masters & demo data | ✅ Done (2026-11-15) |
 | 2 | Contacts: customers, suppliers, groups, addresses, ledgers | ✅ Done (2026-11-16) |
 | 3 | ✅ Done (2026-11-17) — **POS billing panel**: registers & sessions, fast search/scan, cart, GST calculator, split payments, hold/recall, receipts, returns, keyboard shortcuts, PIN switch | ⏳ |
-| 4 | ⏳ **Next** — Orders: sales list/cancel/reprint, quotations, purchase orders → GRN → bill, supplier payments, purchase returns, dues | ⏳ |
-| 5 | Dashboard KPIs & charts; sales, profit, stock, register, outstanding and GST reports; Excel/PDF export | ⏳ |
+| 4 | ✅ Done (2026-11-18) — Orders: sales list/cancel/reprint, quotations, purchase orders → GRN → bill, supplier payments, purchase returns, dues | ⏳ |
+| 5 | ⏳ **Next** — Dashboard KPIs & charts; sales, profit, stock, register, outstanding and GST reports; Excel/PDF export | ⏳ |
 | 6 | Notifications, expenses, audit log viewer, backups, performance pass | ⏳ |
 
 ## Phase 0 checklist
@@ -69,6 +69,16 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 - [x] GST invoice numbers ≤ 16 chars; thermal 80/58 mm receipts, A4 tax invoice with HSN summary & amount in words, credit notes
 - [x] Sales list and invoice view with reprint
 - [x] Tests: 159 passing on SQLite **and** MySQL; full cashier flow verified in headless Chrome
+
+## Phase 4 checklist
+- [x] Sales list filters (payment status, cancelled), dues per bill, cancel bill in the open shift (stock, ledger, exchange vouchers reversed)
+- [x] Customer receipts & supplier payments (cash through a drawer or not), oldest-first allocation, printable receipts/vouchers, payments list
+- [x] Quotations with live GST, statuses, A4 print, convert to a POS bill (even when the register isn't open yet)
+- [x] Purchase orders (draft/placed/partly received/received/cancelled) with print
+- [x] Goods receipt + supplier bill: GST incl. IGST, freight → landed cost, weighted-average stock, duplicate bill check, partial PO receipt, payment now, print tags per piece
+- [x] Purchase returns with debit notes
+- [x] Fix: exchange credit is a voucher in the ledger (named customers using another customer's credit note)
+- [x] Tests: 180 passing on SQLite and MySQL; PO → receipt → debit note → payment, quotation → POS, customer payment → drawer, cancel flows verified in Chrome; layout sweep clean at 3 screen sizes
 
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

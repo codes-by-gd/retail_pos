@@ -53,7 +53,7 @@ const destroy = () => router.delete(route('products.destroy', props.product.id))
             </template>
         </PageHeader>
 
-        <div class="grid gap-6 lg:grid-cols-3">
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
             <Card class="lg:col-span-2" title="Details">
                 <div class="flex flex-col gap-6 sm:flex-row">
                     <img v-if="product.image_url" :src="product.image_url" alt="" class="h-32 w-32 rounded-md border object-cover" />

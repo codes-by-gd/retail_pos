@@ -139,7 +139,7 @@ const submit = async () => {
                         </tbody>
                     </table>
 
-                    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                         <FormField label="Refund as">
                             <select v-model="refundMethod" class="block w-full rounded-md border-gray-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
                                 <option v-for="m in methods" :key="m.value" :value="m.value">{{ m.label }}</option>

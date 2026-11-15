@@ -22,7 +22,7 @@ const columns = [
         <PageHeader :title="`Adjustment ${adjustment.reference_no}`" />
 
         <Card class="mb-6">
-            <dl class="grid gap-4 text-sm sm:grid-cols-4">
+            <dl class="grid grid-cols-1 gap-4 text-sm sm:grid-cols-4">
                 <div><dt class="text-gray-500">Date</dt><dd class="font-medium">{{ date(adjustment.date) }}</dd></div>
                 <div><dt class="text-gray-500">Reason</dt><dd class="font-medium">{{ adjustment.reason }}</dd></div>
                 <div><dt class="text-gray-500">Branch</dt><dd class="font-medium">{{ adjustment.branch }}</dd></div>

@@ -57,7 +57,7 @@ const columns = [
         </PageHeader>
 
         <Card :padded="false">
-            <div class="grid gap-3 border-b border-gray-100 p-4 sm:grid-cols-3">
+            <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 sm:grid-cols-3">
                 <SearchInput v-model="filters.search" placeholder="Search name, email or phone…" />
                 <SelectInput v-model="filters.role" :options="roles" placeholder="All roles" />
                 <SelectInput

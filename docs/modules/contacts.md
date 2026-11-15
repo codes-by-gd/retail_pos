@@ -22,7 +22,7 @@
 - ✅ CSV import (create, or update by `code`; per-row errors) and export, per customers / suppliers
 - ✅ JSON endpoints for the POS / purchases: search (exact phone match first) and quick-add customer
 - ⏳ Loyalty points (earn & redeem), WhatsApp/SMS birthday greetings (later)
-- ⏳ Sales/purchase history on the contact page (as Phases 3–4 create documents they post to the ledger)
+- ✅ Receive payment / pay supplier from the contact page; unpaid bills list (overdue flag from supplier payment terms) — see [Orders](orders.md#payments-paymentsmanage)
 
 ## Screens
 | Screen | Route | Page |

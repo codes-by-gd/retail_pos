@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Sales\Models\Sale;
 use App\Modules\Sales\Models\SalePayment;
+use App\Modules\Sales\Services\SaleCancelService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -21,6 +23,7 @@ class SaleController extends Controller
             'to' => ['nullable', 'date'],
             'user_id' => ['nullable', 'integer'],
             'payment_status' => ['nullable', 'in:paid,partial,due'],
+            'status' => ['nullable', 'in:completed,cancelled'],
         ]);
         $branchId = current_branch()->id();
 
@@ -33,7 +36,8 @@ class SaleController extends Controller
             ->when($filters['from'] ?? null, fn ($q, $d) => $q->where('sold_at', '>=', $d))
             ->when($filters['to'] ?? null, fn ($q, $d) => $q->where('sold_at', '<', now()->parse($d)->addDay()))
             ->when($filters['user_id'] ?? null, fn ($q, $id) => $q->where('user_id', $id))
-            ->when($filters['payment_status'] ?? null, fn ($q, $s) => $q->where('payment_status', $s));
+            ->when($filters['payment_status'] ?? null, fn ($q, $s) => $q->where('payment_status', $s)->where('status', Sale::COMPLETED))
+            ->when($filters['status'] ?? null, fn ($q, $s) => $q->where('status', $s));
 
         $summary = (clone $query)->where('status', Sale::COMPLETED)->selectRaw('COUNT(*) as bills, COALESCE(SUM(grand_total), 0) as total')->first();
 
@@ -47,6 +51,7 @@ class SaleController extends Controller
                 'phone' => $s->customer_phone,
                 'items_count' => $s->items_count,
                 'grand_total' => (float) $s->grand_total,
+                'due_amount' => (float) $s->due_amount,
                 'methods' => $s->payments->pluck('method')->unique()->map(fn ($m) => SalePayment::LABELS[$m] ?? $m)->values(),
                 'payment_status' => $s->payment_status,
                 'status' => $s->status,
@@ -61,10 +66,11 @@ class SaleController extends Controller
         ]);
     }
 
-    public function show(Sale $sale): Response
+    public function show(Sale $sale, SaleCancelService $cancel): Response
     {
         $this->authorizeBranch($sale);
-        $sale->load(['items', 'payments', 'cashier:id,name', 'branch:id,name,code', 'customer:id,code,is_walk_in,type',
+        $sale->load(['items', 'payments', 'cashier:id,name', 'branch:id,name,code', 'customer:id,code,is_walk_in,type', 'canceller:id,name',
+            'allocations.payment:id,reference_no,date,method',
             'returns' => fn ($q) => $q->with('items:id,sale_return_id,sale_item_id,quantity', 'user:id,name')]);
 
         return Inertia::render('Sales/Show', [
@@ -72,7 +78,7 @@ class SaleController extends Controller
                 ...$sale->only(['id', 'invoice_no', 'customer_name', 'customer_phone', 'customer_gstin', 'place_of_supply', 'is_inter_state',
                     'price_type', 'status', 'payment_status', 'note', 'bill_discount_type']),
                 ...collect(['subtotal', 'line_discount_total', 'bill_discount_value', 'bill_discount_total', 'taxable_total', 'cgst_total', 'sgst_total',
-                    'igst_total', 'cess_total', 'round_off', 'grand_total', 'paid_total', 'change_given', 'account_amount'])
+                    'igst_total', 'cess_total', 'round_off', 'grand_total', 'paid_total', 'change_given', 'account_amount', 'due_amount'])
                     ->mapWithKeys(fn ($f) => [$f => (float) $sale->{$f}])->all(),
                 'sold_at' => $sale->sold_at->toIso8601String(),
                 'cashier' => $sale->cashier->name,
@@ -93,8 +99,23 @@ class SaleController extends Controller
                     'items' => $r->items->count(), 'print_url' => route('sale-returns.print', $r),
                 ]),
                 'print_url' => route('sales.print', $sale),
+                'cancelled_at' => $sale->cancelled_at?->toIso8601String(),
+                'cancelled_by' => $sale->canceller?->name,
+                'cancel_reason' => $sale->cancel_reason,
+                'allocations' => $sale->allocations->map(fn ($a) => ['reference_no' => $a->payment->reference_no, 'date' => $a->payment->date->toDateString(),
+                    'amount' => (float) $a->amount, 'print_url' => route('payments.print', $a->contact_payment_id)]),
             ],
+            'cancelBlocker' => auth()->user()->can('sales.cancel') ? $cancel->blocker($sale) : 'You are not allowed to cancel bills.',
         ]);
+    }
+
+    public function cancel(Request $request, Sale $sale, SaleCancelService $cancel): RedirectResponse
+    {
+        $this->authorizeBranch($sale);
+        $data = $request->validate(['reason' => ['required', 'string', 'max:255']], ['reason.required' => 'Say why the bill is cancelled.']);
+        $cancel->cancel($sale, $data['reason'], $request->user());
+
+        return back()->with('success', "Bill {$sale->invoice_no} cancelled. Stock is back; return any money taken.");
     }
 
     private function authorizeBranch(Sale $sale): void

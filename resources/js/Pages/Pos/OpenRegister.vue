@@ -10,9 +10,14 @@ import { Link, useForm } from '@inertiajs/vue3';
 const props = defineProps({
     registers: { type: Array, required: true },
     canOpen: { type: Boolean, default: false },
+    recallId: { type: Number, default: null },
 });
 
-const form = useForm({ register_id: props.registers.find((r) => r.open_session)?.id ?? props.registers[0]?.id ?? null, opening_cash: '' });
+const form = useForm({
+    register_id: props.registers.find((r) => r.open_session)?.id ?? props.registers[0]?.id ?? null,
+    opening_cash: '',
+    recall: props.recallId,
+});
 const selected = () => props.registers.find((r) => r.id === form.register_id);
 const submit = () => form.post(route('pos.register.open'));
 </script>
@@ -36,7 +41,8 @@ const submit = () => form.post(route('pos.register.open'));
                 </p>
 
                 <form v-else class="mt-6 space-y-5" @submit.prevent="submit">
-                    <div class="grid gap-2 sm:grid-cols-2">
+                    <p v-if="recallId" class="rounded-md bg-indigo-50 p-3 text-sm text-indigo-800">The quotation's bill opens as soon as the register is open.</p>
+                    <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
                         <label
                             v-for="r in registers"
                             :key="r.id"

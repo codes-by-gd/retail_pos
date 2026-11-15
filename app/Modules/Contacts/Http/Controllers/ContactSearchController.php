@@ -20,7 +20,7 @@ class ContactSearchController extends Controller
             'kind' => ['nullable', Rule::in([Contact::CUSTOMER, Contact::SUPPLIER])],
         ]);
         $kind = $data['kind'] ?? Contact::CUSTOMER;
-        abort_unless($request->user()->canAny($kind === Contact::SUPPLIER ? ['suppliers.view', 'purchases.manage'] : ['customers.view', 'pos.access']), 403);
+        abort_unless($request->user()->canAny($kind === Contact::SUPPLIER ? ['suppliers.view', 'purchases.manage', 'purchases.view'] : ['customers.view', 'pos.access', 'quotations.manage']), 403);
 
         $q = trim($data['q'] ?? '');
         if ($q === '') {
@@ -39,7 +39,7 @@ class ContactSearchController extends Controller
             ->limit(10)
             ->get();
 
-        return response()->json(['data' => $contacts->map(fn (Contact $c) => $this->present($c))]);
+        return response()->json(['data' => $contacts->map(fn (Contact $c) => Contact::forPos($c))]);
     }
 
     /** Quick add from the POS: name + phone (+ optional GSTIN). */
@@ -65,24 +65,6 @@ class ContactSearchController extends Controller
         ]);
         $contact->setAttribute('balance', 0)->load('group');
 
-        return response()->json(['data' => $this->present($contact)], 201);
-    }
-
-    private function present(Contact $c): array
-    {
-        return [
-            'id' => $c->id,
-            'code' => $c->code,
-            'name' => $c->name,
-            'company_name' => $c->company_name,
-            'phone' => $c->phone,
-            'gstin' => $c->gstin,
-            'state_code' => $c->state_code,
-            'balance' => (float) ($c->balance ?? 0),
-            'credit_limit' => (float) $c->credit_limit,
-            'price_type' => $c->group?->price_type ?? 'retail',
-            'discount_percent' => (float) ($c->group?->discount_percent ?? 0),
-            'is_walk_in' => $c->is_walk_in,
-        ];
+        return response()->json(['data' => Contact::forPos($contact)], 201);
     }
 }

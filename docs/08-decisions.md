@@ -86,4 +86,19 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-028 · No native `<dialog>` for modals — 2026-11-17
 **Context:** after a modal `<dialog>` closed, Chrome kept typed input away from the programmatically focused POS search box until a mouse click — barcode scans were lost. **Decision:** the shared `Modal` component is a teleported fixed overlay; the POS also refocuses the search box after printing and on window focus.
 
+### D-029 · Exchange credit is a voucher (supersedes the ledger part of D-026) — 2026-11-18
+**Context:** a named customer paying with a credit note from someone else's return (e.g. a walk-in's) ended up owing that amount. **Decision:** a return refunded as *exchange* posts nothing to any account; spending the voucher counts like money for the spender (credit in their ledger), and cancelling that bill reverses it and re-validates the voucher.
+
+### D-030 · Payments allocate oldest-first; ledger stays the truth — 2026-11-18
+**Decision:** customer/supplier payments are allocated to unpaid bills oldest first (a specific bill first when paid from it); the remainder is "on account" (settles opening balances or is an advance). Bills keep a `due_amount` for display; balances always come from the contact ledger.
+
+### D-031 · Cancel only in the open shift — 2026-11-18
+**Decision:** a bill can be cancelled only while its register shift is open and nothing was returned or paid against it later. Afterwards use a return/credit note. **Consequences:** closed Z-reports never change.
+
+### D-032 · Purchases excluding GST, landed cost — 2026-11-18
+**Decision:** supplier rates are entered excluding GST; GST (input credit) never enters stock cost. Freight/other charges are shared over lines by taxable value into `landed_unit_cost`, which is the cost used for the weighted average. GST on freight is not modelled.
+
+### D-033 · Quotations use list price + discounts — 2026-11-18
+**Decision:** quote lines take the customer's list price (retail/wholesale) and discounts only, so converting to a POS bill needs only the normal discount permission and the POS re-prices at current rates.
+
 ### Open questions

@@ -7,6 +7,7 @@ import {
     BuildingStorefrontIcon,
     CalculatorIcon,
     ComputerDesktopIcon,
+    CreditCardIcon,
     ChartBarIcon,
     Cog6ToothIcon,
     CubeIcon,
@@ -56,8 +57,8 @@ export const navigation = [
         items: [
             { label: 'Sales', route: 'sales.index', active: 'sales.*', icon: ReceiptPercentIcon, permission: 'sales.view' },
             { label: 'Register Shifts', route: 'register-sessions.index', active: 'register-sessions.*', icon: ComputerDesktopIcon, permission: 'pos.register.manage' },
-            { label: 'Purchases', icon: TruckIcon, permission: 'purchases.view', soon: 'Phase 4' },
-            { label: 'Quotations', icon: DocumentTextIcon, permission: 'quotations.manage', soon: 'Phase 4' },
+            { label: 'Quotations', route: 'quotations.index', active: 'quotations.*', icon: DocumentTextIcon, permission: 'quotations.manage' },
+            { label: 'Purchases', route: 'purchases.index', active: ['purchases.*', 'purchase-orders.*'], icon: TruckIcon, permission: 'purchases.view' },
         ],
     },
     {
@@ -70,6 +71,7 @@ export const navigation = [
     {
         label: 'Finance',
         items: [
+            { label: 'Payments', route: 'payments.index', active: 'payments.*', icon: CreditCardIcon, permission: 'payments.manage' },
             { label: 'Expenses', icon: BanknotesIcon, permission: 'expenses.manage', soon: 'Phase 6' },
             {
                 label: 'Reports',

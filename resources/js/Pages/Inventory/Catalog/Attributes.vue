@@ -62,7 +62,7 @@ const move = (i, step) => {
             Sizes and colours used to build product variants. The order of values here is the order on screens and labels (S, M, L…).
         </p>
 
-        <div class="grid gap-4 lg:grid-cols-2">
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
             <Card v-for="a in attributes" :key="a.id" :title="a.name" :description="a.used ? `Used by ${a.used} variants` : 'Not used yet'">
                 <template #actions>
                     <RowActions :deletable="!a.used" @edit="openEdit(a)" @delete="crud.deleting.value = a" />

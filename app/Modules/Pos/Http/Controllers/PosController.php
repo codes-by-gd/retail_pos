@@ -48,6 +48,7 @@ class PosController extends Controller
                         ] : null,
                     ]),
                 'canOpen' => $request->user()->can('pos.register.manage'),
+                'recallId' => $request->integer('recall') ?: null,   // keep "convert quotation" through opening the register
             ]);
         }
 
@@ -73,6 +74,7 @@ class PosController extends Controller
             'heldCount' => HeldCart::where('branch_id', $branch->id)->count(),
             'lastSale' => Sale::where('register_session_id', $session->id)->latest('id')->first(['id', 'invoice_no', 'grand_total']),
             'lockUsers' => $this->lockUsers(),
+            'recallId' => $request->integer('recall') ?: null,
         ]);
     }
 
@@ -81,6 +83,7 @@ class PosController extends Controller
         $data = $request->validate([
             'register_id' => ['required', Rule::exists('registers', 'id')->where('branch_id', current_branch()->id())->where('is_active', true)],
             'opening_cash' => ['nullable', 'numeric', 'min:0', 'max:9999999'],
+            'recall' => ['nullable', 'integer'],
         ]);
         $register = Register::findOrFail($data['register_id']);
 
@@ -92,7 +95,7 @@ class PosController extends Controller
         $session = $this->registers->open($register, $request->user(), $data['opening_cash'] ?? 0);
         $request->session()->put(self::SESSION_KEY, $session->id);
 
-        return to_route('pos.terminal');
+        return to_route('pos.terminal', ! empty($data['recall']) ? ['recall' => $data['recall']] : []);
     }
 
     public function leaveRegister(Request $request): RedirectResponse

@@ -59,7 +59,7 @@ const columns = [
             </template>
         </PageHeader>
 
-        <div class="mb-6 grid gap-4 sm:grid-cols-3">
+        <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
                 <p class="text-sm text-gray-500">Items</p>
                 <p class="mt-1 text-2xl font-semibold tabular-nums">{{ number(totals.items) }}</p>
@@ -75,7 +75,7 @@ const columns = [
         </div>
 
         <Card :padded="false">
-            <div class="grid gap-3 border-b border-gray-100 p-4 sm:grid-cols-3">
+            <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 sm:grid-cols-3">
                 <SearchInput v-model="filters.search" placeholder="Name, SKU or barcode…" />
                 <SelectInput v-model="filters.category_id" :options="categories" placeholder="All categories" />
                 <SelectInput

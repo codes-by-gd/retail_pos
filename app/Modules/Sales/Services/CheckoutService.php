@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Modules\Contacts\Enums\LedgerEntryType;
 use App\Modules\Contacts\Models\Contact;
 use App\Modules\Contacts\Services\ContactLedgerService;
+use App\Modules\Contacts\Services\PaymentService;
 use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Models\ProductVariant;
 use App\Modules\Inventory\Services\StockService;
@@ -127,6 +128,10 @@ class CheckoutService
             // ---------- payments ----------
             $payments = $this->validatePayments($data['payments'] ?? [], $grand, $customer);
 
+            // On-account amount is due, except what existing store credit (negative balance) already covers.
+            $credit = $customer->is_walk_in ? BigDecimal::zero() : BigDecimal::max(BigDecimal::zero(), BigDecimal::of($customer->balance())->negated());
+            $due = BigDecimal::max(BigDecimal::zero(), $payments['account']->minus($credit))->toScale(2);
+
             // ---------- save ----------
             $sale = Sale::create([
                 'invoice_no' => $this->numbers->gstNumber('INV', (string) settings('invoice.prefix', ''), $branch),
@@ -156,8 +161,9 @@ class CheckoutService
                 'paid_total' => (string) $payments['total'],
                 'change_given' => (string) $payments['change'],
                 'account_amount' => (string) $payments['account'],
+                'due_amount' => (string) $due,
                 'status' => Sale::COMPLETED,
-                'payment_status' => $payments['account']->isZero() ? 'paid' : ($payments['account']->isEqualTo($grand) ? 'due' : 'partial'),
+                'payment_status' => PaymentService::statusFor($due, $grand),
                 'note' => $data['note'] ?? null,
             ]);
 
@@ -288,8 +294,9 @@ class CheckoutService
             }
         }
 
-        // Money actually settled now (cash/card/UPI minus change). Negative when exchange credit exceeds the bill.
-        $settled = $sum(SalePayment::CASH, SalePayment::CARD, SalePayment::UPI)->minus($change);
+        // Value settled now: cash/card/UPI and exchange vouchers, minus change given back.
+        // (An exchange credit note is a voucher, not account credit — it counts like money for whoever spends it.)
+        $settled = $sum(SalePayment::CASH, SalePayment::CARD, SalePayment::UPI, SalePayment::EXCHANGE)->minus($change);
 
         return compact('rows', 'total', 'change', 'account', 'settled');
     }

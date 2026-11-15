@@ -7,6 +7,7 @@ enum LedgerEntryType: string
     case Opening = 'opening';
     case Sale = 'sale';                       // debit: customer owes us
     case SaleReturn = 'sale_return';          // credit
+    case SaleCancelled = 'sale_cancelled';    // credit: reverses a cancelled bill
     case PaymentReceived = 'payment_received'; // credit
     case Purchase = 'purchase';               // credit: we owe the supplier
     case PurchaseReturn = 'purchase_return';  // debit
@@ -20,6 +21,7 @@ enum LedgerEntryType: string
             self::Opening => 'Opening balance',
             self::Sale => 'Sale',
             self::SaleReturn => 'Sale return',
+            self::SaleCancelled => 'Bill cancelled',
             self::PaymentReceived => 'Payment received',
             self::Purchase => 'Purchase',
             self::PurchaseReturn => 'Purchase return',

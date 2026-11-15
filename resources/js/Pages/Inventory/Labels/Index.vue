@@ -15,6 +15,7 @@ import { computed, onMounted, onUnmounted, reactive, ref, watch } from 'vue';
 
 const props = defineProps({
     preselected: { type: Array, default: () => [] },
+    copies: { type: [Object, Array], default: () => ({}) },
     businessName: { type: String, default: '' },
 });
 
@@ -89,7 +90,7 @@ const add = (item, copies = 1) => {
 onMounted(async () => {
     if (!props.preselected.length) return;
     const { data } = await axios.get(route('variants.search'), { params: { ids: props.preselected } });
-    data.data.forEach((item) => add(item));
+    data.data.forEach((item) => add(item, Math.max(1, Number(props.copies?.[item.id] ?? 1))));
 });
 
 const setCopiesToStock = () => lines.value.forEach((l) => (l.copies = Math.max(1, Math.floor(l.stock || 0))));
@@ -142,7 +143,7 @@ const print = () => window.print();
                 </template>
             </PageHeader>
 
-            <div class="grid gap-6 xl:grid-cols-3">
+            <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
                 <Card title="Items" class="xl:col-span-2">
                     <VariantPicker :show-stock="true" autofocus @select="add" />
                     <table v-if="lines.length" class="mt-4 min-w-full text-sm">
