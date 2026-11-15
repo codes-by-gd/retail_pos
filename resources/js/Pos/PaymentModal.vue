@@ -8,6 +8,7 @@ import { BanknotesIcon, CreditCardIcon, DevicePhoneMobileIcon, GiftIcon, Receipt
 import axios from 'axios';
 import { computed, nextTick, ref, watch } from 'vue';
 import { apiError } from './helpers';
+import { play } from '@/utils/sounds';
 
 const props = defineProps({
     show: { type: Boolean, default: false },
@@ -52,6 +53,7 @@ const addPoints = () => {
     const fit = Math.floor(Math.max(0, total.value - otherPaid) / loyalty.value.point_value + 1e-9);
     const pts = Math.min(maxPoints.value, fit);
     if (pts < loyalty.value.min_redeem) return (localError.value = `At least ${loyalty.value.min_redeem} points are needed and the bill must still be unpaid.`);
+    play('payment');
     payments.value.push({ method: 'points', points: pts, amount: round(pts * loyalty.value.point_value), reference: '', sale_return_id: null, label: 'Loyalty points' });
 };
 const setPoints = (p, value) => {
@@ -78,6 +80,7 @@ watch(
 
 const add = (method, amount = remaining.value) => {
     if (amount <= 0 && method !== 'cash') return;
+    play('payment');
     const existing = payments.value.find((p) => p.method === method && !p.sale_return_id);
     if (existing) existing.amount = round(Number(existing.amount) + amount);
     else payments.value.push({ method, amount: round(amount), reference: '', sale_return_id: null, label: labels[method] });
@@ -101,6 +104,8 @@ const addExchange = async () => {
         localError.value = apiError(e);
     }
 };
+
+watch([localError, () => props.error], ([a, b]) => (a || b) && play('error'));
 
 const complete = () => {
     localError.value = '';

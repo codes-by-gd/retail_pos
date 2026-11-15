@@ -14,6 +14,7 @@ import ProductSearch from '@/Pos/ProductSearch.vue';
 import ReturnModal from '@/Pos/ReturnModal.vue';
 import { useCartStore } from '@/stores/cart';
 import { money } from '@/utils/format';
+import { play, setSound, soundSwitch } from '@/utils/sounds';
 import {
     ArrowLeftIcon,
     ArrowUturnLeftIcon,
@@ -24,6 +25,8 @@ import {
     PrinterIcon,
     ReceiptPercentIcon,
     TrashIcon,
+    SpeakerWaveIcon,
+    SpeakerXMarkIcon,
 } from '@heroicons/vue/24/outline';
 import { Head, Link, router, usePage } from '@inertiajs/vue3';
 import axios from 'axios';
@@ -39,6 +42,8 @@ const props = defineProps({
     recallId: { type: Number, default: null },
     popularIds: { type: Array, default: () => [] },
 });
+// POS sounds: per counter (this browser); the "Sounds at the POS" setting is the default until changed here
+const sound = soundSwitch('pos', props.config.beep_on_scan);
 const mobileView = ref('items'); // phones/tablets: 'items' | 'bill'
 const showHelp = ref(false);
 const shortcuts = [
@@ -71,7 +76,8 @@ const toast = ref('');
 const totals = computed(() => cart.preview.totals);
 const anyModal = computed(() => !!modal.value || !!editing.value || locked.value || !!completed.value || showHelp.value);
 
-const flash = (msg) => {
+const flash = (msg, tone = 'warning') => {
+    if (tone) play(tone);
     toast.value = msg;
     setTimeout(() => (toast.value = ''), 4000);
 };
@@ -96,6 +102,7 @@ const completeSale = async (payments) => {
         const { data } = await axios.post(route('pos.checkout'), cart.checkoutPayload(payments));
         if (cart.heldCartId) held.value = Math.max(0, held.value - 1);
         completed.value = data.sale;
+        play('sale');
         last.value = { id: data.sale.id, invoice_no: data.sale.invoice_no, grand_total: data.sale.grand_total };
         modal.value = null;
         exchangeCredits.value = [];
@@ -129,7 +136,7 @@ const hold = async () => {
         held.value = data.count;
         cart.clear(walkInCustomer);
         exchangeCredits.value = [];
-        flash(`Bill held: ${label}`);
+        flash(`Bill held: ${label}`, 'hold');
     } catch (e) {
         flash(apiError(e));
     }
@@ -183,7 +190,7 @@ const clearBill = () => {
 /* ---------- returns ---------- */
 const onExchange = (credit) => {
     exchangeCredits.value = [...exchangeCredits.value, credit];
-    flash(`Exchange credit ${money(credit.total)} will be applied when you press Pay.`);
+    flash(`Exchange credit ${money(credit.total)} will be applied when you press Pay.`, 'payment');
 };
 
 /* ---------- lock ---------- */
@@ -260,6 +267,9 @@ onUnmounted(() => {
                     <PrinterIcon class="h-5 w-5" /><span>Last bill</span>
                 </button>
                 <Link v-if="can('pos.register.manage')" :href="route('register-sessions.show', session.id)" class="top-btn"><ReceiptPercentIcon class="h-5 w-5" /><span>Close register</span></Link>
+                <button type="button" class="top-btn" :title="sound ? 'Sounds on — click to mute' : 'Sounds off — click to turn on'" :aria-pressed="sound" @click="setSound('pos', !sound)">
+                    <component :is="sound ? SpeakerWaveIcon : SpeakerXMarkIcon" class="h-5 w-5" :class="sound ? '' : 'text-gray-400'" />
+                </button>
                 <button type="button" class="top-btn" title="Lock / switch cashier" @click="locked = true"><LockClosedIcon class="h-5 w-5" /></button>
             </div>
         </header>

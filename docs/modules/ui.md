@@ -21,6 +21,9 @@ Tailwind palettes `gray, indigo, red, amber, green, pink` are CSS variables (`ta
 ## Forms
 - `useUnsavedGuard(() => dirty)` asks before leaving a form with unsaved changes (links, back button, closing the tab). Used on product, purchase, purchase order, quotation, contact, user, stock adjustment and transfer forms.
 
+## Sounds
+`utils/sounds.js` plays short synthesized tones per area, each with its own per-device switch: `pos` (speaker button on the POS) and `alerts` (Notifications → On this device). Toggle switches use a literal white knob (`bg-[#fff]`) so they stay visible in dark mode.
+
 ## Dashboard
 Quick actions, KPIs and chart render immediately; top items, outstanding money, drawers, recent bills and low stock load right after (Inertia deferred prop) with placeholders; figures refresh every 2 minutes while visible; the period/branch choice is remembered for the session.
 

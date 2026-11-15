@@ -8,7 +8,7 @@ import { MagnifyingGlassIcon, QrCodeIcon } from '@heroicons/vue/24/outline';
 import { useDebounceFn } from '@vueuse/core';
 import axios from 'axios';
 import { computed, onMounted, ref } from 'vue';
-import { beep } from './helpers';
+import { play } from '@/utils/sounds';
 
 const props = defineProps({
     beepOnScan: { type: Boolean, default: true },
@@ -24,6 +24,7 @@ const loading = ref(false);
 const message = ref('');
 const input = ref(null);
 let requestId = 0;
+let resultsFor = ''; // the text the current results belong to
 
 const search = async (q) => {
     const id = ++requestId;
@@ -36,6 +37,7 @@ const search = async (q) => {
         const { data } = await axios.get(route('variants.search'), { params: { q, limit: 40 } });
         if (id !== requestId) return results.value;
         results.value = data.data;
+        resultsFor = q;
         active.value = 0;
         message.value = data.data.length ? '' : `Nothing found for “${q}”.`;
         return data.data;
@@ -87,7 +89,8 @@ const recentList = computed(() => recentIds.value.map((id) => quick.value[id]).f
 const popularList = computed(() => props.popularIds.map((id) => quick.value[id]).filter((v) => v && !recentIds.value.includes(v.id)).slice(0, 12));
 onMounted(loadQuick);
 
-const pick = (variant) => {
+const pick = (variant, scanned = false) => {
+    if (!scanned) play('add');
     emit('add', variant);
     remember(variant.id);
     if (!quick.value[variant.id]) quick.value[variant.id] = variant;
@@ -100,14 +103,15 @@ const pick = (variant) => {
 const onEnter = async () => {
     const q = term.value.trim();
     if (!q) return;
-    const list = results.value.length ? results.value : await search(q);
+    // Results of a half-typed search must never be used for the full code (e.g. typed fast + Enter).
+    const list = results.value.length && resultsFor === q ? results.value : await search(q);
     const exact = list.find((v) => v.sku.toLowerCase() === q.toLowerCase() || v.barcodes.includes(q));
     if (exact) {
-        if (props.beepOnScan) beep(true);
-        return pick(exact);
+        play('scan');
+        return pick(exact, true);
     }
     if (list.length === 1 || (list[active.value] && results.value.length)) return pick(list[active.value] ?? list[0]);
-    if (props.beepOnScan) beep(false);
+    play('notfound');
     message.value = `No item with barcode / SKU “${q}”.`;
 };
 

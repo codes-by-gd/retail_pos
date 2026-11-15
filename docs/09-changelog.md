@@ -1,5 +1,12 @@
 # 09 · Changelog
 
+## Real-time notifications & POS sounds (2026-11-16)
+- Live notifications over WebSockets (Laravel Reverb): instant bell updates, pop-up cards, optional chime and desktop notifications, "On this device" settings with a test alert; polling remains as fallback; pushes never delay a sale.
+- POS sounds for scan / not found / add / remove / warning / payment / sale complete / hold / error, with a speaker on/off button per counter.
+- Loyalty on/off checked end to end (Settings → POS shows/hides Points); the POS now also hides the ★ points badge while loyalty is off.
+- Fixes: toggle switches were invisible in dark mode; pressing Enter right after typing a code could add the first match of a half-typed search instead of reporting "not found".
+- 214 tests (SQLite and MySQL).
+
 ## Phase 7 — Logo, loyalty points, UI/UX (2026-11-16)
 - Logo upload; shown on receipts (grayscale on thermal), A4 invoices and all prints, PDF reports, app header and login page.
 - Loyalty points: 1 point per ₹100 (configurable), redeem at ₹1/point as a payment (min 100 points, max 50 % of a bill), 12-month expiry, oldest points first; returns take back earned points, cancellations undo everything; POS badge and Points button, receipt lines, customer history and adjustments (`loyalty.adjust`), loyalty report, nightly `pos:expire-points`.

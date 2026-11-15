@@ -13,6 +13,7 @@
 | Max. % of a bill | 50 % | Points can pay at most this share of a bill |
 | Expire after | 12 months | Each batch expires 12 months after it was earned (0 = never) |
 
+- **On/off:** Settings → Business → *Loyalty points on*. Off = nothing is earned, the POS hides the Points button and the ★ badge, points can't be used; balances are kept and come back when switched on again.
 - Only **named customers** — never the walk-in customer.
 - **Using points is a payment method** (`Loyalty points`), not a discount: GST and the bill total are unchanged, the customer's account is credited like money (D-042).
 - Oldest points are used first; nightly `pos:expire-points` (00:30) removes what is left of expired batches.

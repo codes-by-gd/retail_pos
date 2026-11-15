@@ -105,7 +105,8 @@ class Contact extends Model
             'price_type' => $c->group?->price_type ?? 'retail',
             'discount_percent' => (float) ($c->group?->discount_percent ?? 0),
             'is_walk_in' => $c->is_walk_in,
-            'points' => $c->is_walk_in || $c->type === self::SUPPLIER ? 0
+            // shown at the POS only while loyalty is switched on
+            'points' => $c->is_walk_in || $c->type === self::SUPPLIER || ! LoyaltyService::enabled() ? 0
                 : (int) ($c->getAttributes()['loyalty_points'] ?? app(LoyaltyService::class)->balance($c)),
         ];
     }

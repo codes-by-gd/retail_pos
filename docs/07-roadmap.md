@@ -108,6 +108,7 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 - [x] POS quick picks, tablet/phone layout with bottom pay bar, shortcuts panel, clearer sale-complete screen
 - [x] Tests: 210 passing on SQLite and MySQL; 15 pages × light/dark × 3 widths checked in Chrome with no errors or sideways scrolling
 - Skipped by request: WhatsApp invoices
+- Follow-up (2026-11-16): real-time notifications (Reverb), POS sounds with on/off, loyalty on/off verified
 
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

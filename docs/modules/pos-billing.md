@@ -36,6 +36,8 @@
 - ✅ Quick picks when the search box is empty: *Recently added* on this counter and *Popular here* (best sellers, 30 days) (Phase 7)
 - ✅ Tablets & phones: Items / Bill tabs, sticky total + Pay bar; keyboard-shortcuts panel (Phase 7)
 - ✅ Loyalty points: badge on the customer, **Points** payment button, earned/used/balance on the receipt and the sale-complete screen (Phase 7)
+- ✅ **Sounds** (Web Audio, no files): scan, item not found, picked, removed, no-stock warning, payment added, sale complete, held, error. **Speaker button** in the POS top bar turns them on/off for that counter (remembered in the browser); *Settings → POS → Sounds at the POS* is the default for counters that haven't chosen
+- ✅ Typed codes: pressing Enter always searches the full text (a half-typed search's results are never used)
 - ✅ The search box keeps focus (after printing, after closing dialogs, when the window regains focus) so a scanner always works
 
 **Returns & exchanges** (`pos.returns`, granted to cashiers by default)

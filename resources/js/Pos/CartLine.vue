@@ -1,4 +1,5 @@
 <script setup>
+import { play } from '@/utils/sounds';
 import { useCartStore } from '@/stores/cart';
 import { money, qty } from '@/utils/format';
 import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/vue/24/outline';
@@ -54,7 +55,7 @@ const change = (delta) => {
         </div>
 
         <p class="w-24 shrink-0 pt-1 text-right text-sm font-semibold tabular-nums text-gray-900">{{ money(calc?.line_total ?? 0) }}</p>
-        <button type="button" class="pt-1 text-gray-300 hover:text-red-600" title="Remove" @click="cart.remove(item.key)">
+        <button type="button" class="pt-1 text-gray-300 hover:text-red-600" title="Remove" @click="cart.remove(item.key); play('remove')">
             <XMarkIcon class="h-5 w-5" />
         </button>
     </div>

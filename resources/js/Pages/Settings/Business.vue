@@ -173,7 +173,7 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
                             label="Allow selling out-of-stock items"
                             description="Stock can go below zero."
                         />
-                        <Toggle v-model="form.pos.beep_on_scan" label="Beep on barcode scan" />
+                        <Toggle v-model="form.pos.beep_on_scan" label="Sounds at the POS" description="Scan, item added, payment and sale-complete sounds. Each counter can also switch them on/off with the speaker button." />
                         <Toggle v-model="form.pos.print_after_sale" label="Print receipt after each sale" />
                         <Toggle v-model="form.pos.accept_card" label="Accept card payments" />
                         <Toggle v-model="form.pos.accept_upi" label="Accept UPI payments" />

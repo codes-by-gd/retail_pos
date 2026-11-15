@@ -3,7 +3,9 @@
 namespace App\Modules\Notifications\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Notifications\Notifications\AlertNotification;
 use App\Modules\Notifications\NotificationTypes;
+use App\Modules\Notifications\Services\Notifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -80,6 +82,15 @@ class NotificationController extends Controller
         $request->user()->readNotifications()->delete();
 
         return back()->with('success', 'Read notifications cleared.');
+    }
+
+    /** Sends the user a test alert — checks the bell, pop-up, sound and desktop notification end to end. */
+    public function test(Request $request, Notifier $notifier): RedirectResponse
+    {
+        $notifier->sendTo($request->user(), new AlertNotification('test', 'Test alert', 'If you can see this pop-up, live notifications work on this device.',
+            route('notifications.index'), 'success'));
+
+        return back();
     }
 
     public function preferences(Request $request): RedirectResponse

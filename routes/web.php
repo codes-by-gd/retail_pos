@@ -234,6 +234,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/read-all', [NotificationController::class, 'readAll'])->name('read-all');
         Route::delete('/read', [NotificationController::class, 'clearRead'])->name('clear-read');
         Route::put('/preferences', [NotificationController::class, 'preferences'])->name('preferences');
+        Route::post('/test', [NotificationController::class, 'test'])->middleware('throttle:10,1')->name('test');
         Route::get('/{id}/open', [NotificationController::class, 'open'])->name('open');
         Route::post('/{id}/toggle', [NotificationController::class, 'toggle'])->name('toggle');
     });

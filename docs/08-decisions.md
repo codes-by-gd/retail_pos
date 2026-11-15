@@ -137,4 +137,10 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-045 · List filters remembered per session, forms guarded — 2026-11-16
 **Decision:** filters live in the URL (shareable) and are also saved in sessionStorage per list; opening a list without a query restores them. Forms with unsaved changes ask before navigating away.
 
+### D-046 · Real-time alerts with Reverb, polling as fallback — 2026-11-16
+**Decision:** Laravel Reverb (first-party, self-hosted, free) pushes alerts to private per-user channels. Pushes run after the HTTP response with short timeouts and pause for 60 s when the server is unreachable; the database notification is always stored and the bell keeps polling, so the app never depends on the WebSocket server. **Consequence:** one more long-running process in production (`reverb:start`).
+
+### D-047 · POS sounds are synthesized and per counter — 2026-11-16
+**Decision:** Web Audio tones instead of audio files (no downloads, work offline); the on/off choice is stored per browser so each counter decides, with the business setting as the default.
+
 ### Open questions

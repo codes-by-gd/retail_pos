@@ -18,7 +18,7 @@ defineProps({
             @click="model = !model"
         >
             <span
-                class="inline-block h-4 w-4 translate-y-0.5 rounded-full bg-white shadow transition-transform"
+                class="inline-block h-4 w-4 translate-y-0.5 rounded-full bg-[#fff] shadow transition-transform"
                 :class="model ? 'translate-x-[18px]' : 'translate-x-0.5'"
             />
         </button>

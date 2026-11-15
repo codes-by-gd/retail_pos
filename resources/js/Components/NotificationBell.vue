@@ -1,10 +1,17 @@
 <script setup>
-/** Top-bar bell: unread badge, latest alerts on click, refreshed every minute. */
-import { BellIcon } from '@heroicons/vue/24/outline';
+/**
+ * Top-bar bell. Real time over Reverb (private channel App.Models.User.{id}, event ".alert"):
+ * badge + list update instantly, a pop-up card appears, optional chime and desktop notification.
+ * If the WebSocket server isn't reachable it falls back to polling every minute.
+ */
+import { getEcho, realtimeConnected } from '@/echo';
+import { play } from '@/utils/sounds';
+import { desktopAlertsOn } from '@/utils/desktopAlerts';
+import { BellIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import { Link, usePage } from '@inertiajs/vue3';
 import { onClickOutside, useIntervalFn } from '@vueuse/core';
 import axios from 'axios';
-import { computed, ref, watch } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
 const page = usePage();
 const unread = ref(page.props.notifications?.unread ?? 0);
@@ -12,6 +19,8 @@ const latest = ref([]);
 const open = ref(false);
 const loading = ref(false);
 const root = ref(null);
+const toasts = ref([]);
+const userId = page.props.auth.user.id;
 
 watch(() => page.props.notifications?.unread, (n) => n !== undefined && (unread.value = n));
 
@@ -27,7 +36,39 @@ const load = async () => {
         loading.value = false;
     }
 };
-useIntervalFn(() => document.visibilityState === 'visible' && load(), 60000);
+// Polling is only the safety net: every minute without a live connection, every 5 minutes with one.
+let tick = 0;
+useIntervalFn(() => {
+    tick++;
+    if (document.visibilityState === 'visible' && (!realtimeConnected.value || tick % 5 === 0)) load();
+}, 60000);
+
+/* ---------- real time ---------- */
+const dismiss = (id) => (toasts.value = toasts.value.filter((t) => t.id !== id));
+const onAlert = ({ notification, unread: count }) => {
+    unread.value = count;
+    latest.value = [notification, ...latest.value.filter((n) => n.id !== notification.id)].slice(0, 8);
+    toasts.value = [notification, ...toasts.value.filter((t) => t.id !== notification.id)].slice(0, 3);
+    setTimeout(() => dismiss(notification.id), 7000);
+    play('alert', 'alerts');
+    if (document.visibilityState !== 'visible' && desktopAlertsOn() && 'Notification' in window && Notification.permission === 'granted') {
+        const n = new Notification(notification.title, { body: notification.body, tag: notification.id });
+        n.onclick = () => {
+            window.focus();
+            window.location.href = route('notifications.open', notification.id);
+        };
+    }
+};
+let channel = null;
+onMounted(() => {
+    const echo = getEcho();
+    if (!echo) return;
+    channel = echo.private(`App.Models.User.${userId}`).listen('.alert', onAlert);
+});
+onBeforeUnmount(() => {
+    // The layout stays mounted across Inertia page visits; leave only when the app really goes away.
+    if (channel && !document.body.contains(root.value)) getEcho()?.leave(`App.Models.User.${userId}`);
+});
 
 const toggle = () => {
     open.value = !open.value;
@@ -59,15 +100,20 @@ const badge = computed(() => (unread.value > 99 ? '99+' : String(unread.value)))
             class="relative rounded-full p-1.5 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
             :aria-label="`Notifications, ${unread} unread`"
             :aria-expanded="open"
+            :title="realtimeConnected ? 'Notifications (live)' : 'Notifications'"
             @click="toggle"
         >
             <BellIcon class="h-6 w-6" />
             <span v-if="unread" class="absolute -right-0.5 -top-0.5 min-w-[1.1rem] rounded-full bg-red-600 px-1 text-center text-[10px] font-semibold leading-[1.1rem] text-white">{{ badge }}</span>
+            <span v-if="realtimeConnected" class="absolute bottom-0.5 right-0.5 h-2 w-2 rounded-full bg-green-500 ring-2 ring-white" aria-hidden="true" />
         </button>
 
         <div v-if="open" class="fixed inset-x-4 top-16 z-40 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-lg sm:absolute sm:inset-x-auto sm:right-0 sm:top-auto sm:mt-2 sm:w-[22rem]">
             <div class="flex items-center justify-between border-b border-gray-100 px-4 py-2.5">
-                <p class="text-sm font-semibold text-gray-900">Notifications</p>
+                <p class="text-sm font-semibold text-gray-900">
+                    Notifications
+                    <span class="ml-1 text-[11px] font-normal" :class="realtimeConnected ? 'text-green-700' : 'text-gray-400'">{{ realtimeConnected ? '● live' : '○ checking every minute' }}</span>
+                </p>
                 <button v-if="unread" type="button" class="text-xs text-indigo-600 hover:text-indigo-800" @click="readAll">Mark all read</button>
             </div>
             <ul class="max-h-96 divide-y divide-gray-100 overflow-y-auto">
@@ -87,5 +133,21 @@ const badge = computed(() => (unread.value > 99 ? '99+' : String(unread.value)))
                 See all &amp; alert settings
             </Link>
         </div>
+
+        <!-- live pop-ups -->
+        <Teleport to="body">
+            <div class="pointer-events-none fixed inset-x-4 top-20 z-[55] flex flex-col items-end gap-2 sm:left-auto sm:right-6" aria-live="polite">
+                <TransitionGroup enter-from-class="translate-x-4 opacity-0" enter-active-class="transition duration-200" leave-to-class="opacity-0" leave-active-class="transition duration-150">
+                    <div v-for="t in toasts" :key="t.id" class="pointer-events-auto flex w-full max-w-sm gap-3 rounded-lg border border-gray-200 bg-white p-3 shadow-lg" role="status">
+                        <span class="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full" :class="dot[t.level] ?? dot.info" />
+                        <a :href="route('notifications.open', t.id)" class="min-w-0 flex-1" @click="dismiss(t.id)">
+                            <span class="block text-sm font-medium text-gray-900">{{ t.title }}</span>
+                            <span class="line-clamp-2 block text-xs text-gray-600">{{ t.body }}</span>
+                        </a>
+                        <button type="button" class="self-start rounded p-0.5 text-gray-400 hover:text-gray-600" aria-label="Dismiss" @click="dismiss(t.id)"><XMarkIcon class="h-4 w-4" /></button>
+                    </div>
+                </TransitionGroup>
+            </div>
+        </Teleport>
     </div>
 </template>

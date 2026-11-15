@@ -7,6 +7,18 @@ import SecondaryButton from '@/Components/SecondaryButton.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { dateTime } from '@/utils/format';
 import { Link, router, useForm } from '@inertiajs/vue3';
+import Toggle from '@/Components/Toggle.vue';
+import { realtimeConnected } from '@/echo';
+import { desktopAlerts, desktopSupported, setDesktopAlerts } from '@/utils/desktopAlerts';
+import { setSound, soundSwitch } from '@/utils/sounds';
+import { ref } from 'vue';
+
+const alertSound = soundSwitch('alerts', true);
+const desktopNote = ref('');
+const toggleDesktop = async (on) => {
+    const ok = await setDesktopAlerts(on);
+    desktopNote.value = on && !ok ? 'The browser blocked notifications — allow them in the site settings (padlock icon).' : '';
+};
 
 const props = defineProps({
     notifications: { type: Object, required: true },
@@ -62,6 +74,21 @@ const dot = { danger: 'bg-red-500', warning: 'bg-amber-500', success: 'bg-green-
                 <Pagination :paginator="notifications" />
             </Card>
 
+            <div class="space-y-6">
+            <Card title="On this device" description="How alerts reach you in this browser.">
+                <div class="space-y-4">
+                    <p class="flex items-center gap-2 text-sm">
+                        <span class="h-2.5 w-2.5 rounded-full" :class="realtimeConnected ? 'bg-green-500' : 'bg-gray-300'" />
+                        <span v-if="realtimeConnected" class="text-green-800">Live — new alerts appear instantly.</span>
+                        <span v-else class="text-gray-600">Not live — checking every minute. (The real-time server isn't running or can't be reached.)</span>
+                    </p>
+                    <Toggle :model-value="alertSound" label="Play a sound for new alerts" @update:model-value="setSound('alerts', $event)" />
+                    <Toggle v-if="desktopSupported()" :model-value="desktopAlerts" label="Desktop notifications" description="Pop up from the computer when this tab is in the background." @update:model-value="toggleDesktop" />
+                    <p v-if="desktopNote" class="text-xs text-amber-700">{{ desktopNote }}</p>
+                    <SecondaryButton type="button" @click="router.post(route('notifications.test'), {}, { preserveScroll: true })">Send me a test alert</SecondaryButton>
+                </div>
+            </Card>
+
             <Card title="Which alerts I get" description="Only alerts your role can receive are listed.">
                 <form class="space-y-4" @submit.prevent="savePrefs">
                     <div v-for="t in types" :key="t.key" class="border-b border-gray-100 pb-3 last:border-0">
@@ -83,6 +110,7 @@ const dot = { danger: 'bg-red-500', warning: 'bg-amber-500', success: 'bg-green-
                     <div v-if="types.length" class="flex justify-end"><PrimaryButton :disabled="prefs.processing">Save</PrimaryButton></div>
                 </form>
             </Card>
+            </div>
         </div>
     </AppLayout>
 </template>
