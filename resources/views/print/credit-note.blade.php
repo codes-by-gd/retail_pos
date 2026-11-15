@@ -15,6 +15,7 @@
 @include('print._toolbar')
 <div class="page {{ $format === 'a4' ? 'a4' : '' }}">
     <div class="center">
+        @include('print._logo')
         <h1>{{ $business['name'] }}</h1>
         <div>{{ $branch->name }}</div>
         @if ($gstin)<div class="small">GSTIN: {{ $gstin }}</div>@endif

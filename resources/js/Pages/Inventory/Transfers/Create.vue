@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
 import InputError from '@/Components/InputError.vue';
@@ -29,6 +30,7 @@ const submit = () =>
     form
         .transform((d) => ({ ...d, items: d.items.map((l) => ({ product_variant_id: l.product_variant_id, quantity: l.quantity })) }))
         .post(route('stock-transfers.store'));
+useUnsavedGuard(() => form.items.length > 0 && !form.processing && !form.wasSuccessful);
 </script>
 
 <template>

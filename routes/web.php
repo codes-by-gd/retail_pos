@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BranchSwitchController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\ProfileController;
 use App\Modules\Contacts\Http\Controllers\ContactController;
 use App\Modules\Contacts\Http\Controllers\ContactImportController;
@@ -22,6 +23,7 @@ use App\Modules\Inventory\Http\Controllers\StockTransferController;
 use App\Modules\Inventory\Http\Controllers\TaxRateController;
 use App\Modules\Inventory\Http\Controllers\UnitController;
 use App\Modules\Inventory\Http\Controllers\VariantSearchController;
+use App\Modules\Loyalty\Http\Controllers\LoyaltyController;
 use App\Modules\Notifications\Http\Controllers\NotificationController;
 use App\Modules\Pos\Http\Controllers\CheckoutController;
 use App\Modules\Pos\Http\Controllers\HeldCartController;
@@ -48,6 +50,7 @@ Route::redirect('/', '/dashboard');
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::post('/branch/switch', BranchSwitchController::class)->name('branch.switch');
+    Route::get('/search', GlobalSearchController::class)->middleware('throttle:120,1')->name('search');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -235,6 +238,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/{id}/toggle', [NotificationController::class, 'toggle'])->name('toggle');
     });
 
+    Route::post('/customers/{contact}/loyalty', [LoyaltyController::class, 'adjust'])->middleware('can:loyalty.adjust')->name('customers.loyalty.adjust');
+
     Route::get('/activity', [ActivityController::class, 'index'])->middleware('can:activity.view')->name('activity.index');
 
     // Settings
@@ -246,6 +251,8 @@ Route::middleware('auth')->group(function () {
         Route::delete('/backups/{name}', [BackupController::class, 'destroy'])->name('backups.destroy')->where('name', '[A-Za-z0-9.\-]+');
         Route::get('/business', [BusinessSettingsController::class, 'edit'])->name('business.edit');
         Route::put('/business', [BusinessSettingsController::class, 'update'])->name('business.update');
+        Route::post('/business/logo', [BusinessSettingsController::class, 'uploadLogo'])->name('business.logo');
+        Route::delete('/business/logo', [BusinessSettingsController::class, 'removeLogo'])->name('business.logo.destroy');
         Route::resource('branches', BranchController::class)->only(['index', 'store', 'update', 'destroy']);
         Route::resource('registers', RegisterController::class)->only(['index', 'store', 'update', 'destroy']);
     });

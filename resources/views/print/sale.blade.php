@@ -19,6 +19,7 @@
 {{-- ================= Thermal receipt ================= --}}
 <div class="page">
     <div class="center">
+        @include('print._logo')
         <h1>{{ $business['name'] }}</h1>
         <div>{{ $branch->name }}</div>
         @if ($branch->address || $business['address'])<div class="small">{{ $branch->address ?: $business['address'] }}{{ ($branch->city ?: $business['city']) ? ', '.($branch->city ?: $business['city']) : '' }}</div>@endif
@@ -76,6 +77,14 @@
         @if ((float) $sale->change_given > 0)<tr><td>Change returned</td><td class="right">{{ $money($sale->change_given) }}</td></tr>@endif
         @if ((float) $sale->account_amount > 0)<tr class="bold"><td>Balance due (on account)</td><td class="right">{{ $money($sale->account_amount) }}</td></tr>@endif
     </table>
+    @if ($pointsBalance !== null)
+        <hr>
+        <table class="totals small">
+            @if ($sale->points_redeemed)<tr><td>Points used</td><td class="right">{{ $sale->points_redeemed }}</td></tr>@endif
+            @if ($sale->points_earned)<tr><td>Points earned</td><td class="right">+{{ $sale->points_earned }}</td></tr>@endif
+            <tr class="bold"><td>Points balance</td><td class="right">{{ $pointsBalance }}</td></tr>
+        </table>
+    @endif
     @php($savings = $sale->items->sum(fn ($i) => $i->mrp ? max(0, ((float) $i->mrp - (float) $i->unit_price) * (float) $i->quantity) : 0) + (float) $sale->line_discount_total + (float) $sale->bill_discount_total)
     @if ($savings > 0)<hr><div class="center bold">You saved ₹{{ $money($savings) }} today!</div>@endif
     <hr>
@@ -89,6 +98,7 @@
     <table style="border:0">
         <tr>
             <td style="border:0; width:60%">
+                @include('print._logo')
                 <h1>{{ $business['legal_name'] ?: $business['name'] }}</h1>
                 <div>{{ $branch->name }}</div>
                 <div class="small">{{ collect([$branch->address ?: $business['address'], $branch->city ?: $business['city'], $branch->pincode ?: $business['pincode']])->filter()->implode(', ') }}</div>
@@ -156,6 +166,7 @@
                     @endforeach
                 </table>
                 <p class="small"><b>Amount in words:</b> {{ $words }}</p>
+                @if ($pointsBalance !== null)<p class="small">Loyalty points: {{ $sale->points_redeemed ? 'used '.$sale->points_redeemed.' · ' : '' }}{{ $sale->points_earned ? 'earned '.$sale->points_earned.' · ' : '' }}balance <b>{{ $pointsBalance }}</b></p>@endif
                 @foreach ($payments as $p)<div class="small">{{ $p['label'] }}{{ $p['reference'] ? ' ('.$p['reference'].')' : '' }}: ₹{{ $money($p['amount']) }}</div>@endforeach
                 @if ((float) $sale->account_amount > 0)<div class="small bold">Balance due: ₹{{ $money($sale->account_amount) }}</div>@endif
             </td>

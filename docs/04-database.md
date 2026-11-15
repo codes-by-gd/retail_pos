@@ -77,6 +77,14 @@ Conventions: `id` big-int primary keys, `timestamps()` on every business table, 
 | `contact_payments` | ✅ | `reference_no` (RCPT/PAY), `contact_id`, `branch_id`, `register_session_id` (cash through a drawer), `direction` (in/out), `method` (cash/upi/card/bank/cheque), `amount`, `unallocated`, `reference`, `date`, `note`, `user_id` |
 | `payment_allocations` | ✅ | `contact_payment_id`, `allocatable` (sale or purchase), `amount` |
 
+## Loyalty (Phase 7)
+| Table | Purpose |
+|---|---|
+| `loyalty_transactions` | Append-only points ledger: contact, branch, `type` (earn, redeem, reverse, restore, expire, adjust), signed `points`, `remaining` (unspent part of a + row, for oldest-first use and expiry), `expires_at`, sale / sale_return, note, user · balance = SUM(points) |
+| `sales.points_earned`, `sales.points_redeemed` | Snapshot for receipts and returns |
+
+Payments with points are `sale_payments.method = 'points'` (reference "200 points").
+
 ## Expenses & notifications (Phase 6)
 | Table | Purpose |
 |---|---|

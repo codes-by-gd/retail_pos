@@ -58,6 +58,7 @@ tests/Unit, tests/Feature/<Area>/
 - **Stock:** every change goes through one `StockService`, inside a DB transaction with row locks, and writes a `stock_movements` ledger row.
 - **Business-rule errors:** services throw `DomainException` / `InsufficientStockException`; `bootstrap/app.php` turns them into a "back with error" toast (or JSON 422). No try/catch in controllers.
 - **Document numbers:** `DocumentNumberService::next('ADJ', $branch)` inside the saving transaction → `ADJ/BR1/26-27/0001`.
+- **UI conventions** (dark mode via CSS-variable palettes, `useListFilters`, `useUnsavedGuard`, `DateRangeFilter`, phone cards in `DataTable`, command palette): see [modules/ui.md](modules/ui.md).
 - **Alerts:** business code calls `app(Alerts::class)->…` (wrapped in `rescue()`); `Notifier` picks recipients by permission + branch + preferences and de-duplicates by key. Alert failures never break a sale.
 - **Scheduled jobs** live in `routes/console.php` (`pos:daily-alerts`, `pos:backup`).
 - **Reports:** `app/Modules/Reports` — `ReportRegistry` lists the reports; each returns typed sections that drive the screen and Excel/CSV/PDF exports; `SalesFacts` holds the shared sale/return line queries (also used by the dashboard). See [modules/reports.md](modules/reports.md).

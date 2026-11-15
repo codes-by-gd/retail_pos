@@ -9,6 +9,7 @@ use App\Modules\Contacts\Services\PaymentService;
 use App\Modules\Expenses\Models\ExpenseCategory;
 use App\Modules\Expenses\Services\ExpenseService;
 use App\Modules\Inventory\Models\ProductVariant;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Pos\Models\Register;
 use App\Modules\Pos\Services\RegisterService;
 use App\Modules\Purchases\Services\PurchaseService;
@@ -219,6 +220,15 @@ class DemoSalesSeeder extends Seeder
             $roll <= 85 => [['method' => 'upi', 'amount' => $total, 'reference' => 'UPI'.mt_rand(10000, 99999)]],
             default => [['method' => 'card', 'amount' => $total, 'reference' => 'XX'.mt_rand(1000, 9999)]],
         };
+
+        // Regular customers sometimes pay part of the bill with loyalty points
+        if (! $customer->is_walk_in && ! $wholesale && mt_rand(1, 100) <= 20) {
+            $points = app(LoyaltyService::class)->maxRedeemable($customer, $total);
+            if ($points > 0) {
+                $value = (float) LoyaltyService::value($points);
+                $payments = [['method' => 'points', 'amount' => $value], ['method' => 'upi', 'amount' => round($total - $value, 2), 'reference' => 'UPI'.mt_rand(10000, 99999)]];
+            }
+        }
 
         try {
             return $checkout->checkout($session, $cashier, [

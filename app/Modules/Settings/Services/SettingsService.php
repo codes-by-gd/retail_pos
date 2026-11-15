@@ -42,7 +42,13 @@ class SettingsService
         'alerts.discount_percent' => 20,              // alert managers when a bill is discounted this much (0 = off)
         'alerts.cash_difference' => 100,              // alert when a register closes this much short/excess
         'alerts.email_enabled' => false,              // also email users who chose email (needs MAIL_* in .env)
-        'backup.keep_days' => 14,                     // nightly backups older than this are deleted
+        'backup.keep_days' => 14,
+        'loyalty.enabled' => true,                    // points for named customers
+        'loyalty.earn_per' => 100,                    // ₹ of bill for 1 point
+        'loyalty.point_value' => 1,                   // ₹ value of 1 point when redeemed
+        'loyalty.min_redeem' => 100,                  // fewest points that can be used at once
+        'loyalty.max_redeem_percent' => 50,           // points can pay at most this % of a bill
+        'loyalty.expiry_months' => 12,                // 0 = never expire                     // nightly backups older than this are deleted
     ];
 
     private ?array $loaded = null;

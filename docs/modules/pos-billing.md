@@ -33,6 +33,9 @@
 - ✅ Hold bills (any cashier of the branch can recall; prices/GST/stock are refreshed on recall) and clear
 - ✅ After sale: big "Change ₹X" screen, auto-print receipt (setting), reprint receipt / A4 invoice, reprint last bill from the top bar
 - ✅ Lock screen / **switch cashier with PIN** (rate-limited) without leaving the register
+- ✅ Quick picks when the search box is empty: *Recently added* on this counter and *Popular here* (best sellers, 30 days) (Phase 7)
+- ✅ Tablets & phones: Items / Bill tabs, sticky total + Pay bar; keyboard-shortcuts panel (Phase 7)
+- ✅ Loyalty points: badge on the customer, **Points** payment button, earned/used/balance on the receipt and the sale-complete screen (Phase 7)
 - ✅ The search box keeps focus (after printing, after closing dialogs, when the window regains focus) so a scanner always works
 
 **Returns & exchanges** (`pos.returns`, granted to cashiers by default)

@@ -28,7 +28,7 @@ const max = computed(() => Math.max(...props.items.map((i) => Math.abs(i.value))
                 </span>
             </div>
             <div class="mt-1 h-1.5 rounded-full bg-gray-100">
-                <div class="h-1.5 rounded-full bg-[#2a78d6]" :style="{ width: `${max ? Math.max(2, (Math.abs(item.value) / max) * 100) : 0}%` }" />
+                <div class="h-1.5 rounded-full bg-[#2a78d6] dark:bg-[#3987e5]" :style="{ width: `${max ? Math.max(2, (Math.abs(item.value) / max) * 100) : 0}%` }" />
             </div>
         </li>
     </ul>

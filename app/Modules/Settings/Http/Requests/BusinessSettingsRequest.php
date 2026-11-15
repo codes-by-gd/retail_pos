@@ -49,6 +49,12 @@ class BusinessSettingsRequest extends FormRequest
             'alerts.discount_percent' => ['sometimes', 'required', 'numeric', 'min:0', 'max:100'],
             'alerts.cash_difference' => ['sometimes', 'required', 'numeric', 'min:0', 'max:1000000'],
             'alerts.email_enabled' => ['sometimes', 'required', 'boolean'],
+            'loyalty.enabled' => ['sometimes', 'required', 'boolean'],
+            'loyalty.earn_per' => ['sometimes', 'required', 'numeric', 'min:1', 'max:100000'],
+            'loyalty.point_value' => ['sometimes', 'required', 'numeric', 'min:0.01', 'max:1000'],
+            'loyalty.min_redeem' => ['sometimes', 'required', 'integer', 'min:1', 'max:1000000'],
+            'loyalty.max_redeem_percent' => ['sometimes', 'required', 'numeric', 'min:1', 'max:100'],
+            'loyalty.expiry_months' => ['sometimes', 'required', 'integer', 'min:0', 'max:120'],
         ];
     }
 

@@ -1,5 +1,16 @@
 # 09 · Changelog
 
+## Phase 7 — Logo, loyalty points, UI/UX (2026-11-16)
+- Logo upload; shown on receipts (grayscale on thermal), A4 invoices and all prints, PDF reports, app header and login page.
+- Loyalty points: 1 point per ₹100 (configurable), redeem at ₹1/point as a payment (min 100 points, max 50 % of a bill), 12-month expiry, oldest points first; returns take back earned points, cancellations undo everything; POS badge and Points button, receipt lines, customer history and adjustments (`loyalty.adjust`), loyalty report, nightly `pos:expire-points`.
+- Dark mode (light/dark/system) across the whole app via CSS-variable palettes; dark-aware charts.
+- Collapsible sidebar; Ctrl+K command palette with pages, quick actions and global search.
+- Lists: phone card layout in `DataTable`, filters remembered per session, shared date presets, sticky report headers; forms warn about unsaved changes.
+- Dashboard: quick actions, deferred secondary panels with placeholders, auto-refresh, remembered period/branch.
+- POS: quick picks (recent & popular), tablet/phone layout with Items/Bill tabs and a pay bar, shortcuts panel, payment and points on the completion screen.
+- Demo data: some bills paid partly with points.
+- 210 tests (SQLite and MySQL).
+
 ## Phase 6 — Expenses, notifications, audit log, backups (2026-11-15)
 - Expenses module: categories, entries with GST included, bill photos, cash paid from a register drawer (shown in the Z-report, locked after the shift closes), filters and category totals.
 - New reports: Expenses and Profit & loss (net sales − cost − expenses − stock written off). Dashboard profit card shows net profit after expenses.

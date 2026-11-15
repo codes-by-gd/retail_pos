@@ -9,6 +9,7 @@ use App\Modules\Reports\Reports\ExpensesReport;
 use App\Modules\Reports\Reports\Gstr1Report;
 use App\Modules\Reports\Reports\Gstr3bReport;
 use App\Modules\Reports\Reports\LowStockReport;
+use App\Modules\Reports\Reports\LoyaltyReport;
 use App\Modules\Reports\Reports\OutstandingReport;
 use App\Modules\Reports\Reports\PaymentModesReport;
 use App\Modules\Reports\Reports\ProfitLossReport;
@@ -37,6 +38,7 @@ class ReportRegistry
             new DimensionSalesReport('sales-by-branch', 'Sales by branch', 'Compare branches (choose “All branches”).', ['branch' => ['Branch', 'Branch']]),
             new DimensionSalesReport('sales-by-hour', 'Hourly sales', 'Busy hours of the day — plan staff at the counter.', ['hour' => ['Hour', 'Hour']]),
             new PaymentModesReport,
+            new LoyaltyReport,
 
             new StockValuationReport,
             new LowStockReport,

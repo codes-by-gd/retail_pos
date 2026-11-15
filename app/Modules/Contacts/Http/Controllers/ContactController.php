@@ -9,6 +9,8 @@ use App\Modules\Contacts\Models\ContactPayment;
 use App\Modules\Contacts\Models\CustomerGroup;
 use App\Modules\Contacts\Services\ContactLedgerService;
 use App\Modules\Contacts\Services\ContactService;
+use App\Modules\Loyalty\Http\Controllers\LoyaltyController;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Purchases\Models\Purchase;
 use App\Modules\Sales\Models\Sale;
 use App\Support\Gst\IndianStates;
@@ -116,6 +118,7 @@ class ContactController extends Controller
             'statement' => $this->ledger->statement($contact, $period['from'] ?? null, $period['to'] ?? null),
             'period' => ['from' => $period['from'] ?? null, 'to' => $period['to'] ?? null],
             'unpaidBills' => $this->unpaidBills($contact, $kind),
+            'loyalty' => $kind === 'customer' ? LoyaltyController::forContact($contact, app(LoyaltyService::class)) : null,
             'registers' => ContactPaymentController::openSessions(),
             'paymentMethods' => collect(ContactPayment::METHODS)->map(fn ($label, $value) => compact('value', 'label'))->values(),
         ]);

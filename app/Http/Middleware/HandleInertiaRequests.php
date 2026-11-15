@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Support\Branding;
 use App\Support\Permissions;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -30,6 +31,8 @@ class HandleInertiaRequests extends Middleware
                 'name' => config('app.name'),
                 'business_name' => settings('business.name'),
                 'currency' => settings('business.currency_symbol'),
+                'logo_url' => Branding::logoUrl(),
+                'fy_start' => (string) settings('business.financial_year_start', '04-01'),
             ],
             'auth' => fn () => [
                 'user' => $user ? [

@@ -7,6 +7,7 @@ import { BarElement, CategoryScale, Chart as ChartJS, LinearScale, Tooltip } fro
 import { computed } from 'vue';
 import { Bar } from 'vue-chartjs';
 import { money, number } from '@/utils/format';
+import { useTheme } from '@/composables/useTheme';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip);
 
@@ -22,8 +23,11 @@ const props = defineProps({
     height: { type: Number, default: 240 },
 });
 
-const SERIES = '#2a78d6';
-const SERIES_HOVER = '#1f63b5';
+const { isDark } = useTheme();
+// series-1 blue, stepped for each surface; grid/axes recessive
+const palette = computed(() => isDark.value
+    ? { series: '#3987e5', hover: '#5b9cec', grid: '#1f2937', axis: '#374151', tick: '#9ca3af', tip: '#374151' }
+    : { series: '#2a78d6', hover: '#1f63b5', grid: '#f3f4f6', axis: '#e5e7eb', tick: '#6b7280', tip: '#111827' });
 const fmt = (v) => (props.format === 'money' ? money(v) : number(v, 2));
 const compact = (v) => {
     const a = Math.abs(v);
@@ -39,8 +43,8 @@ const data = computed(() => ({
     datasets: [{
         label: props.label,
         data: props.values,
-        backgroundColor: SERIES,
-        hoverBackgroundColor: SERIES_HOVER,
+        backgroundColor: palette.value.series,
+        hoverBackgroundColor: palette.value.hover,
         borderRadius: { topLeft: 4, topRight: 4 },
         borderSkipped: 'start',
         maxBarThickness: 28,
@@ -57,7 +61,7 @@ const options = computed(() => ({
     plugins: {
         legend: { display: false },
         tooltip: {
-            backgroundColor: '#111827',
+            backgroundColor: palette.value.tip,
             padding: 10,
             displayColors: false,
             callbacks: {
@@ -68,8 +72,8 @@ const options = computed(() => ({
         },
     },
     scales: {
-        x: { grid: { display: false }, border: { color: '#e5e7eb' }, ticks: { color: '#6b7280', font: { size: 11 }, maxRotation: 0, autoSkipPadding: 12 } },
-        y: { beginAtZero: true, grid: { color: '#f3f4f6' }, border: { display: false }, ticks: { color: '#6b7280', font: { size: 11 }, maxTicksLimit: 5, callback: compact } },
+        x: { grid: { display: false }, border: { color: palette.value.axis }, ticks: { color: palette.value.tick, font: { size: 11 }, maxRotation: 0, autoSkipPadding: 12 } },
+        y: { beginAtZero: true, grid: { color: palette.value.grid }, border: { display: false }, ticks: { color: palette.value.tick, font: { size: 11 }, maxTicksLimit: 5, callback: compact } },
     },
 }));
 </script>

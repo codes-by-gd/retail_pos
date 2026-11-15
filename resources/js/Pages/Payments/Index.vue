@@ -1,4 +1,6 @@
 <script setup>
+import DateRangeFilter from '@/Components/DateRangeFilter.vue';
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import Card from '@/Components/Card.vue';
 import DataTable from '@/Components/DataTable.vue';
@@ -14,8 +16,7 @@ import { Link, router } from '@inertiajs/vue3';
 import { reactive, watch } from 'vue';
 
 const props = defineProps({ payments: { type: Object, required: true }, filters: { type: Object, required: true }, totals: { type: Object, required: true }, methods: { type: Array, required: true } });
-const filters = reactive({ search: props.filters.search ?? '', direction: props.filters.direction ?? null, method: props.filters.method ?? null, from: props.filters.from ?? '', to: props.filters.to ?? '' });
-watch(filters, () => router.get(route('payments.index'), Object.fromEntries(Object.entries(filters).filter(([, v]) => v)), { preserveState: true, replace: true }));
+const filters = useListFilters('payments.index', { search: props.filters.search ?? '', direction: props.filters.direction ?? null, method: props.filters.method ?? null, from: props.filters.from ?? '', to: props.filters.to ?? '' });
 const columns = [
     { key: 'reference_no', label: 'Receipt / voucher' }, { key: 'contact', label: 'From / to' }, { key: 'method', label: 'Mode' },
     { key: 'amount', label: 'Amount', align: 'right' }, { key: 'actions', label: '', align: 'right' },
@@ -30,8 +31,7 @@ const columns = [
                 <SearchInput v-model="filters.search" placeholder="Number, ref or name…" />
                 <SelectInput v-model="filters.direction" :options="[{ value: 'in', label: 'Received from customers' }, { value: 'out', label: 'Paid to suppliers' }]" placeholder="In & out" />
                 <SelectInput v-model="filters.method" :options="methods" placeholder="Any mode" />
-                <TextInput v-model="filters.from" type="date" aria-label="From" />
-                <TextInput v-model="filters.to" type="date" aria-label="To" />
+                <DateRangeFilter v-model:from="filters.from" v-model:to="filters.to" />
             </div>
             <DataTable :columns="columns" :rows="payments.data" empty="No payments recorded.">
                 <template #reference_no="{ row }">

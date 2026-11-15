@@ -4,7 +4,7 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { useCartStore } from '@/stores/cart';
 import { money } from '@/utils/format';
-import { BanknotesIcon, CreditCardIcon, DevicePhoneMobileIcon, ReceiptRefundIcon, UserIcon, XMarkIcon } from '@heroicons/vue/24/outline';
+import { BanknotesIcon, CreditCardIcon, DevicePhoneMobileIcon, GiftIcon, ReceiptRefundIcon, UserIcon, XMarkIcon } from '@heroicons/vue/24/outline';
 import axios from 'axios';
 import { computed, nextTick, ref, watch } from 'vue';
 import { apiError } from './helpers';
@@ -34,7 +34,31 @@ const round = (v) => Math.round(v * 100) / 100;
 const canAccount = computed(() => cart.customer && !cart.customer.is_walk_in);
 const accountRoom = computed(() => (canAccount.value ? round(Number(cart.customer.credit_limit || 0) - Number(cart.customer.balance || 0)) : 0));
 
-const labels = { cash: 'Cash', card: 'Card', upi: 'UPI', account: 'On account', exchange: 'Exchange credit' };
+const labels = { cash: 'Cash', card: 'Card', upi: 'UPI', account: 'On account', exchange: 'Exchange credit', points: 'Loyalty points' };
+
+// ---- loyalty points (a payment worth points × point value, limited to a % of the bill) ----
+const loyalty = computed(() => props.config.loyalty ?? { enabled: false });
+const pointsRow = computed(() => payments.value.find((p) => p.method === 'points'));
+const maxPoints = computed(() => {
+    if (!loyalty.value.enabled || !canAccount.value) return 0;
+    const byBill = Math.floor((total.value * loyalty.value.max_redeem_percent) / 100 / loyalty.value.point_value + 1e-9);
+    const max = Math.min(Number(cart.customer.points || 0), byBill);
+    return max >= loyalty.value.min_redeem ? max : 0;
+});
+const addPoints = () => {
+    localError.value = '';
+    if (pointsRow.value) return;
+    const otherPaid = paid.value;
+    const fit = Math.floor(Math.max(0, total.value - otherPaid) / loyalty.value.point_value + 1e-9);
+    const pts = Math.min(maxPoints.value, fit);
+    if (pts < loyalty.value.min_redeem) return (localError.value = `At least ${loyalty.value.min_redeem} points are needed and the bill must still be unpaid.`);
+    payments.value.push({ method: 'points', points: pts, amount: round(pts * loyalty.value.point_value), reference: '', sale_return_id: null, label: 'Loyalty points' });
+};
+const setPoints = (p, value) => {
+    const pts = Math.max(0, Math.min(maxPoints.value, Math.floor(Number(value) || 0)));
+    p.points = pts;
+    p.amount = round(pts * loyalty.value.point_value);
+};
 
 watch(
     () => props.show,
@@ -82,7 +106,7 @@ const complete = () => {
     localError.value = '';
     if (remaining.value > 0) return (localError.value = `Still ${money(remaining.value)} to collect.`);
     const nonChange = payments.value.filter((p) => !['cash', 'exchange'].includes(p.method)).reduce((s, p) => s + Number(p.amount), 0);
-    if (nonChange > total.value + 0.001) return (localError.value = 'Card, UPI and on-account amounts cannot be more than the bill.');
+    if (nonChange > total.value + 0.001) return (localError.value = 'Card, UPI, points and on-account amounts cannot be more than the bill.');
     emit('complete', payments.value.filter((p) => Number(p.amount) > 0).map(({ method, amount, reference, sale_return_id }) => ({ method, amount: Number(amount), reference: reference || null, sale_return_id })));
 };
 
@@ -108,7 +132,22 @@ defineExpose({ complete });
                             </button>
                         </div>
                         <div class="mt-1.5 flex gap-2">
+                            <label v-if="p.method === 'points'" class="flex min-w-0 flex-1 items-center gap-1 text-xs text-gray-500">
+                                <input
+                                    :value="p.points"
+                                    type="number"
+                                    step="1"
+                                    :min="loyalty.min_redeem"
+                                    :max="maxPoints"
+                                    aria-label="Points"
+                                    class="w-24 rounded-md border-gray-300 py-1 text-right text-sm tabular-nums focus:border-indigo-500 focus:ring-indigo-500"
+                                    @input="setPoints(p, $event.target.value)"
+                                    @focus="$event.target.select()"
+                                />
+                                pts = <span class="font-medium tabular-nums text-gray-800">{{ money(p.amount) }}</span>
+                            </label>
                             <input
+                                v-else
                                 v-model.number="p.amount"
                                 :ref="(el) => p.method === 'cash' && (cashInput = el)"
                                 type="number"
@@ -145,6 +184,10 @@ defineExpose({ complete });
                     <button v-if="config.accept_card" type="button" class="pay-btn" @click="add('card')"><CreditCardIcon class="h-5 w-5" /> Card</button>
                     <button v-if="canAccount" type="button" class="pay-btn" :disabled="accountRoom <= 0" :title="`Available: ${money(accountRoom)}`" @click="addAccount">
                         <UserIcon class="h-5 w-5" /> On account
+                    </button>
+                    <button v-if="loyalty.enabled && canAccount" type="button" class="pay-btn" :disabled="!maxPoints || !!pointsRow"
+                        :title="maxPoints ? `Up to ${maxPoints} points (${money(maxPoints * loyalty.point_value)})` : `Needs at least ${loyalty.min_redeem} points`" @click="addPoints">
+                        <GiftIcon class="h-5 w-5" /> Points <span class="text-xs font-normal text-gray-500">{{ cart.customer.points || 0 }}</span>
                     </button>
                 </div>
                 <div>

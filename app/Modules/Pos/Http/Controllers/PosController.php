@@ -5,6 +5,7 @@ namespace App\Modules\Pos\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Contacts\Models\Contact;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Pos\Models\HeldCart;
 use App\Modules\Pos\Models\Register;
 use App\Modules\Pos\Models\RegisterSession;
@@ -15,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\Rule;
@@ -67,6 +69,7 @@ class PosController extends Controller
                 'branch_state' => $branch->state_code,
                 'accept_card' => (bool) settings('pos.accept_card'),
                 'accept_upi' => (bool) settings('pos.accept_upi'),
+                'loyalty' => LoyaltyService::rules(),
                 'print_after_sale' => (bool) settings('pos.print_after_sale'),
                 'receipt_size' => settings('pos.receipt_size'),
                 'beep_on_scan' => (bool) settings('pos.beep_on_scan'),
@@ -75,7 +78,17 @@ class PosController extends Controller
             'lastSale' => Sale::where('register_session_id', $session->id)->latest('id')->first(['id', 'invoice_no', 'grand_total']),
             'lockUsers' => $this->lockUsers(),
             'recallId' => $request->integer('recall') ?: null,
+            'popularIds' => $this->popularIds($branch->id),
         ]);
+    }
+
+    /** Best-selling SKUs at this branch over the last 30 days — quick picks on the billing screen. */
+    private function popularIds(int $branchId): array
+    {
+        return DB::table('sale_items as si')->join('sales as s', 's.id', '=', 'si.sale_id')
+            ->join('product_variants as pv', 'pv.id', '=', 'si.product_variant_id')->whereNull('pv.deleted_at')->where('pv.is_active', true)
+            ->where('s.branch_id', $branchId)->where('s.status', Sale::COMPLETED)->where('s.sold_at', '>=', now()->subDays(30))
+            ->groupBy('si.product_variant_id')->orderByRaw('SUM(si.quantity) DESC')->limit(12)->pluck('si.product_variant_id')->all();
     }
 
     public function openRegister(Request $request): RedirectResponse

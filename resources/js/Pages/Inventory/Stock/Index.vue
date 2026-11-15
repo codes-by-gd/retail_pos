@@ -1,4 +1,5 @@
 <script setup>
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Card from '@/Components/Card.vue';
@@ -22,14 +23,10 @@ const props = defineProps({
 
 const { can } = usePermissions();
 
-const filters = reactive({
+const filters = useListFilters('stock.index', {
     search: props.filters.search ?? '',
     category_id: props.filters.category_id ? Number(props.filters.category_id) : null,
     level: props.filters.level ?? null,
-});
-watch(filters, () => {
-    const query = Object.fromEntries(Object.entries(filters).filter(([, v]) => v));
-    router.get(route('stock.index'), query, { preserveState: true, preserveScroll: true, replace: true });
 });
 
 const status = (r) => {

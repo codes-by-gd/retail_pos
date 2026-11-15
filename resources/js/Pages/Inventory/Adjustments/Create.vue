@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
 import InputError from '@/Components/InputError.vue';
@@ -72,6 +73,7 @@ const submit = () =>
             })),
         }))
         .post(route('stock-adjustments.store'));
+useUnsavedGuard(() => form.items.length > 0 && !form.processing && !form.wasSuccessful);
 </script>
 
 <template>

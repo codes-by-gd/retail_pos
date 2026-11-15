@@ -1,4 +1,6 @@
 <script setup>
+import DateRangeFilter from '@/Components/DateRangeFilter.vue';
+import { useListFilters } from '@/composables/useListFilters';
 import BarList from '@/Components/BarList.vue';
 import Card from '@/Components/Card.vue';
 import ConfirmModal from '@/Components/ConfirmModal.vue';
@@ -18,7 +20,7 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { date, money } from '@/utils/format';
 import { LockClosedIcon, PaperClipIcon, PencilSquareIcon, PlusIcon, TagIcon, TrashIcon } from '@heroicons/vue/24/outline';
 import { Link, router, useForm } from '@inertiajs/vue3';
-import { computed, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 
 const props = defineProps({
     expenses: { type: Object, required: true },
@@ -30,11 +32,10 @@ const props = defineProps({
     today: { type: String, required: true },
 });
 
-const filters = reactive({
+const filters = useListFilters('expenses.index', {
     from: props.filters.from, to: props.filters.to, search: props.filters.search ?? '',
     category: props.filters.category ? Number(props.filters.category) : null, method: props.filters.method ?? null,
 });
-watch(filters, () => router.get(route('expenses.index'), Object.fromEntries(Object.entries(filters).filter(([, v]) => v)), { preserveState: true, preserveScroll: true, replace: true }));
 
 const methodLabel = Object.fromEntries(props.methods.map((m) => [m.value, m.label]));
 const activeCategories = computed(() => props.categories.filter((c) => c.active || c.value === form.expense_category_id));
@@ -62,6 +63,7 @@ const submit = () => {
     form.transform((d) => ({ ...d, register_session_id: d.method === 'cash' ? d.register_session_id : null, ...(editing.value ? { _method: 'put' } : {}) }));
     editing.value ? form.post(route('expenses.update', editing.value.id), options) : form.post(route('expenses.store'), options);
 };
+onMounted(() => new URLSearchParams(window.location.search).has('add') && openCreate());
 const destroy = () => router.delete(route('expenses.destroy', deleting.value.id), { preserveScroll: true, onFinish: () => (deleting.value = null) });
 
 const columns = [
@@ -87,8 +89,7 @@ const columns = [
             <Card :padded="false" class="xl:col-span-2">
                 <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 sm:grid-cols-2 lg:grid-cols-5">
                     <SearchInput v-model="filters.search" class="lg:col-span-1" placeholder="Ref., payee, note…" />
-                    <TextInput v-model="filters.from" type="date" aria-label="From" />
-                    <TextInput v-model="filters.to" type="date" aria-label="To" />
+                    <DateRangeFilter v-model:from="filters.from" v-model:to="filters.to" :allow-any="false" />
                     <SelectInput v-model="filters.category" :options="categories" placeholder="All categories" />
                     <SelectInput v-model="filters.method" :options="methods" placeholder="Any mode" />
                 </div>

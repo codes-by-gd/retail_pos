@@ -3,6 +3,7 @@
 namespace App\Modules\Sales\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Sales\Models\Sale;
 use App\Modules\Sales\Models\SalePayment;
 use App\Modules\Sales\Models\SaleReturn;
@@ -25,6 +26,7 @@ class PrintController extends Controller
             'payments' => $sale->payments->map(fn ($p) => ['label' => SalePayment::LABELS[$p->method] ?? $p->method, 'amount' => $p->amount, 'reference' => $p->reference]),
             'hsnSummary' => $this->hsnSummary($sale->items),
             'words' => AmountInWords::rupees($sale->grand_total),
+            'pointsBalance' => ($sale->points_earned || $sale->points_redeemed) ? app(LoyaltyService::class)->balance($sale->customer_id) : null,
             'placeOfSupply' => IndianStates::name($sale->place_of_supply).' ('.$sale->place_of_supply.')',
         ]);
     }

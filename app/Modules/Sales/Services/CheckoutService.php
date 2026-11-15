@@ -10,6 +10,7 @@ use App\Modules\Contacts\Services\PaymentService;
 use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Models\ProductVariant;
 use App\Modules\Inventory\Services\StockService;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Notifications\Services\Alerts;
 use App\Modules\Pos\Models\HeldCart;
 use App\Modules\Pos\Models\RegisterSession;
@@ -36,6 +37,7 @@ class CheckoutService
         private ContactLedgerService $ledger,
         private DocumentNumberService $numbers,
         private RegisterService $registers,
+        private LoyaltyService $loyalty,
     ) {}
 
     /**
@@ -211,6 +213,7 @@ class CheckoutService
             }
 
             $this->postToLedger($sale, $customer, $payments);
+            $this->loyalty->afterSale($sale, $customer, $payments['points'], $user);
 
             if (! empty($data['held_cart_id'])) {
                 HeldCart::where('id', $data['held_cart_id'])->where('branch_id', $branch->id)->delete();
@@ -246,6 +249,10 @@ class CheckoutService
         );
 
         $enabled = [SalePayment::CASH, SalePayment::ACCOUNT, SalePayment::EXCHANGE];
+        if (LoyaltyService::enabled()) {
+            $enabled[] = SalePayment::POINTS;
+        }
+        $points = 0;
         if (settings('pos.accept_card')) {
             $enabled[] = SalePayment::CARD;
         }
@@ -273,6 +280,17 @@ class CheckoutService
                 $row['sale_return_id'] = $return->id;
                 $row['reference'] = $return->credit_note_no;
             }
+            if ($p['method'] === SalePayment::POINTS) {
+                if ($points) {
+                    $this->fail("payments.$i.method", 'Use loyalty points only once per bill.');
+                }
+                try {
+                    $points = $this->loyalty->checkRedemption($customer, $row['amount'], (string) $grand);
+                } catch (\DomainException $e) {
+                    $this->fail("payments.$i.amount", $e->getMessage());
+                }
+                $row['reference'] = "{$points} points";
+            }
             $rows[] = $row;
         }
 
@@ -283,7 +301,7 @@ class CheckoutService
 
         $change = $total->minus($grand);
         if ($change->isGreaterThan($sum(SalePayment::CASH, SalePayment::EXCHANGE))) {
-            $this->fail('payments', 'Card, UPI and on-account amounts cannot be more than the bill.');
+            $this->fail('payments', 'Card, UPI, points and on-account amounts cannot be more than the bill.');
         }
 
         $account = $sum(SalePayment::ACCOUNT);
@@ -299,9 +317,10 @@ class CheckoutService
 
         // Value settled now: cash/card/UPI and exchange vouchers, minus change given back.
         // (An exchange credit note is a voucher, not account credit — it counts like money for whoever spends it.)
-        $settled = $sum(SalePayment::CASH, SalePayment::CARD, SalePayment::UPI, SalePayment::EXCHANGE)->minus($change);
+        // Loyalty points count the same way: the customer paid with value they had earned.
+        $settled = $sum(SalePayment::CASH, SalePayment::CARD, SalePayment::UPI, SalePayment::EXCHANGE, SalePayment::POINTS)->minus($change);
 
-        return compact('rows', 'total', 'change', 'account', 'settled');
+        return compact('rows', 'total', 'change', 'account', 'settled', 'points');
     }
 
     /** Named customers only: sale debit, money settled now credit (or refund debit for exchange excess). */

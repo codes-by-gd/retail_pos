@@ -1,6 +1,6 @@
 # Contacts
 
-**Status:** ✅ done (Phase 2, 2026-11-16) · loyalty points ⏳ later
+**Status:** ✅ done (Phase 2; loyalty points Phase 7)
 **Purpose:** Customers and suppliers, their details, and how much money is owed either way.
 
 ## Key concepts
@@ -21,7 +21,8 @@
 - ✅ Delete only when the contact has no transactions (other than an opening balance); otherwise deactivate
 - ✅ CSV import (create, or update by `code`; per-row errors) and export, per customers / suppliers
 - ✅ JSON endpoints for the POS / purchases: search (exact phone match first) and quick-add customer
-- ⏳ Loyalty points (earn & redeem), WhatsApp/SMS birthday greetings (later)
+- ✅ Loyalty points: balance, history and adjustments on the customer page — see [Loyalty](loyalty.md)
+- ⏳ WhatsApp/SMS birthday greetings (later)
 - ✅ Receive payment / pay supplier from the contact page; unpaid bills list (overdue flag from supplier payment terms) — see [Orders](orders.md#payments-paymentsmanage)
 
 ## Screens

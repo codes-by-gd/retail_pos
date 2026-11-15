@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
 import PageHeader from '@/Components/PageHeader.vue';
@@ -41,6 +42,7 @@ const toggleBranch = (id) => {
 const submit = () => {
     editing.value ? form.put(route('users.update', props.user.id)) : form.post(route('users.store'));
 };
+useUnsavedGuard(() => form.isDirty && !form.processing && !form.wasSuccessful);
 </script>
 
 <template>

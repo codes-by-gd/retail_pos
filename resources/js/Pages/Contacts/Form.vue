@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
 import PageHeader from '@/Components/PageHeader.vue';
@@ -75,6 +76,7 @@ const submit = () => {
     }));
     editing.value ? form.put(route(`${plural.value}.update`, props.contact.id)) : form.post(route(`${plural.value}.store`));
 };
+useUnsavedGuard(() => form.isDirty && !form.processing && !form.wasSuccessful);
 </script>
 
 <template>

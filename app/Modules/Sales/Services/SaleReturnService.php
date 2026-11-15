@@ -8,6 +8,7 @@ use App\Modules\Contacts\Services\ContactLedgerService;
 use App\Modules\Contacts\Services\PaymentService;
 use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Services\StockService;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Pos\Models\RegisterSession;
 use App\Modules\Pos\Services\RegisterService;
 use App\Modules\Sales\Models\Sale;
@@ -156,6 +157,7 @@ class SaleReturnService
             }
 
             activity()->causedBy($user)->performedOn($return)->withProperties(['sale' => $sale->invoice_no, 'total' => (string) $total, 'refund' => $refundMethod])->log('Sale return');
+            app(LoyaltyService::class)->afterReturn($return, $user);
 
             return $return->fresh('items');
         });

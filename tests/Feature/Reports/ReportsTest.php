@@ -145,9 +145,13 @@ it('fills the dashboard with today\'s figures and hides profit without permissio
         ->and($data['kpis']['returns']['value'])->toEqual(549)->and($data['kpis']['returns']['count'])->toEqual(1)
         ->and($data['kpis']['profit']['value'])->toBeGreaterThan(0)
         ->and($data['paymentModes'][0])->method->toBe('upi')->share->toEqual(100)
-        ->and(collect($data['trend'])->sum('value'))->toEqual(549)
-        ->and($data['topProducts'][0]['qty'])->toEqual(1)
-        ->and($data['drawers'][0]['expected'])->toEqual(1000 - 549);   // float 1000, cash refund 549
+        ->and(collect($data['trend'])->sum('value'))->toEqual(549);
+
+    // secondary panels arrive as a deferred prop
+    posAs($this->ctx)->get(route('dashboard'))->assertInertia(fn ($p) => $p->missing('details')
+        ->loadDeferredProps(fn ($reload) => $reload
+            ->where('details.topProducts.0.qty', 1)
+            ->where('details.drawers.0.expected', 451)));   // float 1000 − cash refund 549
 
     $cashier = userWithRole('Cashier', [$this->ctx->branch]);
     $data = $this->actingAs($cashier)->get(route('dashboard', ['branch' => 'all', 'period' => '7d']))->viewData('page')['props'];

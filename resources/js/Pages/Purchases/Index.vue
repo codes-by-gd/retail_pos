@@ -1,4 +1,6 @@
 <script setup>
+import DateRangeFilter from '@/Components/DateRangeFilter.vue';
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Card from '@/Components/Card.vue';
@@ -17,8 +19,7 @@ import { reactive, watch } from 'vue';
 
 const props = defineProps({ purchases: { type: Object, required: true }, filters: { type: Object, required: true }, totals: { type: Object, required: true } });
 const { can } = usePermissions();
-const filters = reactive({ search: props.filters.search ?? '', payment_status: props.filters.payment_status ?? null, from: props.filters.from ?? '', to: props.filters.to ?? '' });
-watch(filters, () => router.get(route('purchases.index'), Object.fromEntries(Object.entries(filters).filter(([, v]) => v)), { preserveState: true, replace: true }));
+const filters = useListFilters('purchases.index', { search: props.filters.search ?? '', payment_status: props.filters.payment_status ?? null, from: props.filters.from ?? '', to: props.filters.to ?? '' });
 const color = { paid: 'green', partial: 'amber', due: 'red' };
 const columns = [
     { key: 'reference_no', label: 'Purchase' }, { key: 'supplier', label: 'Supplier' },
@@ -38,8 +39,7 @@ const columns = [
             <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 md:grid-cols-5">
                 <SearchInput v-model="filters.search" class="md:col-span-2" placeholder="Number, supplier bill no. or supplier…" />
                 <SelectInput v-model="filters.payment_status" :options="[{ value: 'due', label: 'Unpaid' }, { value: 'partial', label: 'Part paid' }, { value: 'paid', label: 'Paid' }]" placeholder="Any payment" />
-                <TextInput v-model="filters.from" type="date" aria-label="From" />
-                <TextInput v-model="filters.to" type="date" aria-label="To" />
+                <DateRangeFilter v-model:from="filters.from" v-model:to="filters.to" />
             </div>
             <DataTable :columns="columns" :rows="purchases.data" empty="No purchases yet.">
                 <template #reference_no="{ row }">

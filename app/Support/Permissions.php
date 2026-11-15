@@ -45,6 +45,7 @@ final class Permissions
             'customers.manage' => 'Create / edit customers',
             'suppliers.view' => 'View suppliers',
             'suppliers.manage' => 'Create / edit suppliers',
+            'loyalty.adjust' => 'Adjust customers\' loyalty points',
         ],
         'Expenses' => [
             'expenses.manage' => 'Manage expenses',

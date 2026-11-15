@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import ContactPicker from '@/Components/ContactPicker.vue';
 import FormField from '@/Components/FormField.vue';
@@ -82,6 +83,7 @@ const submit = () => {
     }));
     form.post(route('purchases.store'));
 };
+useUnsavedGuard(() => (form.isDirty || lines.value.length > (props.prefill?.items?.length ?? 0)) && !form.processing && !form.wasSuccessful);
 </script>
 
 <template>

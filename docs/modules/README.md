@@ -14,3 +14,5 @@ Each page follows the same structure: **Status · Purpose · Features · Screens
 | [Reports](reports.md) | 5–6 | ✅ done |
 | [Notifications](notifications.md) | 6 | ✅ done |
 | [Expenses](expenses.md) | 6 | ✅ done |
+| [Loyalty points](loyalty.md) | 7 | ✅ done |
+| [UI & UX conventions](ui.md) | 7 | ✅ done |

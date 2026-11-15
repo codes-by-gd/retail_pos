@@ -125,4 +125,16 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-041 · Backups as gzip SQL dumps, restore from the CLI — 2026-11-15
 **Decision:** `mysqldump --single-transaction` (no locks during billing), password via `MYSQL_PWD`, files only under `storage/app/backups` with a strict file-name pattern (no path traversal). Restoring replaces all data, so there is no restore button — it is a documented server command.
 
+### D-042 · Loyalty points are a payment method — 2026-11-16
+**Decision:** redeeming points is a tender (`points`) worth points × point value, not a discount, so GST, the bill total and the JS/PHP calculators are untouched; the customer's account is credited like money (as with exchange vouchers). Points are earned on the bill total minus the part paid with points. Points used are not restored on a return (refund by the chosen method); a cancellation restores them. **Trade-off:** tax is charged on the full value; a discount treatment would lower GST but change the calculators.
+
+### D-043 · Points ledger with FIFO batches — 2026-11-16
+**Decision:** append-only `loyalty_transactions`; each + row keeps `remaining`, so spending uses the oldest batch first and expiry removes exactly what is left of each batch. Balance = SUM(points).
+
+### D-044 · Dark mode by variable palettes — 2026-11-16
+**Decision:** instead of adding `dark:` classes to every page, the used Tailwind palettes are CSS variables with separate background (`--c-*`) and text (`--t-*`) maps, flipped under `.dark`. One change themes every existing and future page; coloured buttons keep white text. New colours must go through these palettes.
+
+### D-045 · List filters remembered per session, forms guarded — 2026-11-16
+**Decision:** filters live in the URL (shareable) and are also saved in sessionStorage per list; opening a list without a query restores them. Forms with unsaved changes ask before navigating away.
+
 ### Open questions

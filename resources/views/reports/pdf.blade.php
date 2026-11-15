@@ -20,6 +20,8 @@
 </head>
 <body>
     <div class="foot">Printed {{ now()->format('d M Y, h:i A') }} · amounts in Rs.</div>
+    @php($logo = \App\Support\Branding::logoDataUri())
+    @if ($logo)<img src="{{ $logo }}" alt="" style="float: right; max-height: 14mm; max-width: 40mm">@endif
     <h1>{{ $header[1] ?? '' }}</h1>
     <div class="meta">{{ $header[0] ?? '' }} · {{ implode(' · ', array_slice($header, 2)) }}</div>
 

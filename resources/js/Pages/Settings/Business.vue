@@ -3,20 +3,31 @@ import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import SelectInput from '@/Components/SelectInput.vue';
 import TextareaInput from '@/Components/TextareaInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Toggle from '@/Components/Toggle.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useForm } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
+import { ref } from 'vue';
 
 const props = defineProps({
     settings: { type: Object, required: true },
     states: { type: Array, required: true },
     mailConfigured: { type: Boolean, default: false },
+    logoUrl: { type: String, default: null },
 });
 
-const { business, invoice, tax, pos, alerts } = props.settings;
+const logoForm = useForm({ logo: null });
+const logoInput = ref(null);
+const uploadLogo = (e) => {
+    logoForm.logo = e.target.files[0] ?? null;
+    if (logoForm.logo) logoForm.post(route('settings.business.logo'), { preserveScroll: true, forceFormData: true, onFinish: () => (e.target.value = '') });
+};
+const removeLogo = () => router.delete(route('settings.business.logo.destroy'), { preserveScroll: true });
+
+const { business, invoice, tax, pos, alerts, loyalty } = props.settings;
 
 const form = useForm({
     business: {
@@ -41,6 +52,14 @@ const form = useForm({
         accept_card: !!pos.accept_card,
         accept_upi: !!pos.accept_upi,
     },
+    loyalty: {
+        enabled: !!loyalty?.enabled,
+        earn_per: Number(loyalty?.earn_per ?? 100),
+        point_value: Number(loyalty?.point_value ?? 1),
+        min_redeem: Number(loyalty?.min_redeem ?? 100),
+        max_redeem_percent: Number(loyalty?.max_redeem_percent ?? 50),
+        expiry_months: Number(loyalty?.expiry_months ?? 12),
+    },
     alerts: {
         discount_percent: Number(alerts?.discount_percent ?? 20),
         cash_difference: Number(alerts?.cash_difference ?? 100),
@@ -62,6 +81,21 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
         <PageHeader title="Business settings" description="Details printed on invoices and defaults used across the system." />
 
         <form class="space-y-6" @submit.prevent="submit">
+            <Card title="Logo" description="Printed on receipts (in black & white on thermal printers), invoices and reports, and shown in the app header. PNG, JPG or WebP up to 1 MB; a wide logo on a white or transparent background works best.">
+                <div class="flex flex-wrap items-center gap-4">
+                    <div class="flex h-20 w-48 items-center justify-center rounded-md border border-dashed border-gray-300 bg-white p-2">
+                        <img v-if="logoUrl" :src="logoUrl" alt="Shop logo" class="max-h-full max-w-full object-contain" />
+                        <span v-else class="text-xs text-gray-400">No logo</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <input ref="logoInput" type="file" accept="image/png,image/jpeg,image/webp" class="hidden" @change="uploadLogo" />
+                        <SecondaryButton type="button" :disabled="logoForm.processing" @click="logoInput.click()">{{ logoUrl ? 'Change logo' : 'Upload logo' }}</SecondaryButton>
+                        <SecondaryButton v-if="logoUrl" type="button" @click="removeLogo">Remove</SecondaryButton>
+                    </div>
+                    <p v-if="logoForm.errors.logo" class="w-full text-sm text-red-600">{{ logoForm.errors.logo }}</p>
+                </div>
+            </Card>
+
             <Card title="Business profile" description="Shown on receipts and GST invoices.">
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                     <FormField label="Business / store name" :error="form.errors['business.name']" required>
@@ -149,6 +183,20 @@ const submit = () => form.put(route('settings.business.update'), { preserveScrol
                     </div>
                 </Card>
             </div>
+
+            <Card title="Loyalty points" description="Named customers earn points on every bill and can pay with them at the POS (not the walk-in customer).">
+                <Toggle v-model="form.loyalty.enabled" label="Loyalty points on" />
+                <div v-if="form.loyalty.enabled" class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                    <FormField label="₹ spent for 1 point" :error="form.errors['loyalty.earn_per']"><TextInput v-model.number="form.loyalty.earn_per" type="number" min="1" /></FormField>
+                    <FormField label="1 point is worth (₹)" :error="form.errors['loyalty.point_value']"><TextInput v-model.number="form.loyalty.point_value" type="number" min="0.01" step="0.01" /></FormField>
+                    <FormField label="Min. points to use" :error="form.errors['loyalty.min_redeem']"><TextInput v-model.number="form.loyalty.min_redeem" type="number" min="1" /></FormField>
+                    <FormField label="Max. % of a bill" :error="form.errors['loyalty.max_redeem_percent']"><TextInput v-model.number="form.loyalty.max_redeem_percent" type="number" min="1" max="100" /></FormField>
+                    <FormField label="Expire after (months)" hint="0 = never" :error="form.errors['loyalty.expiry_months']"><TextInput v-model.number="form.loyalty.expiry_months" type="number" min="0" /></FormField>
+                </div>
+                <p v-if="form.loyalty.enabled" class="mt-3 text-xs text-gray-500">
+                    A ₹{{ form.loyalty.earn_per * 10 }} bill earns 10 points, worth ₹{{ (10 * form.loyalty.point_value).toFixed(2) }} — about {{ ((form.loyalty.point_value / form.loyalty.earn_per) * 100).toFixed(1) }}% back.
+                </p>
+            </Card>
 
             <Card title="Alerts" description="When managers get a notification. Each person chooses which alerts they want on their Notifications page.">
                 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">

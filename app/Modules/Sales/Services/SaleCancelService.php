@@ -7,6 +7,7 @@ use App\Modules\Contacts\Enums\LedgerEntryType;
 use App\Modules\Contacts\Services\ContactLedgerService;
 use App\Modules\Inventory\Enums\StockMovementType;
 use App\Modules\Inventory\Services\StockService;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Notifications\Services\Alerts;
 use App\Modules\Pos\Models\RegisterSession;
 use App\Modules\Sales\Models\Sale;
@@ -59,7 +60,7 @@ class SaleCancelService
                     note: "Cancelled {$sale->invoice_no}: {$reason}", branchId: $sale->branch_id);
 
                 // Undo what was settled at the counter (cash/card/UPI/exchange voucher minus change).
-                $settled = $sale->payments->whereIn('method', [SalePayment::CASH, SalePayment::CARD, SalePayment::UPI, SalePayment::EXCHANGE])
+                $settled = $sale->payments->whereIn('method', [SalePayment::CASH, SalePayment::CARD, SalePayment::UPI, SalePayment::EXCHANGE, SalePayment::POINTS])
                     ->reduce(fn ($s, $p) => $s->plus($p->amount), BigDecimal::zero())->minus($sale->change_given);
                 if ($settled->isPositive()) {
                     $this->ledger->record($sale->customer, LedgerEntryType::Refund, debit: (string) $settled, reference: $sale,
@@ -79,6 +80,7 @@ class SaleCancelService
             ]);
 
             activity()->causedBy($user)->performedOn($sale)->withProperties(['invoice' => $sale->invoice_no, 'total' => $sale->grand_total, 'reason' => $reason])->log('Sale cancelled');
+            app(LoyaltyService::class)->afterCancel($sale, $user);
             rescue(fn () => app(Alerts::class)->saleCancelled($sale, $user));
 
             return $sale;

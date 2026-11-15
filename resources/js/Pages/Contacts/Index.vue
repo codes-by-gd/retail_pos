@@ -1,4 +1,5 @@
 <script setup>
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Card from '@/Components/Card.vue';
@@ -25,16 +26,12 @@ const { can } = usePermissions();
 const isCustomer = computed(() => props.kind === 'customer');
 const plural = computed(() => `${props.kind}s`);
 
-const filters = reactive({
+const filters = useListFilters(`${props.kind}s.index`, {
     search: props.filters.search ?? '',
     group_id: props.filters.group_id ? Number(props.filters.group_id) : null,
     status: props.filters.status ?? null,
     balance: props.filters.balance ?? null,
     occasion: props.filters.occasion ?? null,
-});
-watch(filters, () => {
-    const query = Object.fromEntries(Object.entries(filters).filter(([, v]) => v));
-    router.get(route(`${plural.value}.index`), query, { preserveState: true, preserveScroll: true, replace: true });
 });
 
 const balanceOptions = computed(() =>

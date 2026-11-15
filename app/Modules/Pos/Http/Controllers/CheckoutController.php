@@ -3,6 +3,7 @@
 namespace App\Modules\Pos\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Sales\Models\SalePayment;
 use App\Modules\Sales\Services\CheckoutService;
 use Illuminate\Http\JsonResponse;
@@ -52,6 +53,10 @@ class CheckoutController extends Controller
                 'account_amount' => (float) $sale->account_amount,
                 'customer' => $sale->customer_name,
                 'print_url' => route('sales.print', $sale),
+                'payments' => $sale->payments()->get(['method', 'amount', 'reference'])->map(fn ($p) => ['label' => SalePayment::LABELS[$p->method] ?? $p->method, 'amount' => (float) $p->amount]),
+                'points_earned' => $sale->points_earned,
+                'points_redeemed' => $sale->points_redeemed,
+                'points_balance' => ($sale->points_earned || $sale->points_redeemed) ? app(LoyaltyService::class)->balance($sale->customer_id) : null,
             ],
         ], 201);
     }

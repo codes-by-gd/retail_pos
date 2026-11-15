@@ -1,4 +1,5 @@
 <script setup>
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Card from '@/Components/Card.vue';
@@ -23,17 +24,13 @@ const props = defineProps({
 
 const { can } = usePermissions();
 
-const filters = reactive({
+const filters = useListFilters('products.index', {
     search: props.filters.search ?? '',
     category_id: props.filters.category_id ? Number(props.filters.category_id) : null,
     brand_id: props.filters.brand_id ? Number(props.filters.brand_id) : null,
     status: props.filters.status ?? null,
 });
 
-watch(filters, () => {
-    const query = Object.fromEntries(Object.entries(filters).filter(([, v]) => v));
-    router.get(route('products.index'), query, { preserveState: true, preserveScroll: true, replace: true });
-});
 
 // Selection for label printing (variant ids of the selected products)
 const selected = ref(new Set());

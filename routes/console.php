@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Modules\Notifications\Services\Alerts;
 use App\Modules\Settings\Services\BackupService;
 use Illuminate\Support\Carbon;
@@ -31,5 +32,10 @@ Artisan::command('pos:backup', function (BackupService $backups, Alerts $alerts)
     }
 })->purpose('Back up the database to storage/app/backups and delete old backups');
 
+Artisan::command('pos:expire-points', function (LoyaltyService $loyalty) {
+    $this->info($loyalty->expire().' loyalty point(s) expired.');
+})->purpose('Expire loyalty points past their expiry date');
+
+Schedule::command('pos:expire-points')->dailyAt('00:30');
 Schedule::command('pos:daily-alerts')->dailyAt('21:45');
 Schedule::command('pos:backup')->dailyAt('23:30');

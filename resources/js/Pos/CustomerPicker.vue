@@ -86,6 +86,7 @@ const save = async () => {
         </div>
         <Badge v-if="cart.customer?.price_type === 'wholesale'" color="amber">Wholesale</Badge>
         <Badge v-if="cart.customer?.discount_percent > 0" color="green">{{ cart.customer.discount_percent }}% member</Badge>
+        <Badge v-if="!cart.customer?.is_walk_in && cart.customer?.points > 0" color="amber" :title="`${cart.customer.points} loyalty points`">★ {{ cart.customer.points }} pts</Badge>
         <Badge v-if="cart.interState" color="indigo">IGST</Badge>
         <span class="text-xs font-medium text-indigo-600">Change</span>
     </button>
@@ -114,6 +115,7 @@ const save = async () => {
                                 <span v-if="c.balance > 0" class="block text-amber-700">Owes {{ money(c.balance) }}</span>
                                 <span v-else-if="c.balance < 0" class="block text-indigo-700">Credit {{ money(-c.balance) }}</span>
                                 <span v-if="c.discount_percent" class="block text-green-700">{{ c.discount_percent }}% off</span>
+                                <span v-if="c.points" class="block text-amber-700">★ {{ c.points }} pts</span>
                             </span>
                         </button>
                     </li>

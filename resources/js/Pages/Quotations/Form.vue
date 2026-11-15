@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import ContactPicker from '@/Components/ContactPicker.vue';
 import FormField from '@/Components/FormField.vue';
@@ -24,6 +25,7 @@ const props = defineProps({
 const page = usePage();
 const customer = ref(props.quotation?.customer ?? null);
 const lines = ref(props.quotation?.items ?? []);
+const initialLines = JSON.stringify(lines.value);
 const form = useForm({
     customer_name: props.quotation?.customer_name ?? '',
     customer_phone: props.quotation?.customer_phone ?? '',
@@ -66,6 +68,7 @@ const submit = () => {
     }));
     props.quotation ? form.put(route('quotations.update', props.quotation.id)) : form.post(route('quotations.store'));
 };
+useUnsavedGuard(() => (form.isDirty || JSON.stringify(lines.value) !== initialLines) && !form.processing && !form.wasSuccessful);
 </script>
 
 <template>

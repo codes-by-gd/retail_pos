@@ -7,10 +7,14 @@ import { money, qty } from '@/utils/format';
 import { MagnifyingGlassIcon, QrCodeIcon } from '@heroicons/vue/24/outline';
 import { useDebounceFn } from '@vueuse/core';
 import axios from 'axios';
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { beep } from './helpers';
 
-const props = defineProps({ beepOnScan: { type: Boolean, default: true } });
+const props = defineProps({
+    beepOnScan: { type: Boolean, default: true },
+    popularIds: { type: Array, default: () => [] },
+    branchId: { type: Number, default: null },
+});
 const emit = defineEmits(['add']);
 
 const term = ref('');
@@ -50,8 +54,43 @@ const groups = computed(() => {
     return [...map.values()];
 });
 
+// ---- quick picks: best sellers here + recently added on this counter ----
+const RECENT_KEY = `pos-recent-${props.branchId}`;
+const readRecent = () => {
+    try {
+        return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+    } catch {
+        return [];
+    }
+};
+const recentIds = ref(readRecent());
+const quick = ref({});
+const loadQuick = async () => {
+    const ids = [...new Set([...recentIds.value, ...props.popularIds])];
+    if (!ids.length) return;
+    try {
+        const { data } = await axios.get(route('variants.search'), { params: { ids } });
+        quick.value = Object.fromEntries(data.data.map((v) => [v.id, v]));
+    } catch {
+        /* quick picks are optional */
+    }
+};
+const remember = (id) => {
+    recentIds.value = [id, ...recentIds.value.filter((x) => x !== id)].slice(0, 8);
+    try {
+        localStorage.setItem(RECENT_KEY, JSON.stringify(recentIds.value));
+    } catch {
+        /* ignore */
+    }
+};
+const recentList = computed(() => recentIds.value.map((id) => quick.value[id]).filter(Boolean));
+const popularList = computed(() => props.popularIds.map((id) => quick.value[id]).filter((v) => v && !recentIds.value.includes(v.id)).slice(0, 12));
+onMounted(loadQuick);
+
 const pick = (variant) => {
     emit('add', variant);
+    remember(variant.id);
+    if (!quick.value[variant.id]) quick.value[variant.id] = variant;
     term.value = '';
     results.value = [];
     message.value = '';
@@ -77,7 +116,7 @@ const move = (step) => {
     active.value = (active.value + step + results.value.length) % results.value.length;
 };
 
-defineExpose({ focus: () => input.value?.focus() });
+defineExpose({ focus: () => input.value?.focus(), refreshQuick: loadQuick });
 </script>
 
 <template>
@@ -135,7 +174,29 @@ defineExpose({ focus: () => input.value?.focus() });
                     </button>
                 </div>
             </div>
-            <div v-if="!groups.length && !message" class="flex h-full flex-col items-center justify-center text-center text-sm text-gray-400">
+            <template v-if="!groups.length && !message && !term">
+                <div v-for="list in [{ title: 'Recently added', items: recentList }, { title: 'Popular here (30 days)', items: popularList }]" :key="list.title">
+                    <template v-if="list.items.length">
+                        <p class="mb-1.5 mt-1 text-[11px] font-semibold uppercase tracking-wider text-gray-400">{{ list.title }}</p>
+                        <div class="mb-3 grid grid-cols-2 gap-2 sm:grid-cols-3 2xl:grid-cols-4">
+                            <button
+                                v-for="v in list.items"
+                                :key="`${list.title}-${v.id}`"
+                                type="button"
+                                class="min-h-[3.75rem] rounded-lg border px-3 py-2 text-left transition hover:border-indigo-400 hover:bg-indigo-50/40 active:scale-[0.98]"
+                                :class="v.track_stock && v.stock <= 0 ? 'border-red-200 bg-red-50' : 'border-gray-200 bg-white'"
+                                @click="pick(v)"
+                            >
+                                <span class="block truncate text-sm font-medium text-gray-900">{{ v.product_name }}</span>
+                                <span class="block truncate text-xs text-gray-500">
+                                    {{ v.variant_name ? `${v.variant_name} · ` : '' }}{{ money(v.selling_price) }}<template v-if="v.track_stock"> · {{ qty(v.stock) }} left</template>
+                                </span>
+                            </button>
+                        </div>
+                    </template>
+                </div>
+            </template>
+            <div v-if="!groups.length && !message && !recentList.length && !popularList.length" class="flex h-full flex-col items-center justify-center text-center text-sm text-gray-400">
                 <QrCodeIcon class="mb-2 h-12 w-12" />
                 <p>Scan a barcode tag, or type to search.</p>
                 <p class="mt-4 text-xs leading-6">

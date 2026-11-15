@@ -1,4 +1,5 @@
 <script setup>
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Card from '@/Components/Card.vue';
@@ -19,8 +20,7 @@ const props = defineProps({
     statuses: { type: Object, required: true },
 });
 
-const filters = reactive({ search: props.filters.search ?? '', status: props.filters.status ?? null });
-watch(filters, () => router.get(route('quotations.index'), Object.fromEntries(Object.entries(filters).filter(([, v]) => v)), { preserveState: true, replace: true }));
+const filters = useListFilters('quotations.index', { search: props.filters.search ?? '', status: props.filters.status ?? null });
 
 const color = { draft: 'gray', sent: 'indigo', accepted: 'green', rejected: 'red', converted: 'amber' };
 const columns = [

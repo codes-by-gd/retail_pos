@@ -2,6 +2,7 @@
 <table style="border:0">
     <tr>
         <td style="border:0; width:60%">
+            @include('print._logo')
             <h1>{{ $business['legal_name'] ?: $business['name'] }}</h1>
             <div>{{ $branch->name }}</div>
             <div class="small">{{ collect([$branch->address ?: $business['address'], $branch->city ?: $business['city'], $branch->pincode ?: $business['pincode']])->filter()->implode(', ') }}</div>

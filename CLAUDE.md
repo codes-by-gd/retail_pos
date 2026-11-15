@@ -18,6 +18,8 @@ Laravel 12 + Vue 3 (Inertia) + Tailwind POS for a **clothing store** (one busine
 - Exchange credit notes are vouchers: no ledger entry when issued; they credit whoever spends them.
 - Responsive grids need an explicit `grid-cols-1` (otherwise wide content stretches the page on phones).
 - Alerts: call `app(Alerts::class)->…` wrapped in `rescue()`; new alert types go in `NotificationTypes` (permissions decide recipients). Scheduled jobs live in `routes/console.php`.
+- UI: dark mode comes from CSS-variable palettes (gray, indigo, red, amber, green, pink) — never hard-code hex colours in classes; lists use `useListFilters`, forms `useUnsavedGuard`, periods `DateRangeFilter`; `DataTable` renders phone cards (see docs/modules/ui.md).
+- Loyalty points are a payment method (`points`), not a discount; all rules in `LoyaltyService`.
 - Reports: add to `ReportRegistry`, return typed `Section`s (screen + Excel/CSV/PDF for free). Compare DATE columns with `$f->dateRange()` — SQLite stores date casts as `Y-m-d 00:00:00`, so `BETWEEN 'd' AND 'd'` misses them. Bills count on bill date, returns on credit-note date.
 - Run tests on MySQL too before committing a phase (see docs/03-getting-started.md). Commit locally per phase; never push.
 

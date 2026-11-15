@@ -27,6 +27,7 @@ class DashboardController extends Controller
             'canAllBranches' => $allowed->count() > 1,
             'branchLabel' => $label,
             'data' => $branchIds ? $dashboard->build($request->user(), $period, $branchIds, $label) : null,
+            'details' => Inertia::defer(fn () => $branchIds ? $dashboard->details($request->user(), $period, $branchIds, $label) : null),
         ]);
     }
 }

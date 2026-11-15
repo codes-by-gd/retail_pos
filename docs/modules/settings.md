@@ -1,6 +1,6 @@
 # Settings
 
-**Status:** ✅ done (Phases 0–6) · logo upload and template designer ⏳ later
+**Status:** ✅ done (Phases 0–6) · template designer ⏳ later
 **Purpose:** Business identity, branches and the defaults every other module reads.
 
 ## Features
@@ -11,7 +11,8 @@
 - ✅ POS: allow negative stock, beep on scan, default receipt size (58 mm / 80 mm / A4)
 - ✅ Branches: create/edit/delete, code, state, optional own GSTIN, active flag
 - ✅ Current-branch switcher in the top bar
-- ⏳ Logo upload (P3, for receipts)
+- ✅ Logo upload (Phase 7): receipts (grayscale on thermal), A4 invoices, all prints, PDF reports, app header and login page
+- ✅ Loyalty rules (Phase 7) — see [Loyalty](loyalty.md)
 - ✅ Cash registers per branch (Phase 3)
 - ✅ Card / UPI on or off at the POS (Phase 3) · ⏳ custom payment methods later
 - ⏳ Receipt / label template designer (P1, P3)

@@ -12,7 +12,10 @@ import { date, money } from '@/utils/format';
 import PaymentFormModal from '@/Components/PaymentFormModal.vue';
 import { BanknotesIcon, PencilSquareIcon, PrinterIcon } from '@heroicons/vue/24/outline';
 import { Link } from '@inertiajs/vue3';
-import { router } from '@inertiajs/vue3';
+import { router, useForm } from '@inertiajs/vue3';
+import InputError from '@/Components/InputError.vue';
+import PrimaryButton from '@/Components/PrimaryButton.vue';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
 import { computed, reactive, ref, watch } from 'vue';
 
 const props = defineProps({
@@ -23,7 +26,12 @@ const props = defineProps({
     unpaidBills: { type: Array, default: () => [] },
     registers: { type: Array, default: () => [] },
     paymentMethods: { type: Array, default: () => [] },
+    loyalty: { type: Object, default: null },
 });
+const adjusting = ref(false);
+const showAllPoints = ref(false);
+const pointsForm = useForm({ points: '', note: '' });
+const adjustPoints = () => pointsForm.post(route('customers.loyalty.adjust', props.contact.id), { preserveScroll: true, onSuccess: () => { adjusting.value = false; pointsForm.reset(); } });
 const paying = ref(false);
 const direction = computed(() => (props.kind === 'customer' ? 'in' : 'out'));
 const unpaidTotal = computed(() => props.unpaidBills.reduce((s, b) => s + b.due, 0));
@@ -129,6 +137,40 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
                 </dl>
             </Card>
         </div>
+
+        <Card v-if="loyalty" class="mt-6" title="Loyalty points" :padded="false">
+            <template #actions>
+                <SecondaryButton v-if="can('loyalty.adjust')" type="button" @click="adjusting = !adjusting">Adjust points</SecondaryButton>
+            </template>
+            <div class="grid grid-cols-1 gap-4 border-b border-gray-100 p-5 sm:grid-cols-3">
+                <div><p class="text-xs text-gray-500">Balance</p><p class="text-2xl font-semibold tabular-nums text-gray-900">★ {{ loyalty.balance }}</p><p class="text-xs text-gray-500">worth {{ money(loyalty.value) }}</p></div>
+                <div v-if="loyalty.next_expiry"><p class="text-xs text-gray-500">Expiring next</p><p class="font-medium text-amber-700">{{ loyalty.next_expiry.points }} pts on {{ date(loyalty.next_expiry.date) }}</p></div>
+                <div v-if="!loyalty.enabled" class="text-xs text-amber-700">Loyalty is switched off in Settings; points can't be earned or used.</div>
+            </div>
+            <form v-if="adjusting" class="grid grid-cols-1 gap-3 border-b border-gray-100 bg-gray-50 p-5 sm:grid-cols-[8rem_1fr_auto] sm:items-start" @submit.prevent="adjustPoints">
+                <div><TextInput v-model="pointsForm.points" type="number" step="1" placeholder="+50 / −20" aria-label="Points" /><InputError :message="pointsForm.errors.points" /></div>
+                <div><TextInput v-model="pointsForm.note" placeholder="Reason (goodwill, correction…)" aria-label="Reason" /><InputError :message="pointsForm.errors.note" /></div>
+                <PrimaryButton :disabled="pointsForm.processing">Save</PrimaryButton>
+            </form>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <tbody class="divide-y divide-gray-100">
+                        <tr v-for="t in showAllPoints ? loyalty.history : loyalty.history.slice(0, 6)" :key="t.id">
+                            <td class="whitespace-nowrap px-4 py-2 text-gray-500">{{ date(t.date) }}</td>
+                            <td class="px-4 py-2">{{ t.type }}<p class="text-xs text-gray-500">{{ t.note }}<span v-if="t.expires_at"> · expires {{ date(t.expires_at) }}</span></p></td>
+                            <td class="px-4 py-2 text-right">
+                                <Link v-if="t.sale_id" :href="route('sales.show', t.sale_id)" class="text-xs text-indigo-600 hover:text-indigo-800">bill</Link>
+                            </td>
+                            <td class="whitespace-nowrap px-4 py-2 text-right font-medium tabular-nums" :class="t.points < 0 ? 'text-red-700' : 'text-green-700'">{{ t.points > 0 ? '+' : '' }}{{ t.points }}</td>
+                        </tr>
+                        <tr v-if="!loyalty.history.length"><td class="px-4 py-6 text-center text-gray-500">No points yet — they are earned on every bill.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <button v-if="loyalty.history.length > 6" type="button" class="block w-full border-t border-gray-100 py-2 text-center text-xs text-indigo-600 hover:bg-gray-50" @click="showAllPoints = !showAllPoints">
+                {{ showAllPoints ? 'Show less' : `Show all ${loyalty.history.length} recent entries` }}
+            </button>
+        </Card>
 
         <Card v-if="unpaidBills.length" class="mt-6" :title="`Unpaid bills (${unpaidBills.length})`" :description="`Total due ${money(unpaidTotal)}`" :padded="false">
             <table class="w-full text-sm">

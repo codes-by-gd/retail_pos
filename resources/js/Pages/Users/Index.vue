@@ -1,4 +1,5 @@
 <script setup>
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import Card from '@/Components/Card.vue';
 import DataTable from '@/Components/DataTable.vue';
@@ -21,16 +22,12 @@ const props = defineProps({
 
 const { can } = usePermissions();
 
-const filters = reactive({
+const filters = useListFilters('users.index', {
     search: props.filters.search ?? '',
     role: props.filters.role ?? null,
     status: props.filters.status ?? null,
 });
 
-watch(filters, () => {
-    const query = Object.fromEntries(Object.entries(filters).filter(([, v]) => v));
-    router.get(route('users.index'), query, { preserveState: true, preserveScroll: true, replace: true });
-});
 
 const columns = [
     { key: 'name', label: 'User' },

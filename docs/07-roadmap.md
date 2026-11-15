@@ -12,6 +12,7 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 | 4 | ✅ Done (2026-11-18) — Orders: sales list/cancel/reprint, quotations, purchase orders → GRN → bill, supplier payments, purchase returns, dues | ⏳ |
 | 5 | ✅ Done (2026-11-15) — Dashboard KPIs & charts; sales, profit, stock, register, outstanding and GST reports; Excel/PDF export | ⏳ |
 | 6 | ✅ Done (2026-11-15) — Notifications, expenses, audit log viewer, backups, performance pass | ⏳ |
+| 7 | ✅ Done (2026-11-16) — Logo, loyalty points, dark mode, command palette, mobile & POS UX, dashboard and list polish | ⏳ |
 
 ## Phase 0 checklist
 - [x] Laravel 12 + Breeze (Vue/Inertia) + Pest, Tailwind, Pinia, heroicons
@@ -98,7 +99,15 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 - [x] Performance: indexes for every date-range query; reports < 30 ms and dashboard ≈ 130 ms on the demo data; production checklist in Getting started
 - [x] Tests: 202 passing on SQLite and MySQL; new pages checked in Chrome at 3 screen sizes for Admin, Manager, Cashier and Stock Keeper
 
-All planned phases are complete. Next candidates are in "Later / optional" below.
+## Phase 7 checklist — logo, loyalty, UI/UX (2026-11-16)
+- [x] Shop logo on receipts, invoices, prints, PDF reports, app header and login
+- [x] Loyalty points: earn per ₹, redeem as payment with min/max rules, oldest-first use, expiry job, returns/cancellations, manual adjust (`loyalty.adjust`), receipt lines, customer page, report
+- [x] Dark mode (light/dark/system) for every screen; collapsible sidebar; Ctrl+K command palette with global search
+- [x] Phone card layout for lists, remembered list filters, shared date presets, unsaved-changes warning, sticky report headers
+- [x] Dashboard quick actions, deferred secondary panels, auto-refresh, remembered period
+- [x] POS quick picks, tablet/phone layout with bottom pay bar, shortcuts panel, clearer sale-complete screen
+- [x] Tests: 210 passing on SQLite and MySQL; 15 pages × light/dark × 3 widths checked in Chrome with no errors or sideways scrolling
+- Skipped by request: WhatsApp invoices
 
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

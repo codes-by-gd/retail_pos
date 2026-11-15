@@ -1,4 +1,5 @@
 <script setup>
+import { useListFilters } from '@/composables/useListFilters';
 import Card from '@/Components/Card.vue';
 import PageHeader from '@/Components/PageHeader.vue';
 import Pagination from '@/Components/Pagination.vue';
@@ -17,11 +18,10 @@ const props = defineProps({
     subjects: { type: Array, required: true },
 });
 
-const filters = reactive({
+const filters = useListFilters('activity.index', {
     search: props.filters.search ?? '', user_id: props.filters.user_id ? Number(props.filters.user_id) : null,
     subject: props.filters.subject ?? null, from: props.filters.from ?? '', to: props.filters.to ?? '',
 });
-watch(filters, () => router.get(route('activity.index'), Object.fromEntries(Object.entries(filters).filter(([, v]) => v)), { preserveState: true, preserveScroll: true, replace: true }));
 
 const expanded = ref(new Set());
 const toggle = (id) => (expanded.value.has(id) ? expanded.value.delete(id) : expanded.value.add(id));

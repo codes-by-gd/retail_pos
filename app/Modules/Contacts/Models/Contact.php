@@ -2,6 +2,7 @@
 
 namespace App\Modules\Contacts\Models;
 
+use App\Modules\Loyalty\Services\LoyaltyService;
 use App\Support\Gst\IndianStates;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
@@ -104,6 +105,8 @@ class Contact extends Model
             'price_type' => $c->group?->price_type ?? 'retail',
             'discount_percent' => (float) ($c->group?->discount_percent ?? 0),
             'is_walk_in' => $c->is_walk_in,
+            'points' => $c->is_walk_in || $c->type === self::SUPPLIER ? 0
+                : (int) ($c->getAttributes()['loyalty_points'] ?? app(LoyaltyService::class)->balance($c)),
         ];
     }
 

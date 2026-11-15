@@ -13,6 +13,9 @@
 - ✅ Money outstanding: customers owe us / we owe suppliers, top debtors (`customers.view` / `suppliers.view`), link to the ageing report
 - ✅ Recent bills (`sales.view`) and low-stock items (`products.view`) with links to the stock page and reorder report
 
+- ✅ Quick actions (new bill, receive goods, add expense, new customer, reports — by permission) (Phase 7)
+- ✅ KPIs show instantly; secondary panels load right after (deferred) with placeholders; auto-refresh every 2 minutes; period/branch remembered for the session (Phase 7)
+
 ## Business rules
 - Sales figures are the same as the Sales summary report: bills on their bill date, returns subtracted on the credit-note date, cancelled bills excluded.
 - Profit uses the cost saved on each bill line (see [Reports](reports.md#business-rules)).

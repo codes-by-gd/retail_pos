@@ -7,3 +7,24 @@
         display: none !important;
     }
 }
+
+/* Dark mode: form controls (the forms plugin hard-codes white backgrounds) */
+.dark :is(input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']), select, textarea) {
+    background-color: rgb(var(--surface));
+    color: rgb(var(--t-gray-900));
+    border-color: rgb(var(--c-gray-300));
+}
+.dark :is(input[type='checkbox'], input[type='radio']):not(:checked) {
+    background-color: rgb(var(--c-gray-100));
+    border-color: rgb(var(--c-gray-400));
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+    color: rgb(var(--t-gray-400));
+}
+.dark ::-webkit-calendar-picker-indicator {
+    filter: invert(0.8);
+}
+.dark img.invert-dark {
+    filter: invert(1) hue-rotate(180deg);
+}

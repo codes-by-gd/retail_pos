@@ -17,8 +17,10 @@ class SalePayment extends Model
 
     public const EXCHANGE = 'exchange';   // credit from a returned item, used in this bill
 
+    public const POINTS = 'points';       // loyalty points used as payment (reference = number of points)
+
     public const LABELS = [
-        self::CASH => 'Cash', self::CARD => 'Card', self::UPI => 'UPI', self::ACCOUNT => 'On account', self::EXCHANGE => 'Exchange credit',
+        self::CASH => 'Cash', self::CARD => 'Card', self::UPI => 'UPI', self::ACCOUNT => 'On account', self::EXCHANGE => 'Exchange credit', self::POINTS => 'Loyalty points',
     ];
 
     public const UPDATED_AT = null;

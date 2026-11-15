@@ -19,6 +19,7 @@ Every report has: date presets (today, yesterday, this week/month/quarter, last 
 | | Sales by item (`sales-by-item`) | Per article or per size/colour SKU: sold, returned, net qty, taxable, GST, net sales, share % | `reports.sales` |
 | | Sales by category / brand / size & colour / cashier / customer / branch | Same columns per dimension; size/colour lets you pick the attribute (Size, Colour, Waist…) | `reports.sales` |
 | | Hourly sales (`sales-by-hour`) | Busy hours; chart | `reports.sales` |
+| | Loyalty points (`loyalty`) | Points earned, used, taken back, expired, adjusted per customer; balance and value now | `reports.sales` |
 | | Collections by payment mode (`payment-modes`) | At billing (cash net of change), received later, refunds, paid to suppliers, net | `reports.sales` |
 | Inventory & purchases | Stock valuation (`stock-valuation`) | Now: qty, avg cost, value at cost / selling price / MRP — by item, article, category or brand | `reports.inventory` |
 | | Low stock / reorder list (`low-stock`) | At or below reorder level (same rule as the Stock page), suggested order qty & cost | `reports.inventory` |

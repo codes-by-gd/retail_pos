@@ -1,4 +1,5 @@
 <script setup>
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import ButtonLink from '@/Components/ButtonLink.vue';
 import Card from '@/Components/Card.vue';
@@ -16,8 +17,7 @@ import { reactive, watch } from 'vue';
 
 const props = defineProps({ orders: { type: Object, required: true }, filters: { type: Object, required: true }, statuses: { type: Object, required: true } });
 const { can } = usePermissions();
-const filters = reactive({ search: props.filters.search ?? '', status: props.filters.status ?? null });
-watch(filters, () => router.get(route('purchase-orders.index'), Object.fromEntries(Object.entries(filters).filter(([, v]) => v)), { preserveState: true, replace: true }));
+const filters = useListFilters('purchase-orders.index', { search: props.filters.search ?? '', status: props.filters.status ?? null });
 const color = { draft: 'gray', ordered: 'indigo', partially_received: 'amber', received: 'green', cancelled: 'red' };
 const columns = [
     { key: 'reference_no', label: 'Order' }, { key: 'supplier', label: 'Supplier' }, { key: 'expected_date', label: 'Expected' },

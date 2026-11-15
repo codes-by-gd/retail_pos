@@ -1,4 +1,5 @@
 <script setup>
+import { datePresets, matchPreset as matchDates } from '@/utils/dateRanges';
 import BarChart from '@/Components/BarChart.vue';
 import Card from '@/Components/Card.vue';
 import ReportTable from '@/Components/ReportTable.vue';
@@ -22,33 +23,13 @@ const props = defineProps({
     sections: { type: Array, required: true },
 });
 
-// ---- date presets (local dates, YYYY-MM-DD) ----
-const iso = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-const presets = computed(() => {
-    const t = new Date();
-    const y = t.getFullYear();
-    const m = t.getMonth();
-    const day = (offset) => new Date(y, m, t.getDate() + offset);
-    const [fm, fd] = props.fyStart.split('-').map(Number);
-    let fy = new Date(y, fm - 1, fd);
-    if (t < fy) fy = new Date(y - 1, fm - 1, fd);
-    const monday = day(-((t.getDay() + 6) % 7));
-    return {
-        today: ['Today', iso(t), iso(t)],
-        yesterday: ['Yesterday', iso(day(-1)), iso(day(-1))],
-        week: ['This week', iso(monday), iso(t)],
-        month: ['This month', iso(new Date(y, m, 1)), iso(t)],
-        last_month: ['Last month', iso(new Date(y, m - 1, 1)), iso(new Date(y, m, 0))],
-        quarter: ['This quarter', iso(new Date(y, Math.floor(m / 3) * 3, 1)), iso(t)],
-        fy: ['This financial year', iso(fy), iso(t)],
-        last_fy: ['Last financial year', iso(new Date(fy.getFullYear() - 1, fm - 1, fd)), iso(new Date(fy.getFullYear(), fm - 1, fd - 1))],
-    };
-});
+// ---- date presets (shared with lists) ----
+const presets = computed(() => datePresets(props.fyStart));
 const presetOptions = computed(() => [
     ...Object.entries(presets.value).map(([value, [label]]) => ({ value, label })),
     { value: 'custom', label: 'Custom dates' },
 ]);
-const matchPreset = (from, to) => Object.entries(presets.value).find(([, [, f, t]]) => f === from && t === to)?.[0] ?? 'custom';
+const matchPreset = (from, to) => { const m = matchDates(presets.value, from, to); return m === 'any' ? 'custom' : m; };
 
 const state = reactive({
     from: props.filters.from,

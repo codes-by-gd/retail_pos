@@ -61,6 +61,17 @@ class DashboardService
             'previousLabel' => $days === 1 ? ($period === 'today' ? 'yesterday' : 'the day before') : "previous {$days} days",
             'trend' => $this->trend($f, $days === 1),
             'paymentModes' => $this->paymentModes($f),
+        ];
+
+        return $data;
+    }
+
+    /** Secondary panels — loaded right after the page (deferred) so the KPIs show instantly. */
+    public function details(User $user, string $period, array $branchIds, string $branchLabel): array
+    {
+        [$from, $to] = $this->range($period);
+        $f = new ReportFilters($from, $to, $branchIds, $branchLabel);
+        $data = [
             'topProducts' => $this->facts->byDimension($f, 'product')->take(5)->map(fn ($r) => ['label' => $r['label'], 'sub' => $r['sub'], 'qty' => $r['net_qty'], 'value' => $r['net_total']])->values(),
             'topCategories' => $this->facts->byDimension($f, 'category')->take(5)->map(fn ($r) => ['label' => $r['label'], 'qty' => $r['net_qty'], 'value' => $r['net_total']])->values(),
         ];

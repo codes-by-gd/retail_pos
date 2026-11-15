@@ -28,6 +28,7 @@ The catalogue lives in [`app/Support/Permissions.php`](../app/Support/Permission
 | | `payments.manage` | Record payments |
 | Contacts | `customers.view` · `customers.manage` | Customers |
 | | `suppliers.view` · `suppliers.manage` | Suppliers |
+| | `loyalty.adjust` | Add/remove loyalty points by hand (Manager; not Cashier) |
 | Expenses | `expenses.manage` | Expenses |
 | Reports | `reports.sales` · `reports.inventory` · `reports.financial` | Report groups: sales; inventory & purchases; financial = profit, dues, register shifts & GST. Any one opens the Reports menu (gate `reports.any`). Dashboard profit needs `reports.financial` |
 | Users | `users.view` · `users.manage` · `roles.manage` | Users and roles |

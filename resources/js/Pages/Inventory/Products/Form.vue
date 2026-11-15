@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
 import InputError from '@/Components/InputError.vue';
@@ -200,6 +201,7 @@ const submit = () => {
         form.post(route('products.store'), options);
     }
 };
+useUnsavedGuard(() => form.isDirty && !form.processing);
 </script>
 
 <template>

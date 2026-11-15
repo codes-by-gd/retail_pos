@@ -1,4 +1,6 @@
 <script setup>
+import DateRangeFilter from '@/Components/DateRangeFilter.vue';
+import { useListFilters } from '@/composables/useListFilters';
 import Badge from '@/Components/Badge.vue';
 import Card from '@/Components/Card.vue';
 import DataTable from '@/Components/DataTable.vue';
@@ -19,17 +21,13 @@ const props = defineProps({
     cashiers: { type: Array, default: () => [] },
 });
 
-const filters = reactive({
+const filters = useListFilters('sales.index', {
     search: props.filters.search ?? '',
     from: props.filters.from ?? '',
     to: props.filters.to ?? '',
     user_id: props.filters.user_id ? Number(props.filters.user_id) : null,
     payment_status: props.filters.payment_status ?? null,
     status: props.filters.status ?? null,
-});
-watch(filters, () => {
-    const query = Object.fromEntries(Object.entries(filters).filter(([, v]) => v));
-    router.get(route('sales.index'), query, { preserveState: true, preserveScroll: true, replace: true });
 });
 
 const statusColor = { paid: 'green', partial: 'amber', due: 'red' };
@@ -49,8 +47,7 @@ const columns = [
         <Card :padded="false">
             <div class="grid grid-cols-1 gap-3 border-b border-gray-100 p-4 md:grid-cols-3 xl:grid-cols-6">
                 <SearchInput v-model="filters.search" class="md:col-span-1 xl:col-span-2" placeholder="Invoice no., customer or phone…" />
-                <TextInput v-model="filters.from" type="date" aria-label="From" />
-                <TextInput v-model="filters.to" type="date" aria-label="To" />
+                <DateRangeFilter v-model:from="filters.from" v-model:to="filters.to" />
                 <SelectInput v-model="filters.user_id" :options="cashiers" placeholder="All cashiers" />
                 <SelectInput
                     v-model="filters.payment_status"

@@ -1,4 +1,5 @@
 <script setup>
+import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import ContactPicker from '@/Components/ContactPicker.vue';
 import FormField from '@/Components/FormField.vue';
@@ -19,6 +20,7 @@ const props = defineProps({ order: { type: Object, default: null }, today: { typ
 
 const supplier = ref(props.order?.supplier ?? null);
 const lines = ref(props.order?.items ?? []);
+const initialLines = JSON.stringify(lines.value);
 const form = useForm({ order_date: props.order?.order_date ?? props.today, expected_date: props.order?.expected_date ?? '', notes: props.order?.notes ?? '', place: false });
 
 const add = (item) => {
@@ -38,6 +40,7 @@ const save = (place) => {
     }));
     props.order ? form.put(route('purchase-orders.update', props.order.id)) : form.post(route('purchase-orders.store'));
 };
+useUnsavedGuard(() => (form.isDirty || JSON.stringify(lines.value) !== initialLines) && !form.processing && !form.wasSuccessful);
 </script>
 
 <template>

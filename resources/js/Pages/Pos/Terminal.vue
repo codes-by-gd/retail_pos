@@ -37,7 +37,14 @@ const props = defineProps({
     lastSale: { type: Object, default: null },
     lockUsers: { type: Array, default: () => [] },
     recallId: { type: Number, default: null },
+    popularIds: { type: Array, default: () => [] },
 });
+const mobileView = ref('items'); // phones/tablets: 'items' | 'bill'
+const showHelp = ref(false);
+const shortcuts = [
+    ['F2', 'Search / scan'], ['F4', 'Find customer'], ['F6', 'Bill discount'], ['F8', 'Hold bill'], ['F9', 'Pay'], ['F10', 'Returns'],
+    ['Enter', 'Add scanned item · complete payment · next sale'], ['↑ ↓', 'Move in search results'], ['Esc', 'Clear search / close'],
+];
 
 const page = usePage();
 const { can } = usePermissions();
@@ -62,7 +69,7 @@ const cashier = ref(page.props.auth.user.name);
 const toast = ref('');
 
 const totals = computed(() => cart.preview.totals);
-const anyModal = computed(() => !!modal.value || !!editing.value || locked.value || !!completed.value);
+const anyModal = computed(() => !!modal.value || !!editing.value || locked.value || !!completed.value || showHelp.value);
 
 const flash = (msg) => {
     toast.value = msg;
@@ -93,6 +100,8 @@ const completeSale = async (payments) => {
         modal.value = null;
         exchangeCredits.value = [];
         cart.clear(walkInCustomer);
+        mobileView.value = 'items';
+        search.value?.refreshQuick();
         if (props.config.print_after_sale) printUrl(data.sale.print_url, props.config.receipt_size);
     } catch (e) {
         payError.value = apiError(e);
@@ -231,15 +240,16 @@ onUnmounted(() => {
 
 <template>
     <Head title="POS" />
-    <div class="flex h-screen flex-col bg-gray-100">
+    <div class="flex h-screen h-[100dvh] flex-col bg-gray-100">
         <!-- top bar -->
         <header class="flex h-14 shrink-0 items-center gap-2 border-b border-gray-200 bg-white px-3">
             <Link :href="route('dashboard')" class="rounded-md p-2 text-gray-500 hover:bg-gray-100" title="Back to dashboard"><ArrowLeftIcon class="h-5 w-5" /></Link>
-            <div class="min-w-0">
+            <div class="min-w-0 shrink">
                 <p class="truncate text-sm font-semibold text-gray-900">{{ $page.props.app.business_name }} · {{ $page.props.branch?.current?.name }}</p>
                 <p class="truncate text-xs text-gray-500">{{ session.register }} · Cashier: {{ cashier }}</p>
             </div>
-            <div class="ml-auto flex items-center gap-1">
+            <div class="ml-auto flex min-w-0 items-center gap-1 overflow-x-auto">
+                <button type="button" class="top-btn hidden sm:flex" title="Keyboard shortcuts" @click="showHelp = true"><span class="!inline font-mono text-xs">?</span></button>
                 <button v-if="can('pos.returns')" type="button" class="top-btn" @click="modal = 'returns'"><ArrowUturnLeftIcon class="h-5 w-5" /><span>Returns <kbd>F10</kbd></span></button>
                 <button type="button" class="top-btn" @click="modal = 'held'">
                     <PauseCircleIcon class="h-5 w-5" /><span>Held</span>
@@ -256,12 +266,19 @@ onUnmounted(() => {
 
         <div class="flex min-h-0 flex-1 flex-col gap-3 p-3 lg:flex-row">
             <!-- left: search -->
-            <section class="flex min-h-0 flex-1 flex-col rounded-xl bg-white p-4 shadow-sm lg:basis-3/5">
-                <ProductSearch ref="search" :beep-on-scan="config.beep_on_scan" @add="addItem" />
+            <!-- phones/tablets: switch between items and the bill -->
+            <div class="grid shrink-0 grid-cols-2 gap-1 rounded-lg bg-gray-200 p-1 text-sm font-medium lg:hidden" role="tablist">
+                <button type="button" role="tab" class="rounded-md py-1.5" :class="mobileView === 'items' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'" :aria-selected="mobileView === 'items'" @click="mobileView = 'items'">Items</button>
+                <button type="button" role="tab" class="rounded-md py-1.5" :class="mobileView === 'bill' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'" :aria-selected="mobileView === 'bill'" @click="mobileView = 'bill'">
+                    Bill <span v-if="cart.items.length" class="ml-1 rounded-full bg-indigo-600 px-1.5 text-[11px] text-white">{{ cart.count }}</span>
+                </button>
+            </div>
+            <section class="min-h-0 flex-1 flex-col rounded-xl bg-white p-3 shadow-sm sm:p-4 lg:flex lg:basis-3/5" :class="mobileView === 'items' ? 'flex' : 'hidden'">
+                <ProductSearch ref="search" :beep-on-scan="config.beep_on_scan" :popular-ids="popularIds" :branch-id="$page.props.branch?.current?.id" @add="addItem" />
             </section>
 
             <!-- right: bill -->
-            <section class="flex min-h-0 flex-col rounded-xl bg-white shadow-sm lg:basis-2/5">
+            <section class="min-h-0 flex-1 flex-col rounded-xl bg-white shadow-sm lg:flex lg:flex-none lg:basis-2/5" :class="mobileView === 'bill' ? 'flex' : 'hidden'">
                 <div class="border-b border-gray-100"><CustomerPicker ref="customerPicker" :walk-in="walkIn" /></div>
 
                 <div class="min-h-0 flex-1 overflow-y-auto">
@@ -303,6 +320,26 @@ onUnmounted(() => {
             </section>
         </div>
 
+        <!-- phones/tablets: total + pay always in reach while picking items -->
+        <div v-if="mobileView === 'items'" class="flex shrink-0 items-center gap-3 border-t border-gray-200 bg-white px-3 py-2 lg:hidden">
+            <button type="button" class="min-w-0 flex-1 text-left" @click="mobileView = 'bill'">
+                <span class="block text-xs text-gray-500">{{ cart.count }} items · tap to view bill</span>
+                <span class="block text-xl font-bold tabular-nums text-gray-900">{{ money(totals.grand_total) }}</span>
+            </button>
+            <button type="button" class="rounded-lg bg-indigo-600 px-6 py-3 font-semibold text-white disabled:opacity-50" :disabled="cart.isEmpty" @click="openPay">Pay</button>
+        </div>
+
+        <!-- keyboard shortcuts -->
+        <div v-if="showHelp" class="fixed inset-0 z-40 flex items-center justify-center bg-gray-900/60 p-4" @click.self="showHelp = false" @keydown.esc="showHelp = false">
+            <div class="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+                <p class="mb-3 font-semibold text-gray-900">Keyboard shortcuts</p>
+                <dl class="space-y-1.5 text-sm">
+                    <div v-for="[k, what] in shortcuts" :key="k" class="flex items-center justify-between gap-4"><dt class="text-gray-600">{{ what }}</dt><dd><kbd>{{ k }}</kbd></dd></div>
+                </dl>
+                <button type="button" class="mt-5 w-full rounded-lg border border-gray-200 py-2 text-sm hover:bg-gray-50" @click="showHelp = false">Close</button>
+            </div>
+        </div>
+
         <!-- toast -->
         <div v-if="toast" class="fixed bottom-4 left-1/2 z-40 -translate-x-1/2 rounded-lg bg-gray-900 px-4 py-2 text-sm text-white shadow-lg">{{ toast }}</div>
 
@@ -314,6 +351,10 @@ onUnmounted(() => {
                 <p class="text-lg font-semibold text-gray-900">{{ money(completed.grand_total) }} · {{ completed.customer }}</p>
                 <p v-if="completed.change_given > 0" class="mt-4 rounded-lg bg-green-50 py-3 text-3xl font-bold text-green-700">Change {{ money(completed.change_given) }}</p>
                 <p v-if="completed.account_amount > 0" class="mt-3 text-sm text-amber-700">{{ money(completed.account_amount) }} added to the customer's account.</p>
+                <p v-if="completed.payments?.length" class="mt-3 text-sm text-gray-500">Paid by {{ completed.payments.map((p) => `${p.label} ${money(p.amount)}`).join(' · ') }}</p>
+                <p v-if="completed.points_balance !== null && completed.points_balance !== undefined" class="mt-2 rounded-md bg-amber-50 py-1.5 text-sm text-amber-800">
+                    ★ <span v-if="completed.points_redeemed">{{ completed.points_redeemed }} used · </span><span v-if="completed.points_earned">+{{ completed.points_earned }} earned · </span>balance {{ completed.points_balance }} pts
+                </p>
                 <div class="mt-6 grid grid-cols-2 gap-2">
                     <button type="button" class="act-btn !flex-row" @click="printUrl(completed.print_url, config.receipt_size)"><PrinterIcon class="h-5 w-5" /> Receipt</button>
                     <button type="button" class="act-btn !flex-row" @click="printUrl(completed.print_url, 'a4')"><PrinterIcon class="h-5 w-5" /> A4 invoice</button>
