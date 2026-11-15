@@ -57,6 +57,7 @@ tests/Unit, tests/Feature/<Area>/
 - **Stock:** every change goes through one `StockService`, inside a DB transaction with row locks, and writes a `stock_movements` ledger row.
 - **Business-rule errors:** services throw `DomainException` / `InsufficientStockException`; `bootstrap/app.php` turns them into a "back with error" toast (or JSON 422). No try/catch in controllers.
 - **Document numbers:** `DocumentNumberService::next('ADJ', $branch)` inside the saving transaction → `ADJ/BR1/26-27/0001`.
+- **Reports:** `app/Modules/Reports` — `ReportRegistry` lists the reports; each returns typed sections that drive the screen and Excel/CSV/PDF exports; `SalesFacts` holds the shared sale/return line queries (also used by the dashboard). See [modules/reports.md](modules/reports.md).
 - **POS money logic:** `GstCalculator` ⟷ `Pos/gst.js` must stay identical. Checkout/returns live in `app/Modules/Sales/Services`; registers in `app/Modules/Pos`.
 - **Modals:** `Components/Modal.vue` is a teleported overlay, *not* a native `<dialog>` (see D-028). Don't switch back.
 - **Item pickers:** use `Components/VariantPicker.vue` (scanner friendly) backed by `variants.search`.

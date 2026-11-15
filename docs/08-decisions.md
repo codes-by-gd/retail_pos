@@ -101,4 +101,16 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-033 · Quotations use list price + discounts — 2026-11-18
 **Decision:** quote lines take the customer's list price (retail/wholesale) and discounts only, so converting to a POS bill needs only the normal discount permission and the POS re-prices at current rates.
 
+### D-034 · Reports count documents on their own date — 2026-11-15
+**Decision:** a bill counts on its bill date and a return on its credit-note date; "net" = sold − returned within the period. Same rule as GST returns, so the sales reports, dashboard and GSTR-1/3B agree. **Consequence:** a period can show negative net sales for an item returned from an earlier period.
+
+### D-035 · Profit from the cost snapshot on the bill line — 2026-11-15
+**Decision:** cost of goods sold = quantity × `sale_items.unit_cost` (weighted-average cost when sold), excluding GST. Restocked returns give the cost back; damaged returns don't. Later purchase prices never change past profit.
+
+### D-036 · GST reports by registration, ITC only from registered suppliers — 2026-11-15
+**Decision:** GST reports select a GSTIN (branch GSTIN, else business GSTIN) and include the user's branches under it. ITC in 3B comes only from bills of suppliers with a GSTIN, in the month goods are received; debit notes reduce it. B2C (large) threshold ₹1,00,000. The 3B "tax payable" is indicative (no statutory set-off order).
+
+### D-037 · One report framework for screen and exports — 2026-11-15
+**Decision:** reports return typed `Section`s (columns, rows, totals); the same sections render on screen and to Excel (openspout, one sheet per section), CSV (UTF-8 BOM) and PDF (dompdf, "Rs." because of fonts). Reports are aggregated in SQL and then merged in PHP; screen tables are capped at 1,000 rows, exports are complete.
+
 ### Open questions

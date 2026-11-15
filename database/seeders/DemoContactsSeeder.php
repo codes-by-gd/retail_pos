@@ -7,6 +7,7 @@ use App\Modules\Contacts\Models\CustomerGroup;
 use App\Modules\Contacts\Services\ContactService;
 use App\Rules\Gstin;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 /** Demo customers and apparel suppliers. Skipped if non-walk-in contacts exist. */
 class DemoContactsSeeder extends Seeder
@@ -22,7 +23,8 @@ class DemoContactsSeeder extends Seeder
         $gstin = fn (string $first14) => $first14.Gstin::checksum($first14);
 
         // Birthdays relative to today so the "upcoming" filter has data.
-        $soon = fn (int $days, int $age) => now()->addDays($days)->subYears($age)->toDateString();
+        // Real clock (time()), so dates stay right when the demo history seeder back-dates "now".
+        $soon = fn (int $days, int $age) => Carbon::createFromTimestamp(time(), config('app.timezone'))->addDays($days)->subYears($age)->toDateString();
 
         $customers = [
             ['Priya Patel', '9876543210', 'Alkapuri', 'Vadodara', '390007', $gold->id, 0, $soon(3, 32), null, 0],

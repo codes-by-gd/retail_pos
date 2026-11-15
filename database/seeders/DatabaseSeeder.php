@@ -3,9 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Modules\Inventory\Models\Product;
 use App\Modules\Settings\Models\Branch;
 use App\Rules\Gstin;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 
 class DatabaseSeeder extends Seeder
 {
@@ -45,6 +47,15 @@ class DatabaseSeeder extends Seeder
             $user->branches()->sync($branches);
         }
 
+        // Demo catalog, contacts and trading history are created "in the past" so the history reads naturally.
+        $fresh = ! Product::withTrashed()->exists();
+        if ($fresh) {
+            Carbon::setTestNow(now()->subDays(DemoSalesSeeder::DAYS + 1)->setTime(9, 0));
+        }
         $this->call([DemoCatalogSeeder::class, DemoContactsSeeder::class]);
+        Carbon::setTestNow();
+        if ($fresh) {
+            $this->call(DemoSalesSeeder::class);
+        }
     }
 }

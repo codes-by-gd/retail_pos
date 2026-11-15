@@ -114,6 +114,6 @@ it('counts low and out-of-stock items on the dashboard', function () {
     makeVariant(['reorder_level' => 0]);                                  // out (0 <= 0)
     // $this->v: 10 in stock, reorder 0 → fine
 
-    inBranch($this, $this->main)->get(route('dashboard'))->assertInertia(fn ($p) => $p->where('lowStock', 2));
+    inBranch($this, $this->main)->get(route('dashboard'))->assertInertia(fn ($p) => $p->where('data.lowStock.count', 2));
     inBranch($this, $this->main)->get(route('stock.index', ['level' => 'low']))->assertInertia(fn ($p) => $p->has('rows.data', 2));
 });

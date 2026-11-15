@@ -28,6 +28,7 @@ use App\Modules\Pos\Http\Controllers\RegisterSessionController;
 use App\Modules\Pos\Http\Controllers\ReturnController;
 use App\Modules\Purchases\Http\Controllers\PurchaseController;
 use App\Modules\Purchases\Http\Controllers\PurchaseOrderController;
+use App\Modules\Reports\Http\Controllers\ReportController;
 use App\Modules\Sales\Http\Controllers\PrintController;
 use App\Modules\Sales\Http\Controllers\QuotationController;
 use App\Modules\Sales\Http\Controllers\SaleController;
@@ -156,6 +157,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/payments', [ContactPaymentController::class, 'index'])->name('payments.index');
         Route::post('/contacts/{contact}/payments', [ContactPaymentController::class, 'store'])->name('contacts.payments.store');
         Route::get('/payments/{contactPayment}/print', [ContactPaymentController::class, 'print'])->name('payments.print');
+    });
+
+    // Reports — each report checks its own permission (reports.sales / .inventory / .financial)
+    Route::middleware('can:reports.any')->prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::get('/{report}', [ReportController::class, 'show'])->name('show');
+        Route::get('/{report}/export', [ReportController::class, 'export'])->name('export');
     });
 
     Route::get('/sales/{sale}/print', [PrintController::class, 'sale'])->middleware('can:sales.view')->name('sales.print');

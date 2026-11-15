@@ -10,8 +10,8 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 | 2 | Contacts: customers, suppliers, groups, addresses, ledgers | ✅ Done (2026-11-16) |
 | 3 | ✅ Done (2026-11-17) — **POS billing panel**: registers & sessions, fast search/scan, cart, GST calculator, split payments, hold/recall, receipts, returns, keyboard shortcuts, PIN switch | ⏳ |
 | 4 | ✅ Done (2026-11-18) — Orders: sales list/cancel/reprint, quotations, purchase orders → GRN → bill, supplier payments, purchase returns, dues | ⏳ |
-| 5 | ⏳ **Next** — Dashboard KPIs & charts; sales, profit, stock, register, outstanding and GST reports; Excel/PDF export | ⏳ |
-| 6 | Notifications, expenses, audit log viewer, backups, performance pass | ⏳ |
+| 5 | ✅ Done (2026-11-15) — Dashboard KPIs & charts; sales, profit, stock, register, outstanding and GST reports; Excel/PDF export | ⏳ |
+| 6 | ⏳ **Next** — Notifications, expenses, audit log viewer, backups, performance pass | ⏳ |
 
 ## Phase 0 checklist
 - [x] Laravel 12 + Breeze (Vue/Inertia) + Pest, Tailwind, Pinia, heroicons
@@ -79,6 +79,16 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 - [x] Purchase returns with debit notes
 - [x] Fix: exchange credit is a voucher in the ledger (named customers using another customer's credit note)
 - [x] Tests: 180 passing on SQLite and MySQL; PO → receipt → debit note → payment, quotation → POS, customer payment → drawer, cancel flows verified in Chrome; layout sweep clean at 3 screen sizes
+
+## Phase 5 checklist
+- [x] Report framework: typed sections with totals → screen, Excel (.xlsx, sheet per section), CSV, PDF; date presets incl. financial year; branch / "all branches" / GSTIN scope limited to the user's branches
+- [x] Sales: summary by day/month, by item (article or SKU), category, brand, size/colour, cashier, customer, branch, hour; collections by payment mode
+- [x] Inventory: stock valuation, reorder list, slow-moving/dead stock, stock movement summary, purchase register, purchases by supplier
+- [x] Accounts: profit & margin (8 groupings), receivables & payables with ageing, register shift cash differences
+- [x] GST: GSTR-1 (B2B, B2CL, B2CS, CDNR, CDNUR, HSN with UQC, documents issued) and GSTR-3B summary with ITC
+- [x] Dashboard: period & branch switch, KPIs vs previous period, net sales chart, payment modes, top articles/categories, drawers, dues, recent bills, low stock
+- [x] Demo trading history seeder (45 days, ~900 bills through the real services)
+- [x] Tests: 187 passing on SQLite and MySQL; every report page checked in Chrome at 3 screen sizes for Admin, Stock Keeper and Cashier
 
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

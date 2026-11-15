@@ -77,6 +77,9 @@ Conventions: `id` big-int primary keys, `timestamps()` on every business table, 
 | `contact_payments` | ✅ | `reference_no` (RCPT/PAY), `contact_id`, `branch_id`, `register_session_id` (cash through a drawer), `direction` (in/out), `method` (cash/upi/card/bank/cheque), `amount`, `unallocated`, `reference`, `date`, `note`, `user_id` |
 | `payment_allocations` | ✅ | `contact_payment_id`, `allocatable` (sale or purchase), `amount` |
 
+## Reports & dashboard (Phase 5)
+No new tables. Reports read the saved documents only: `sales`/`sale_items` (bill date, GST, `unit_cost` for profit), `sale_returns`/`sale_return_items` (credit-note date, `restock`), `sale_payments`, `contact_payments`, `purchases`/`purchase_items`, `purchase_returns`, `stock_levels`, `stock_movements`, `register_sessions` and the contact ledger. The `sales (branch_id, sold_at)` index carries most date-range queries.
+
 ## Other
 | Table | Status | Notes |
 |---|---|---|

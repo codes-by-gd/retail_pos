@@ -1,5 +1,15 @@
 # 09 · Changelog
 
+## Phase 5 — Dashboard & reports (2026-11-15)
+- Reports module with 22 reports in four groups (sales, inventory & purchases, accounts & profit, GST), each filterable by date preset/range, branch or GSTIN and options, with totals, sortable columns, charts and Excel/CSV/PDF export.
+- GSTR-1 (B2B, B2C large/small, credit notes, HSN summary with UQC, documents issued) and GSTR-3B summary (outward tax net of credit notes, inter-state B2C, ITC from registered suppliers less debit notes).
+- Profit & margin from the cost saved on each bill line; damaged returns stay a loss.
+- Dashboard rebuilt: period and branch switch, KPIs with change vs previous period, hourly/daily net sales chart, payment modes, top articles & categories, cash in drawers, money outstanding, recent bills, low stock.
+- Demo data now includes 45 days of trading history (shifts, bills, returns, restock purchases, receipts) created through the real services.
+- Low-stock rule unified: the reorder report and dashboard use the Stock page rule (out-of-stock items without a reorder level are included).
+- New dependency: `openspout/openspout` (xlsx export).
+- 187 tests (SQLite and MySQL).
+
 ## Phase 4 — Orders, purchasing & payments (2026-11-18)
 - Sales: payment/cancel filters, due amounts, cancel bill (same open shift, nothing returned or paid later) with full reversal; payments received later shown on the invoice.
 - Payments: receive from customers / pay suppliers (cash, UPI, card, bank, cheque), optional register drawer, oldest-bill-first allocation, RCPT/PAY numbering, A4 receipts, payments list; unpaid bills on contact pages.

@@ -28,5 +28,8 @@ class AppServiceProvider extends ServiceProvider
 
         // Admins can do everything.
         Gate::before(fn (User $user) => $user->hasRole(Permissions::ADMIN_ROLE) ? true : null);
+
+        // Reports menu: any one of the report permissions opens it (each report then checks its own).
+        Gate::define('reports.any', fn (User $user) => $user->hasAnyPermission(['reports.sales', 'reports.inventory', 'reports.financial']));
     }
 }

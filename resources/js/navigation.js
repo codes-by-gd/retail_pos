@@ -75,9 +75,10 @@ export const navigation = [
             { label: 'Expenses', icon: BanknotesIcon, permission: 'expenses.manage', soon: 'Phase 6' },
             {
                 label: 'Reports',
+                route: 'reports.index',
+                active: 'reports.*',
                 icon: ChartBarIcon,
                 permission: ['reports.sales', 'reports.inventory', 'reports.financial'],
-                soon: 'Phase 5',
             },
         ],
     },

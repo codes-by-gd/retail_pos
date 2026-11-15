@@ -24,7 +24,7 @@ it("shows today's sales on the dashboard", function () {
     checkout($this->ctx, [['variant_id' => $shirt->id, 'quantity' => 2]], [['method' => 'card', 'amount' => 2000]], 2000)->assertCreated();
 
     posAs($this->ctx)->get(route('dashboard'))->assertInertia(fn ($p) => $p
-        ->where('today.bills', 2)->where('today.total', 3000)->where('today.average', 1500));
+        ->where('data.kpis.bills.value', 2)->where('data.kpis.net_sales.value', 3000)->where('data.kpis.average.value', 1500));
 });
 
 it('links sale movements in the stock ledger to the invoice', function () {

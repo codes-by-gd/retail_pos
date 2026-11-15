@@ -38,7 +38,7 @@ Demo registers: Main Store has Counter 1 and Counter 2, City Mall Outlet has Cou
 
 Demo contacts: customers (some with birthdays coming up, a Gold Members group, an out-of-state boutique on wholesale pricing), suppliers with opening payables, and the built-in Walk-in Customer.
 
-The seeder also creates GST rates (incl. the price-based *Garments* rate), clothing units, size/colour lists and a demo apparel catalog (15 products / 73 size-colour variants across Men, Women, Kids, Accessories and Fabrics) with stock in both branches.
+The seeder also creates GST rates (incl. the price-based *Garments* rate), clothing units, size/colour lists and a demo apparel catalog (15 products / 73 size-colour variants across Men, Women, Kids, Accessories and Fabrics) with stock in both branches, plus **45 days of trading history** (register shifts, ~900 bills, returns, fortnightly restock purchases, customer receipts) so the dashboard and reports have data. The history is created through the real services with the clock moved back (`DemoSalesSeeder`); a fresh seed takes about 1–2 minutes.
 
 ## Database
 The project uses **MySQL 8.4**, database `pos` (utf8mb4). Configure `.env` (not committed):

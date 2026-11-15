@@ -2,39 +2,31 @@
 
 namespace App\Http\Controllers;
 
-use App\Modules\Inventory\Models\ProductVariant;
-use App\Modules\Sales\Models\Sale;
+use App\Modules\Reports\Services\DashboardService;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __invoke(): Response
+    public function __invoke(Request $request, DashboardService $dashboard): Response
     {
-        $branchId = current_branch()->id();
+        $period = array_key_exists((string) $request->query('period'), DashboardService::PERIODS) ? (string) $request->query('period') : 'today';
+        $allowed = current_branch()->allowedFor($request->user());
+        $all = $request->query('branch') === 'all' && $allowed->count() > 1;
+        $current = current_branch()->get();
 
-        // Today's sales for the current branch (charts and reports arrive in Phase 5).
-        $today = $branchId ? Sale::where('branch_id', $branchId)->where('status', Sale::COMPLETED)
-            ->where('sold_at', '>=', now()->startOfDay())
-            ->selectRaw('COUNT(*) as bills, COALESCE(SUM(grand_total), 0) as total')->first() : null;
-
-        $lowStock = $branchId ? ProductVariant::query()
-            ->active()
-            ->join('products', 'products.id', '=', 'product_variants.product_id')
-            ->leftJoin('stock_levels', fn ($j) => $j->on('stock_levels.product_variant_id', '=', 'product_variants.id')
-                ->where('stock_levels.branch_id', $branchId))
-            ->whereNull('products.deleted_at')
-            ->where('products.is_active', true)
-            ->where('products.track_stock', true)
-            ->whereRaw('COALESCE(stock_levels.quantity, 0) <= product_variants.reorder_level')
-            ->count() : 0;
-
-        $bills = (int) ($today->bills ?? 0);
-        $total = (float) ($today->total ?? 0);
+        [$branchIds, $label] = $all
+            ? [$allowed->pluck('id')->all(), 'All branches']
+            : [$current ? [$current->id] : [], $current?->name ?? 'no branch'];
 
         return Inertia::render('Dashboard', [
-            'lowStock' => $lowStock,
-            'today' => ['bills' => $bills, 'total' => $total, 'average' => $bills ? round($total / $bills, 2) : 0],
+            'period' => $period,
+            'periods' => collect(DashboardService::PERIODS)->map(fn ($label, $value) => compact('value', 'label'))->values(),
+            'allBranches' => $all,
+            'canAllBranches' => $allowed->count() > 1,
+            'branchLabel' => $label,
+            'data' => $branchIds ? $dashboard->build($request->user(), $period, $branchIds, $label) : null,
         ]);
     }
 }

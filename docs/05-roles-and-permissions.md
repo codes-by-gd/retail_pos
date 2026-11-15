@@ -29,7 +29,7 @@ The catalogue lives in [`app/Support/Permissions.php`](../app/Support/Permission
 | Contacts | `customers.view` · `customers.manage` | Customers |
 | | `suppliers.view` · `suppliers.manage` | Suppliers |
 | Expenses | `expenses.manage` | Expenses |
-| Reports | `reports.sales` · `reports.inventory` · `reports.financial` | Report groups (financial = profit & GST) |
+| Reports | `reports.sales` · `reports.inventory` · `reports.financial` | Report groups: sales; inventory & purchases; financial = profit, dues, register shifts & GST. Any one opens the Reports menu (gate `reports.any`). Dashboard profit needs `reports.financial` |
 | Users | `users.view` · `users.manage` · `roles.manage` | Users and roles |
 | Settings | `settings.manage` | Business settings & branches |
 | | `activity.view` | Audit log |
