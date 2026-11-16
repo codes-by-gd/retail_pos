@@ -76,9 +76,9 @@ class SaleReturnService
                 $saleItem = $saleItems->get($item['sale_item_id']) ?? $this->fail("items.$i.sale_item_id", 'Item is not on this invoice.');
                 $remaining = BigDecimal::of($saleItem->quantity)->minus($saleItem->returned_quantity);
                 if ($qty->isGreaterThan($remaining)) {
-                    $this->fail("items.$i.quantity", "Only {$remaining->stripTrailingZeros()} of {$saleItem->displayName()} can still be returned.");
+                    $this->fail("items.$i.quantity", "Only {$remaining->strippedOfTrailingZeros()} of {$saleItem->displayName()} can still be returned.");
                 }
-                if (! $saleItem->variant->product->unit->allow_decimal && ! $qty->isEqualTo($qty->toScale(0, RoundingMode::DOWN))) {
+                if (! $saleItem->variant->product->unit->allow_decimal && ! $qty->isEqualTo($qty->toScale(0, RoundingMode::Down))) {
                     $this->fail("items.$i.quantity", 'Whole pieces only.');
                 }
                 $lines[] = ['item' => $saleItem, 'qty' => $qty, 'all' => $qty->isEqualTo($remaining), 'restock' => (bool) ($item['restock'] ?? true)];
@@ -129,7 +129,7 @@ class SaleReturnService
                 $previous = SaleReturn::where('sale_id', $sale->id)->whereKeyNot($return->id)
                     ->selectRaw('COALESCE(SUM(total), 0) as totals, COALESCE(SUM(total - round_off), 0) as line_sum')->first();
                 $cumulative = BigDecimal::of((string) $previous->line_sum)->plus($sum['line_total']);
-                $total = $cumulative->toScale(0, RoundingMode::HALF_UP)->toScale(2)->minus(BigDecimal::of((string) $previous->totals))->toScale(2);
+                $total = $cumulative->toScale(0, RoundingMode::HalfUp)->toScale(2)->minus(BigDecimal::of((string) $previous->totals))->toScale(2);
             }
             $return->update([
                 'taxable_total' => (string) $sum['taxable_value'],
@@ -187,7 +187,7 @@ class SaleReturnService
         }
 
         foreach ($fields as $f) {
-            $out[$f] = BigDecimal::of((string) $item->{$f})->multipliedBy($qty)->dividedBy($item->quantity, 2, RoundingMode::HALF_UP);
+            $out[$f] = BigDecimal::of((string) $item->{$f})->multipliedBy($qty)->dividedBy($item->quantity, 2, RoundingMode::HalfUp);
         }
         // keep the line consistent: total = taxable + taxes for exclusive, or total share for inclusive
         $out['line_total'] = $out['taxable_value']->plus($out['cgst'])->plus($out['sgst'])->plus($out['igst'])->plus($out['cess']);

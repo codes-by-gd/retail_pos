@@ -46,7 +46,7 @@ class StockService
             return null;
         }
 
-        $delta = BigDecimal::of((string) $quantity)->toScale(3, RoundingMode::HALF_UP);
+        $delta = BigDecimal::of((string) $quantity)->toScale(3, RoundingMode::HalfUp);
         if ($delta->isZero()) {
             return null;
         }
@@ -60,7 +60,7 @@ class StockService
 
             $allowNegative ??= (bool) settings('pos.allow_negative_stock');
             if ($delta->isNegative() && $newQty->isNegative() && ! $allowNegative) {
-                throw new InsufficientStockException($variant->fullName(), (string) $oldQty->stripTrailingZeros(), (string) $delta->abs()->stripTrailingZeros());
+                throw new InsufficientStockException($variant->fullName(), (string) $oldQty->strippedOfTrailingZeros(), (string) $delta->abs()->strippedOfTrailingZeros());
             }
 
             if ($delta->isPositive()) {
@@ -86,7 +86,7 @@ class StockService
                 'branch_id' => $branchId,
                 'type' => $type,
                 'quantity' => (string) $delta,
-                'unit_cost' => (string) $cost->toScale(4, RoundingMode::HALF_UP),
+                'unit_cost' => (string) $cost->toScale(4, RoundingMode::HalfUp),
                 'balance_after' => (string) $newQty,
                 'reference_type' => $reference?->getMorphClass(),
                 'reference_id' => $reference?->getKey(),
@@ -138,11 +138,11 @@ class StockService
     private function weightedAverage(BigDecimal $oldQty, BigDecimal $oldAvg, BigDecimal $inQty, BigDecimal $inCost): BigDecimal
     {
         if (! $oldQty->isPositive()) {
-            return $inCost->toScale(4, RoundingMode::HALF_UP);
+            return $inCost->toScale(4, RoundingMode::HalfUp);
         }
 
         return $oldQty->multipliedBy($oldAvg)
             ->plus($inQty->multipliedBy($inCost))
-            ->dividedBy($oldQty->plus($inQty), 4, RoundingMode::HALF_UP);
+            ->dividedBy($oldQty->plus($inQty), 4, RoundingMode::HalfUp);
     }
 }

@@ -31,7 +31,7 @@ class PurchaseOrderService
                 'order_date' => $data['order_date'],
                 'expected_date' => $data['expected_date'] ?? null,
                 'notes' => $data['notes'] ?? null,
-                'estimated_total' => (string) $total->toScale(2, RoundingMode::HALF_UP),
+                'estimated_total' => (string) $total->toScale(2, RoundingMode::HalfUp),
                 'status' => ! empty($data['place']) ? 'ordered' : 'draft',
             ];
 

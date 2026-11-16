@@ -86,7 +86,7 @@ class Contact extends Model
         $raw = $this->ledger()->selectRaw('COALESCE(SUM(debit) - SUM(credit), 0) as b')->value('b') ?? 0;
 
         // Same "1234.50" format on SQLite (returns floats) and MySQL (returns decimals).
-        return (string) BigDecimal::of((string) $raw)->toScale(2, RoundingMode::HALF_UP);
+        return (string) BigDecimal::of((string) $raw)->toScale(2, RoundingMode::HalfUp);
     }
 
     /** Customer as the POS cart expects it. Uses a preloaded `balance` column when present. */

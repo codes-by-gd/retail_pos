@@ -38,7 +38,7 @@ class PurchaseReturnService
                 $pi = $purchaseItems->get($item['purchase_item_id']) ?? $this->fail("items.$i.purchase_item_id", 'Not on this purchase.');
                 $left = BigDecimal::of($pi->quantity)->minus($pi->returned_quantity);
                 if ($qty->isGreaterThan($left)) {
-                    $this->fail("items.$i.quantity", "Only {$left->stripTrailingZeros()} of {$pi->displayName()} can still be returned.");
+                    $this->fail("items.$i.quantity", "Only {$left->strippedOfTrailingZeros()} of {$pi->displayName()} can still be returned.");
                 }
                 $lines[] = [$pi, $qty, $qty->isEqualTo($left)];
             }
@@ -62,7 +62,7 @@ class PurchaseReturnService
                             ->where('purchase_return_items.purchase_item_id', $pi->id)->sum("purchase_return_items.$f"));
                         $amounts[$f] = BigDecimal::of($pi->{$f})->minus($already)->toScale(2);
                     } else {
-                        $amounts[$f] = BigDecimal::of($pi->{$f})->multipliedBy($qty)->dividedBy($pi->quantity, 2, RoundingMode::HALF_UP);
+                        $amounts[$f] = BigDecimal::of($pi->{$f})->multipliedBy($qty)->dividedBy($pi->quantity, 2, RoundingMode::HalfUp);
                     }
                 }
                 if (! $all) {

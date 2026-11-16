@@ -46,7 +46,7 @@ class LoyaltyService
     /** Rupee value of a number of points. */
     public static function value(int $points): string
     {
-        return (string) BigDecimal::of((string) settings('loyalty.point_value', 1))->multipliedBy($points)->toScale(2, RoundingMode::HALF_UP);
+        return (string) BigDecimal::of((string) settings('loyalty.point_value', 1))->multipliedBy($points)->toScale(2, RoundingMode::HalfUp);
     }
 
     /** Most points that may be used on a bill of $grand for this customer (0 if not allowed). */
@@ -72,8 +72,8 @@ class LoyaltyService
             throw new \DomainException('Choose the customer to use their points.');
         }
         $value = BigDecimal::of((string) settings('loyalty.point_value', 1));
-        $points = BigDecimal::of($amount)->dividedBy($value, 4, RoundingMode::HALF_UP);
-        if (! $points->isEqualTo($points->toScale(0, RoundingMode::DOWN)) || ! $points->isPositive()) {
+        $points = BigDecimal::of($amount)->dividedBy($value, 4, RoundingMode::HalfUp);
+        if (! $points->isEqualTo($points->toScale(0, RoundingMode::Down)) || ! $points->isPositive()) {
             throw new \DomainException('Points must be used in whole points.');
         }
         $points = $points->toInt();

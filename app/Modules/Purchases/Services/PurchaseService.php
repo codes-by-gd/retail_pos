@@ -70,7 +70,7 @@ class PurchaseService
             foreach (array_values($data['items']) as $i => $item) {
                 $v = $variants->get($item['variant_id']) ?? $this->fail("items.$i.variant_id", 'Item not found.');
                 $qty = BigDecimal::of((string) $item['quantity']);
-                if (! $v->product->unit->allow_decimal && ! $qty->isEqualTo($qty->toScale(0, RoundingMode::DOWN))) {
+                if (! $v->product->unit->allow_decimal && ! $qty->isEqualTo($qty->toScale(0, RoundingMode::Down))) {
                     $this->fail("items.$i.quantity", "{$v->fullName()} is counted in whole {$v->product->unit->short_name}.");
                 }
                 if (! empty($item['purchase_order_item_id'])) {
@@ -78,7 +78,7 @@ class PurchaseService
                         ?? $this->fail("items.$i.purchase_order_item_id", 'Not on this purchase order.');
                     $left = BigDecimal::of($poItem->quantity)->minus($poItem->received_quantity);
                     if ($qty->isGreaterThan($left)) {
-                        $this->fail("items.$i.quantity", "Only {$left->stripTrailingZeros()} still to receive for {$v->fullName()} on this order.");
+                        $this->fail("items.$i.quantity", "Only {$left->strippedOfTrailingZeros()} still to receive for {$v->fullName()} on this order.");
                     }
                 }
                 $tax = $v->product->taxRate;
@@ -93,7 +93,7 @@ class PurchaseService
             $t = $calc['totals'];
             $other = BigDecimal::of((string) ($data['other_charges'] ?? 0))->toScale(2);
             $beforeRound = BigDecimal::of($t['grand_total'])->plus($other);
-            $grand = settings('tax.round_off') ? $beforeRound->toScale(0, RoundingMode::HALF_UP)->toScale(2) : $beforeRound;
+            $grand = settings('tax.round_off') ? $beforeRound->toScale(0, RoundingMode::HalfUp)->toScale(2) : $beforeRound;
 
             $purchase = Purchase::create([
                 'reference_no' => $this->numbers->next('PUR', $branch),
@@ -128,9 +128,9 @@ class PurchaseService
                 $v = $variants[$item['variant_id']];
                 $qty = BigDecimal::of((string) $item['quantity']);
                 $share = $other->isZero() || $taxableTotal->isZero() ? BigDecimal::zero()->toScale(2)
-                    : ($i === $last ? $other->minus($shared) : $other->multipliedBy($line['taxable_value'])->dividedBy($taxableTotal, 2, RoundingMode::HALF_UP));
+                    : ($i === $last ? $other->minus($shared) : $other->multipliedBy($line['taxable_value'])->dividedBy($taxableTotal, 2, RoundingMode::HalfUp));
                 $shared = $shared->plus($share);
-                $landed = BigDecimal::of($line['taxable_value'])->plus($share)->dividedBy($qty, 4, RoundingMode::HALF_UP);
+                $landed = BigDecimal::of($line['taxable_value'])->plus($share)->dividedBy($qty, 4, RoundingMode::HalfUp);
 
                 $purchase->items()->create([
                     'product_variant_id' => $v->id,
@@ -146,7 +146,7 @@ class PurchaseService
                 $this->stock->move($v, $branch->id, (string) $qty, StockMovementType::Purchase, (string) $landed, $purchase, "{$purchase->reference_no} · {$supplier->name}");
 
                 if (! empty($data['update_cost_price'])) {
-                    $v->update(['purchase_price' => (string) BigDecimal::of($line['taxable_value'])->dividedBy($qty, 2, RoundingMode::HALF_UP)]);
+                    $v->update(['purchase_price' => (string) BigDecimal::of($line['taxable_value'])->dividedBy($qty, 2, RoundingMode::HalfUp)]);
                 }
                 if (! empty($item['purchase_order_item_id'])) {
                     PurchaseOrderItem::whereKey($item['purchase_order_item_id'])->increment('received_quantity', (float) (string) $qty);

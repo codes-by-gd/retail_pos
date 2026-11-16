@@ -72,7 +72,7 @@ class CheckoutService
                 }
                 $product = $variant->product;
                 $qty = BigDecimal::of((string) $item['quantity']);
-                if (! $product->unit->allow_decimal && ! $qty->isEqualTo($qty->toScale(0, RoundingMode::DOWN))) {
+                if (! $product->unit->allow_decimal && ! $qty->isEqualTo($qty->toScale(0, RoundingMode::Down))) {
                     $this->fail("items.$i.quantity", "{$variant->fullName()} is sold in whole {$product->unit->short_name}.");
                 }
 

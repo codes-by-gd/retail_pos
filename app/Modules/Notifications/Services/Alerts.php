@@ -31,12 +31,12 @@ class Alerts
         $branch = Branch::find($branchId);
         $name = $variant->fullName();
         $out = ! $qty->isPositive();
-        $left = (string) $qty->stripTrailingZeros();
+        $left = (string) $qty->strippedOfTrailingZeros();
 
         $this->notifier->send(new AlertNotification(
             T::LOW_STOCK,
             $out ? "Out of stock: {$name}" : "Low stock: {$name}",
-            $out ? "{$name} ({$variant->sku}) is out of stock at {$branch?->name}." : "Only {$left} left of {$name} ({$variant->sku}) at {$branch?->name} — reorder level ".BigDecimal::of($variant->reorder_level)->stripTrailingZeros().'.',
+            $out ? "{$name} ({$variant->sku}) is out of stock at {$branch?->name}." : "Only {$left} left of {$name} ({$variant->sku}) at {$branch?->name} — reorder level ".BigDecimal::of($variant->reorder_level)->strippedOfTrailingZeros().'.',
             route('stock.index', ['search' => $variant->sku]),
             $out ? 'danger' : 'warning',
             "low_stock:{$variant->id}:{$branchId}",

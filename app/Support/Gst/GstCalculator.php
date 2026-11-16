@@ -39,7 +39,7 @@ final class GstCalculator
         // 1. gross and line discounts
         foreach ($lines as $i => $l) {
             $qty = BigDecimal::of((string) $l['quantity']);
-            $gross = BigDecimal::of((string) $l['unit_price'])->multipliedBy($qty)->toScale(2, RoundingMode::HALF_UP);
+            $gross = BigDecimal::of((string) $l['unit_price'])->multipliedBy($qty)->toScale(2, RoundingMode::HalfUp);
             $lineDiscount = self::discount($gross, $l['discount_type'] ?? null, $l['discount_value'] ?? 0);
             $rows[$i] = ['in' => $l, 'qty' => $qty, 'gross' => $gross, 'line_discount' => $lineDiscount, 'net' => $gross->minus($lineDiscount)];
         }
@@ -60,7 +60,7 @@ final class GstCalculator
             } elseif ($i === $lastWithValue) {
                 $share = $billTotal->minus($allocated);
             } else {
-                $share = $billTotal->multipliedBy($r['net'])->dividedBy($sumNet, 2, RoundingMode::HALF_UP);
+                $share = $billTotal->multipliedBy($r['net'])->dividedBy($sumNet, 2, RoundingMode::HalfUp);
             }
             $allocated = $allocated->plus($share);
             $r['bill_share'] = $share;
@@ -79,21 +79,21 @@ final class GstCalculator
             $amount = $r['amount'];
 
             if ($inclusive) {
-                $taxable = $amount->multipliedBy(100)->dividedBy(BigDecimal::of(100)->plus($rate)->plus($cessRate), 2, RoundingMode::HALF_UP);
-                $cess = $taxable->multipliedBy($cessRate)->dividedBy(100, 2, RoundingMode::HALF_UP);
+                $taxable = $amount->multipliedBy(100)->dividedBy(BigDecimal::of(100)->plus($rate)->plus($cessRate), 2, RoundingMode::HalfUp);
+                $cess = $taxable->multipliedBy($cessRate)->dividedBy(100, 2, RoundingMode::HalfUp);
                 $gst = $amount->minus($taxable)->minus($cess);
                 $lineTotal = $amount;
             } else {
                 $taxable = $amount;
-                $gst = $taxable->multipliedBy($rate)->dividedBy(100, 2, RoundingMode::HALF_UP);
-                $cess = $taxable->multipliedBy($cessRate)->dividedBy(100, 2, RoundingMode::HALF_UP);
+                $gst = $taxable->multipliedBy($rate)->dividedBy(100, 2, RoundingMode::HalfUp);
+                $cess = $taxable->multipliedBy($cessRate)->dividedBy(100, 2, RoundingMode::HalfUp);
                 $lineTotal = $taxable->plus($gst)->plus($cess);
             }
 
             if ($interState) {
                 [$cgst, $sgst, $igst] = [$zero, $zero, $gst];
             } else {
-                $cgst = $gst->dividedBy(2, 2, RoundingMode::HALF_UP);
+                $cgst = $gst->dividedBy(2, 2, RoundingMode::HalfUp);
                 [$sgst, $igst] = [$gst->minus($cgst), $zero];
             }
 
@@ -123,7 +123,7 @@ final class GstCalculator
             $totals['lines'] = $totals['lines']->plus($lineTotal);
         }
 
-        $grand = $roundOff ? $totals['lines']->toScale(0, RoundingMode::HALF_UP)->toScale(2) : $totals['lines'];
+        $grand = $roundOff ? $totals['lines']->toScale(0, RoundingMode::HalfUp)->toScale(2) : $totals['lines'];
 
         return [
             'lines' => array_values($out),
@@ -152,8 +152,8 @@ final class GstCalculator
         }
 
         $amount = $type === 'percent'
-            ? $base->multipliedBy(BigDecimal::min($value, BigDecimal::of(100)))->dividedBy(100, 2, RoundingMode::HALF_UP)
-            : $value->toScale(2, RoundingMode::HALF_UP);
+            ? $base->multipliedBy(BigDecimal::min($value, BigDecimal::of(100)))->dividedBy(100, 2, RoundingMode::HalfUp)
+            : $value->toScale(2, RoundingMode::HalfUp);
 
         return BigDecimal::min($amount, $base)->toScale(2);
     }
