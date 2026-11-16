@@ -287,7 +287,7 @@ useUnsavedGuard(() => form.isDirty && !form.processing);
                             v-for="t in [{ v: 'variable', l: 'Sizes / colours' }, { v: 'single', l: 'Single item' }]"
                             :key="t.v"
                             type="button"
-                            class="rounded px-3 py-1"
+                            class="rounded-sm px-3 py-1"
                             :class="form.type === t.v ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-100'"
                             @click="setType(t.v)"
                         >
@@ -416,7 +416,7 @@ useUnsavedGuard(() => form.isDirty && !form.processing);
                                     <tr v-for="(v, i) in form.variants" :key="keyOf(v.options)" class="border-t border-gray-100">
                                         <td class="sticky left-0 z-10 whitespace-nowrap bg-white py-2 pr-3 pt-4 font-medium text-gray-900 shadow-[1px_0_0_#f3f4f6]">
                                             {{ labelOf(v.options) }}
-                                            <span v-if="!v.id && editing" class="ml-1 rounded bg-green-50 px-1 text-xs font-normal text-green-700">new</span>
+                                            <span v-if="!v.id && editing" class="ml-1 rounded-sm bg-green-50 px-1 text-xs font-normal text-green-700">new</span>
                                             <InputError :message="rowError(i)" class="max-w-[12rem] whitespace-normal font-normal" />
                                         </td>
                                         <td class="px-2 py-2"><TextInput v-model="v.sku" class="min-w-[7rem]" placeholder="auto" /></td>
@@ -432,7 +432,7 @@ useUnsavedGuard(() => form.isDirty && !form.processing);
                                         <td class="py-2 pl-2">
                                             <button
                                                 type="button"
-                                                class="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
+                                                class="rounded-sm p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600"
                                                 title="Don't stock this combination"
                                                 @click="excludeRow(v)"
                                             >

@@ -79,7 +79,7 @@ useUnsavedGuard(() => form.items.length > 0 && !form.processing && !form.wasSucc
                                 <InputError :message="form.errors[`items.${i}.quantity`]" />
                             </td>
                             <td class="py-2 pl-2 text-right">
-                                <button type="button" class="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" @click="form.items.splice(i, 1)">
+                                <button type="button" class="rounded-sm p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" @click="form.items.splice(i, 1)">
                                     <TrashIcon class="h-4 w-4" />
                                 </button>
                             </td>

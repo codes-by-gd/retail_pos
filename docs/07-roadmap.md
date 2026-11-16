@@ -117,5 +117,8 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 ## Email (2026-11-16)
 - [x] SMTP settings screen with test email; forgot password; welcome/set-password emails; admin "send reset email"; branded templates
 
+## Framework upgrade (2026-11-16)
+- [x] Laravel 13, Inertia 3, Pest 5, brick/math 1.0, Vite 8, Tailwind 4 — all packages on their latest major
+
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

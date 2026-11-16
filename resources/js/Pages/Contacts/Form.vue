@@ -164,7 +164,7 @@ useUnsavedGuard(() => form.isDirty && !form.processing && !form.wasSuccessful);
                             <TextInput v-model="form.opening_balance" type="number" min="0" step="0.01" />
                             <select
                                 v-model="openingSide"
-                                class="rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                class="rounded-md border-gray-300 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
                             >
                                 <option value="receivable">They owe us (Dr)</option>
                                 <option value="payable">We owe them (Cr)</option>

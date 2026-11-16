@@ -57,15 +57,15 @@ const columns = [
         </PageHeader>
 
         <div class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
                 <p class="text-sm text-gray-500">Items</p>
                 <p class="mt-1 text-2xl font-semibold tabular-nums">{{ number(totals.items) }}</p>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
                 <p class="text-sm text-gray-500">Stock value (at cost)</p>
                 <p class="mt-1 text-2xl font-semibold tabular-nums">{{ money(totals.value) }}</p>
             </div>
-            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
                 <p class="text-sm text-gray-500">Retail value</p>
                 <p class="mt-1 text-2xl font-semibold tabular-nums">{{ money(totals.retail_value) }}</p>
             </div>

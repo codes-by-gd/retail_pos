@@ -69,7 +69,7 @@ const columns = computed(() => [
             <template #actions>
                 <a
                     :href="route('products.export')"
-                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50"
                 >
                     <ArrowDownTrayIcon class="h-4 w-4" /> Export
                 </a>
@@ -109,15 +109,15 @@ const columns = computed(() => [
                 <template #select="{ row }">
                     <input
                         type="checkbox"
-                        class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                        class="rounded-sm border-gray-300 text-indigo-600 focus:ring-indigo-500"
                         :checked="selected.has(row.id)"
                         @change="toggle(row.id)"
                     />
                 </template>
                 <template #name="{ row }">
                     <Link :href="route('products.show', row.id)" class="flex items-center gap-3">
-                        <img v-if="row.image_url" :src="row.image_url" alt="" class="h-10 w-10 rounded object-cover" />
-                        <span v-else class="flex h-10 w-10 items-center justify-center rounded bg-gray-100 text-gray-300"><PhotoIcon class="h-5 w-5" /></span>
+                        <img v-if="row.image_url" :src="row.image_url" alt="" class="h-10 w-10 rounded-sm object-cover" />
+                        <span v-else class="flex h-10 w-10 items-center justify-center rounded-sm bg-gray-100 text-gray-300"><PhotoIcon class="h-5 w-5" /></span>
                         <span class="min-w-0">
                             <span class="block truncate font-medium text-gray-900 hover:text-indigo-700">{{ row.name }}</span>
                             <span class="block truncate text-xs text-gray-500">

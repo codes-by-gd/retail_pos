@@ -20,7 +20,7 @@ const text = computed(() => ({
 <template>
     <Head :title="text[0]" />
     <div class="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-        <div class="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 text-center shadow-sm">
+        <div class="w-full max-w-md rounded-xl border border-gray-200 bg-white p-8 text-center shadow-xs">
             <p class="text-sm font-semibold text-indigo-600">{{ status }}</p>
             <h1 class="mt-2 text-2xl font-semibold text-gray-900">{{ text[0] }}</h1>
             <p class="mt-3 text-sm text-gray-600">{{ text[1] }}</p>

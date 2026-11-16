@@ -100,7 +100,7 @@ const save = async () => {
                     v-model="term"
                     type="text"
                     placeholder="Mobile number or name…"
-                    class="block w-full rounded-md border-gray-300 py-2.5 text-base shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                    class="block w-full rounded-md border-gray-300 py-2.5 text-base shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
                     @input="search"
                     @keydown.enter.prevent="results[0] ? choose(results[0]) : can('customers.manage') && term && startAdd()"
                 />

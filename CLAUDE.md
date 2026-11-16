@@ -1,6 +1,6 @@
 # Retail POS — guidance for Claude
 
-Laravel 12 + Vue 3 (Inertia) + Tailwind POS for a **clothing store** (one business, multiple branches), Indian GST. Think apparel: size × colour variants from attributes, article/style numbers, price-based garment GST (`TaxRate::rateFor()`), garment tags. Full docs in `docs/` — read `docs/02-architecture.md` before larger changes.
+Laravel 13 + Vue 3 (Inertia 3) + Tailwind 4 POS for a **clothing store** (one business, multiple branches), Indian GST. Think apparel: size × colour variants from attributes, article/style numbers, price-based garment GST (`TaxRate::rateFor()`), garment tags. Full docs in `docs/` — read `docs/02-architecture.md` before larger changes.
 
 ## Conventions
 - Business modules live in `app/Modules/<Module>/{Models,Services,Actions,Http/Controllers,Http/Requests}`; pages in `resources/js/Pages/<Module>/`.
@@ -8,7 +8,7 @@ Laravel 12 + Vue 3 (Inertia) + Tailwind POS for a **clothing store** (one busine
 - Authorize with permissions (`can:perm` middleware, `usePermissions().can()` in Vue), never role names. Catalogue: `app/Support/Permissions.php` → re-run `RolesAndPermissionsSeeder` after changes.
 - Branch-owned data is scoped with `current_branch()->id()`. Settings via `settings('group.key')`.
 - `Model::shouldBeStrict()` is on: eager-load relations; don't add global `$appends`.
-- Money `DECIMAL(15,2)` + brick/math; stock changes only via `StockService`; completed sales are immutable.
+- Money `DECIMAL(15,2)` + brick/math 1.x (strings/ints only, `RoundingMode::HalfUp`, `strippedOfTrailingZeros()`); stock changes only via `StockService`; completed sales are immutable.
 - Reuse components in `resources/js/Components` (DataTable, Pagination, FormField, SelectInput, Toggle, Card, PageHeader, ConfirmModal, VariantPicker, BarcodeSvg…) and `composables/useCrudModal.js`. Add new menu items in `resources/js/navigation.js`.
 - Services throw `DomainException` for business-rule errors (rendered as a toast globally). Document numbers via `DocumentNumberService`.
 - Multipart Inertia forms with nested arrays need `queryStringArrayFormat: 'indices'`.
@@ -18,7 +18,7 @@ Laravel 12 + Vue 3 (Inertia) + Tailwind POS for a **clothing store** (one busine
 - Exchange credit notes are vouchers: no ledger entry when issued; they credit whoever spends them.
 - Responsive grids need an explicit `grid-cols-1` (otherwise wide content stretches the page on phones).
 - Alerts: call `app(Alerts::class)->…` wrapped in `rescue()`; new alert types go in `NotificationTypes` (permissions decide recipients). Scheduled jobs live in `routes/console.php`.
-- UI: dark mode comes from CSS-variable palettes (gray, indigo, red, amber, green, pink) — never hard-code hex colours in classes; lists use `useListFilters`, forms `useUnsavedGuard`, periods `DateRangeFilter`; `DataTable` renders phone cards (see docs/modules/ui.md).
+- UI: dark mode comes from CSS-variable palettes (gray, indigo, red, amber, green, pink) in `resources/css/theme.css` (Tailwind 4 `@theme`: `--color-*` for backgrounds, `--text-color-*` for text) — never hard-code hex colours in classes; Vue `<style>` blocks using `@apply` need `@reference "…/css/app.css";`; lists use `useListFilters`, forms `useUnsavedGuard`, periods `DateRangeFilter`; `DataTable` renders phone cards (see docs/modules/ui.md).
 - Real-time: `Notifier` pushes `AlertPushed` via Reverb after the response (`defer`); never broadcast synchronously in a request path. Dev needs `php artisan reverb:start`. Sounds via `utils/sounds.js` (`play(name, area)`).
 - Loyalty points are a payment method (`points`), not a discount; all rules in `LoyaltyService`.
 - Reports: add to `ReportRegistry`, return typed `Section`s (screen + Excel/CSV/PDF for free). Compare DATE columns with `$f->dateRange()` — SQLite stores date casts as `Y-m-d 00:00:00`, so `BETWEEN 'd' AND 'd'` misses them. Bills count on bill date, returns on credit-note date.

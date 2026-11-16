@@ -44,7 +44,7 @@ const size = (b) => (b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.m
                         </div>
                         <div class="flex gap-2">
                             <a :href="route('settings.backups.download', b.name)"><SecondaryButton type="button"><ArrowDownTrayIcon class="h-4 w-4" /> Download</SecondaryButton></a>
-                            <button type="button" class="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" title="Delete" @click="deleting = b"><TrashIcon class="h-4 w-4" /></button>
+                            <button type="button" class="rounded-sm p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" title="Delete" @click="deleting = b"><TrashIcon class="h-4 w-4" /></button>
                         </div>
                     </li>
                     <li v-if="!backups.length" class="px-5 py-10 text-center text-sm text-gray-500">No backups yet. Click “Back up now”.</li>
@@ -61,8 +61,8 @@ const size = (b) => (b >= 1048576 ? `${(b / 1048576).toFixed(1)} MB` : `${Math.m
                 </Card>
                 <Card title="Restoring">
                     <p class="text-sm text-gray-600">Restoring replaces <strong>all</strong> current data, so it is done by the system administrator on the server:</p>
-                    <pre v-if="driver !== 'sqlite'" class="mt-2 overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-100">gunzip -c pos-….sql.gz | mysql -u root -p pos</pre>
-                    <pre v-else class="mt-2 overflow-x-auto rounded bg-gray-900 p-3 text-xs text-gray-100">gunzip -c pos-….sqlite.gz &gt; database/database.sqlite</pre>
+                    <pre v-if="driver !== 'sqlite'" class="mt-2 overflow-x-auto rounded-sm bg-gray-900 p-3 text-xs text-gray-100">gunzip -c pos-….sql.gz | mysql -u root -p pos</pre>
+                    <pre v-else class="mt-2 overflow-x-auto rounded-sm bg-gray-900 p-3 text-xs text-gray-100">gunzip -c pos-….sqlite.gz &gt; database/database.sqlite</pre>
                 </Card>
             </div>
         </div>

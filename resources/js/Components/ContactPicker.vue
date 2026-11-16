@@ -60,7 +60,7 @@ const onBlur = () => setTimeout(() => (open.value = false), 150);
             type="text"
             autocomplete="off"
             :placeholder="placeholder || (kind === 'supplier' ? 'Search supplier name, phone or code…' : 'Search customer name, mobile or code…')"
-            class="block w-full rounded-md border-gray-300 pl-9 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            class="block w-full rounded-md border-gray-300 pl-9 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
             @input="search"
             @keydown.down.prevent="active = Math.min(active + 1, results.length - 1)"
             @keydown.up.prevent="active = Math.max(active - 1, 0)"

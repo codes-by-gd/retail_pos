@@ -33,7 +33,7 @@ const change = (delta) => {
             <p class="text-xs">
                 <span :class="price !== list ? 'text-amber-700' : 'text-gray-500'">{{ money(price) }}</span>
                 <span v-if="price !== list" class="ml-1 text-gray-400 line-through">{{ money(list) }}</span>
-                <span v-if="discounted" class="ml-1 rounded bg-green-50 px-1 text-green-700">
+                <span v-if="discounted" class="ml-1 rounded-sm bg-green-50 px-1 text-green-700">
                     −{{ item.discount_type === 'percent' ? `${Number(item.discount_value)}%` : money(item.discount_value) }}
                 </span>
                 <span class="ml-1 text-gray-400">· GST {{ calc?.gst_rate }}%</span>

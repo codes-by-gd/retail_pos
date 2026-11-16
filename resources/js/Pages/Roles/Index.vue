@@ -29,7 +29,7 @@ const destroy = () =>
             <template #actions>
                 <Link
                     :href="route('roles.create')"
-                    class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500"
+                    class="inline-flex items-center gap-2 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-500"
                 >
                     <PlusIcon class="h-4 w-4" /> Add role
                 </Link>

@@ -4,18 +4,21 @@
 
 | Layer | Choice |
 |---|---|
-| Backend | **Laravel 12** on PHP 8.4 |
-| Frontend | **Vue 3** (`<script setup>`) rendered through **Inertia.js 2** — no separate API needed for screens |
-| Styling | Tailwind CSS 3 + `@tailwindcss/forms`, icons from `@heroicons/vue` |
+| Backend | **Laravel 13** on PHP 8.4 (Symfony 8 components) |
+| Frontend | **Vue 3** (`<script setup>`) rendered through **Inertia.js 3** — no separate API needed for screens |
+| Build | Vite 8 + `laravel-vite-plugin` 3 |
+| Styling | Tailwind CSS 4 (CSS-first config in `resources/css/app.css` + `theme.css`, Vite plugin) + `@tailwindcss/forms`, icons from `@heroicons/vue` |
 | State | Pinia (used by the POS cart), `@vueuse/core` helpers |
 | Database | MySQL 8.4 in production/dev; SQLite in-memory for tests |
 | Auth | Laravel Breeze (session login). Self-registration is disabled — admins create users. |
 | Permissions | `spatie/laravel-permission` |
 | Audit log | `spatie/laravel-activitylog` (v5) |
-| Money maths | `brick/math` (no floats for money) |
+| Money maths | `brick/math` 1.x (no floats for money — pass strings/ints; `RoundingMode::HalfUp`) |
 | Barcodes / PDF | `jsbarcode` (labels, previews); `picqer/php-barcode-generator`, `barryvdh/laravel-dompdf` reserved for server-side invoices |
 | Charts | `chart.js` + `vue-chartjs` |
-| Tests | Pest |
+| Tests | Pest 5 (PHPUnit 13) |
+| Real time | Laravel Reverb + Laravel Echo |
+| Excel export | `openspout/openspout` |
 
 ## Folder layout
 

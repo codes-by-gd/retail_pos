@@ -22,7 +22,7 @@ watch(model, (v) => {
             v-model="local"
             type="search"
             :placeholder="placeholder"
-            class="block w-full rounded-md border-gray-300 pl-9 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            class="block w-full rounded-md border-gray-300 pl-9 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
         />
     </div>
 </template>

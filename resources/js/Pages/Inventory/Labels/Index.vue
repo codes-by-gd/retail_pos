@@ -164,7 +164,7 @@ const print = () => window.print();
                                 <td class="py-2 text-right">{{ money(l.selling_price) }}</td>
                                 <td class="px-3 py-2"><TextInput v-model="l.copies" type="number" min="0" max="1000" class="!w-24" /></td>
                                 <td class="py-2 text-right">
-                                    <button class="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" @click="lines.splice(i, 1)">
+                                    <button class="rounded-sm p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" @click="lines.splice(i, 1)">
                                         <TrashIcon class="h-4 w-4" />
                                     </button>
                                 </td>
@@ -198,7 +198,7 @@ const print = () => window.print();
                                 ['showMrp', 'MRP'],
                                 ['showSku', 'SKU'],
                             ]" :key="opt[0]" class="flex items-center gap-2">
-                                <input v-model="settings[opt[0]]" type="checkbox" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+                                <input v-model="settings[opt[0]]" type="checkbox" class="rounded-sm border-gray-300 text-indigo-600 focus:ring-indigo-500" />
                                 {{ opt[1] }}
                             </label>
                         </fieldset>
@@ -217,7 +217,7 @@ const print = () => window.print();
             <div
                 v-for="(page, pi) in pages"
                 :key="pi"
-                class="label-page mb-6 bg-white shadow-sm ring-1 ring-gray-200"
+                class="label-page mb-6 bg-white shadow-xs ring-1 ring-gray-200"
                 :style="
                     preset.type === 'sheet'
                         ? {

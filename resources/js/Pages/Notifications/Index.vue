@@ -54,8 +54,8 @@ const dot = { danger: 'bg-red-500', warning: 'bg-amber-500', success: 'bg-green-
         <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
             <Card :padded="false" class="xl:col-span-2">
                 <div class="flex gap-1 border-b border-gray-100 p-3 text-sm">
-                    <Link :href="route('notifications.index')" class="rounded px-3 py-1" :class="!unreadOnly ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-100'">All</Link>
-                    <Link :href="route('notifications.index', { unread: 1 })" class="rounded px-3 py-1" :class="unreadOnly ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-100'">Unread</Link>
+                    <Link :href="route('notifications.index')" class="rounded-sm px-3 py-1" :class="!unreadOnly ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-100'">All</Link>
+                    <Link :href="route('notifications.index', { unread: 1 })" class="rounded-sm px-3 py-1" :class="unreadOnly ? 'bg-gray-800 text-white' : 'text-gray-600 hover:bg-gray-100'">Unread</Link>
                 </div>
                 <ul class="divide-y divide-gray-100">
                     <li v-for="n in notifications.data" :key="n.id" class="flex gap-3 px-5 py-3.5" :class="n.read ? 'bg-white' : 'bg-indigo-50/40'">
@@ -98,11 +98,11 @@ const dot = { danger: 'bg-red-500', warning: 'bg-amber-500', success: 'bg-green-
                                 <p class="text-xs text-gray-500">{{ t.description }}</p>
                             </div>
                             <label class="flex shrink-0 items-center gap-1.5 text-xs text-gray-700">
-                                <input v-model="prefs.app[t.key]" type="checkbox" class="rounded border-gray-300 text-indigo-600" /> In app
+                                <input v-model="prefs.app[t.key]" type="checkbox" class="rounded-sm border-gray-300 text-indigo-600" /> In app
                             </label>
                         </div>
                         <label v-if="emailEnabled" class="mt-1 flex items-center gap-1.5 text-xs text-gray-600" :class="!prefs.app[t.key] ? 'opacity-40' : ''">
-                            <input v-model="prefs.email[t.key]" :disabled="!prefs.app[t.key]" type="checkbox" class="rounded border-gray-300 text-indigo-600" /> Also email me
+                            <input v-model="prefs.email[t.key]" :disabled="!prefs.app[t.key]" type="checkbox" class="rounded-sm border-gray-300 text-indigo-600" /> Also email me
                         </label>
                     </div>
                     <p v-if="!types.length" class="text-sm text-gray-500">Your role doesn't receive any alerts.</p>

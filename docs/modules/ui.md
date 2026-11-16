@@ -8,7 +8,7 @@
 - **Theme** — Light / Dark / System in the account menu (per device, `pos-theme`; applied before the page paints).
 
 ## Dark mode — how it works
-Tailwind palettes `gray, indigo, red, amber, green, pink` are CSS variables (`tailwind.config.js`): `--c-*` for backgrounds/borders/rings, `--t-*` for text, `--surface` for `bg-white`. `.dark` on `<html>` swaps them, so **every page gets dark mode without `dark:` classes**. Rules for new code:
+Tailwind palettes `gray, indigo, red, amber, green, pink` are CSS variables in `resources/css/theme.css`: `--c-*` for backgrounds/borders/rings, `--t-*` for text, `--surface` for `bg-white`. Tailwind 4 maps them with `@theme inline` — `--color-*` (bg, border, ring…) → `--c-*`, `--text-color-*` (text only) → `--t-*`, `--background-color-white` → `--surface`. `.dark` on `<html>` swaps them, so **every page gets dark mode without `dark:` classes**. Rules for new code:
 - Use those palettes (or add a palette to `PALETTES`); don't hard-code hex colours in classes. Charts take colours from `useTheme().isDark`.
 - Print views (`resources/views/print`, PDFs) don't use Tailwind and stay black-on-white.
 

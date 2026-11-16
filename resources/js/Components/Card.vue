@@ -7,7 +7,7 @@ defineProps({
 </script>
 
 <template>
-    <section class="rounded-lg border border-gray-200 bg-white shadow-sm">
+    <section class="rounded-lg border border-gray-200 bg-white shadow-xs">
         <header v-if="title || $slots.actions" class="flex flex-wrap items-start justify-between gap-x-4 gap-y-2 border-b border-gray-100 px-5 py-4">
             <div>
                 <h3 class="text-sm font-semibold text-gray-900">{{ title }}</h3>

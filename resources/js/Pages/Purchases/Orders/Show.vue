@@ -24,7 +24,7 @@ const setStatus = (status) => router.post(route('purchase-orders.status', props.
     <AppLayout :title="order.reference_no">
         <PageHeader :title="`Purchase order ${order.reference_no}`" :description="`${order.supplier.name} · ordered ${date(order.order_date)} by ${order.user}`">
             <template #actions>
-                <button type="button" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                <button type="button" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50"
                     @click="printUrl(route('purchase-orders.print', order.id))"><PrinterIcon class="h-4 w-4" /> Print</button>
                 <template v-if="can('purchases.manage')">
                     <ButtonLink v-if="order.status === 'draft'" :href="route('purchase-orders.edit', order.id)" variant="secondary"><PencilSquareIcon class="h-4 w-4" /> Edit</ButtonLink>

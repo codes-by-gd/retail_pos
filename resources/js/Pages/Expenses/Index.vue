@@ -114,11 +114,11 @@ const columns = [
                     </template>
                     <template #actions="{ row }">
                         <div class="flex items-center justify-end gap-1">
-                            <a v-if="row.has_attachment" :href="route('expenses.attachment', row.id)" target="_blank" class="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-indigo-600" title="Bill photo"><PaperClipIcon class="h-4 w-4" /></a>
+                            <a v-if="row.has_attachment" :href="route('expenses.attachment', row.id)" target="_blank" class="rounded-sm p-1.5 text-gray-400 hover:bg-gray-100 hover:text-indigo-600" title="Bill photo"><PaperClipIcon class="h-4 w-4" /></a>
                             <span v-if="row.locked" class="p-1.5 text-gray-300" :title="row.locked"><LockClosedIcon class="h-4 w-4" /></span>
                             <template v-else>
-                                <button class="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-indigo-600" title="Edit" @click="openEdit(row)"><PencilSquareIcon class="h-4 w-4" /></button>
-                                <button class="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600" title="Delete" @click="deleting = row"><TrashIcon class="h-4 w-4" /></button>
+                                <button class="rounded-sm p-1.5 text-gray-400 hover:bg-gray-100 hover:text-indigo-600" title="Edit" @click="openEdit(row)"><PencilSquareIcon class="h-4 w-4" /></button>
+                                <button class="rounded-sm p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600" title="Delete" @click="deleting = row"><TrashIcon class="h-4 w-4" /></button>
                             </template>
                         </div>
                     </template>
@@ -151,7 +151,7 @@ const columns = [
                         <input ref="fileInput" type="file" accept="image/*,application/pdf" class="block w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-gray-100 file:px-3 file:py-1.5 file:text-sm"
                             @change="form.attachment = $event.target.files[0] ?? null" />
                         <label v-if="editing?.has_attachment && !form.attachment" class="mt-1 flex items-center gap-2 text-xs text-gray-600">
-                            <input v-model="form.remove_attachment" type="checkbox" class="rounded border-gray-300 text-indigo-600" /> Remove the current photo
+                            <input v-model="form.remove_attachment" type="checkbox" class="rounded-sm border-gray-300 text-indigo-600" /> Remove the current photo
                         </label>
                     </FormField>
                     <FormField class="sm:col-span-2" label="Note" :error="form.errors.note"><TextareaInput v-model="form.note" rows="2" /></FormField>

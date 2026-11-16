@@ -126,7 +126,7 @@ useUnsavedGuard(() => form.isDirty && !form.processing && !form.wasSuccessful);
                             >
                                 <input
                                     type="checkbox"
-                                    class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                    class="rounded-sm border-gray-300 text-indigo-600 focus:ring-indigo-500"
                                     :checked="form.branch_ids.includes(b.id)"
                                     @change="toggleBranch(b.id)"
                                 />

@@ -124,7 +124,7 @@ router.on('navigate', () => (open.value = false));
                         @keydown.enter.prevent="choose(items[active])"
                         @keydown.esc.prevent="open = false"
                     />
-                    <kbd class="hidden rounded border border-gray-200 px-1.5 text-xs text-gray-400 sm:block">Esc</kbd>
+                    <kbd class="hidden rounded-sm border border-gray-200 px-1.5 text-xs text-gray-400 sm:block">Esc</kbd>
                 </div>
                 <div ref="list" class="max-h-[60vh] overflow-y-auto py-2">
                     <div v-for="g in grouped" :key="g.group" class="mb-1">

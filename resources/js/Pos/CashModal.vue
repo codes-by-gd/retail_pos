@@ -41,7 +41,7 @@ const save = async () => {
             </div>
             <form v-else class="space-y-4" @submit.prevent="save">
                 <div class="inline-flex rounded-md border border-gray-300 p-0.5 text-sm">
-                    <button v-for="t in [{ v: 'out', l: 'Cash out' }, { v: 'in', l: 'Cash in' }]" :key="t.v" type="button" class="rounded px-3 py-1"
+                    <button v-for="t in [{ v: 'out', l: 'Cash out' }, { v: 'in', l: 'Cash in' }]" :key="t.v" type="button" class="rounded-sm px-3 py-1"
                         :class="form.type === t.v ? 'bg-indigo-600 text-white' : 'text-gray-600'" @click="form.type = t.v">{{ t.l }}</button>
                 </div>
                 <FormField label="Amount (₹)" required><TextInput v-model="form.amount" type="number" min="0" step="0.01" autofocus /></FormField>

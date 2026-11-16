@@ -1,7 +1,7 @@
 # Retail POS
 
 Point of Sale and retail management for a single business with multiple branches, with Indian GST.
-Built with Laravel 12, Vue 3 (Inertia) and Tailwind.
+Built with Laravel 13, Vue 3 (Inertia 3) and Tailwind CSS 4.
 
 - **Documentation:** [docs/README.md](docs/README.md)
 - **Setup:** [docs/03-getting-started.md](docs/03-getting-started.md)

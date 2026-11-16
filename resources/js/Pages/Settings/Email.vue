@@ -85,7 +85,7 @@ useUnsavedGuard(() => form.isDirty && !form.processing && !form.wasSuccessful);
                         <FormField class="sm:col-span-3" label="Username" :error="form.errors.username"><TextInput v-model="form.username" autocomplete="off" placeholder="usually the full email address" /></FormField>
                         <FormField class="sm:col-span-3" label="Password" :error="form.errors.password" :hint="mail.has_password ? 'A password is saved (stored encrypted). Leave empty to keep it.' : 'Stored encrypted.'">
                             <TextInput v-model="form.password" type="password" autocomplete="new-password" :placeholder="mail.has_password ? '••••••••' : ''" />
-                            <label v-if="mail.has_password" class="mt-1 flex items-center gap-2 text-xs text-gray-600"><input v-model="form.remove_password" type="checkbox" class="rounded border-gray-300 text-indigo-600" /> Remove the saved password</label>
+                            <label v-if="mail.has_password" class="mt-1 flex items-center gap-2 text-xs text-gray-600"><input v-model="form.remove_password" type="checkbox" class="rounded-sm border-gray-300 text-indigo-600" /> Remove the saved password</label>
                         </FormField>
                         <FormField class="sm:col-span-3" label="From address" :error="form.errors.from_address" hint="Most providers only allow your own mailbox or a verified domain."><TextInput v-model="form.from_address" type="email" placeholder="billing@yourshop.in" /></FormField>
                         <FormField class="sm:col-span-3" label="From name" :error="form.errors.from_name"><TextInput v-model="form.from_name" :placeholder="businessName" /></FormField>

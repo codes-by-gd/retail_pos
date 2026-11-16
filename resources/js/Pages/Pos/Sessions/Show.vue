@@ -29,7 +29,7 @@ const refundLabels = { cash: 'Cash refunds', card: 'Card refunds', upi: 'UPI ref
     <AppLayout :title="`Shift #${session.id}`">
         <PageHeader :title="`${session.register} · shift #${session.id}`" :description="`${session.branch} · opened ${dateTime(session.opened_at)} by ${session.opened_by}`">
             <template #actions>
-                <button type="button" class="no-print inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" @click="printPage">
+                <button type="button" class="no-print inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50" @click="printPage">
                     <PrinterIcon class="h-4 w-4" /> Print Z-report
                 </button>
                 <ButtonLink v-if="session.status === 'open'" :href="route('pos.terminal')" variant="secondary" class="no-print">Back to POS</ButtonLink>

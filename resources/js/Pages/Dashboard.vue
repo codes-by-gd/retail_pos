@@ -78,21 +78,21 @@ const statusColor = { paid: 'green', partial: 'amber', due: 'red' };
                 </p>
             </div>
             <div class="flex flex-wrap items-center gap-2">
-                <div class="flex flex-wrap rounded-md border border-gray-200 bg-white p-0.5 text-sm shadow-sm" role="group" aria-label="Period">
+                <div class="flex flex-wrap rounded-md border border-gray-200 bg-white p-0.5 text-sm shadow-xs" role="group" aria-label="Period">
                     <button
                         v-for="p in periods"
                         :key="p.value"
                         type="button"
-                        class="rounded px-2.5 py-1"
+                        class="rounded-sm px-2.5 py-1"
                         :class="p.value === period ? 'bg-indigo-600 font-medium text-white' : 'text-gray-600 hover:bg-gray-100'"
                         :aria-pressed="p.value === period"
                         @click="go({ period: p.value })"
                     >{{ p.label }}</button>
                 </div>
-                <div v-if="canAllBranches" class="flex rounded-md border border-gray-200 bg-white p-0.5 text-sm shadow-sm" role="group" aria-label="Branches">
-                    <button type="button" class="rounded px-2.5 py-1" :class="!allBranches ? 'bg-gray-800 font-medium text-white' : 'text-gray-600 hover:bg-gray-100'"
+                <div v-if="canAllBranches" class="flex rounded-md border border-gray-200 bg-white p-0.5 text-sm shadow-xs" role="group" aria-label="Branches">
+                    <button type="button" class="rounded-sm px-2.5 py-1" :class="!allBranches ? 'bg-gray-800 font-medium text-white' : 'text-gray-600 hover:bg-gray-100'"
                         @click="go({ branch: undefined })">This branch</button>
-                    <button type="button" class="rounded px-2.5 py-1" :class="allBranches ? 'bg-gray-800 font-medium text-white' : 'text-gray-600 hover:bg-gray-100'"
+                    <button type="button" class="rounded-sm px-2.5 py-1" :class="allBranches ? 'bg-gray-800 font-medium text-white' : 'text-gray-600 hover:bg-gray-100'"
                         @click="go({ branch: 'all' })">All branches</button>
                 </div>
             </div>
@@ -107,7 +107,7 @@ const statusColor = { paid: 'green', partial: 'amber', due: 'red' };
                     v-for="a in quickActions"
                     :key="a.label"
                     :href="a.href"
-                    class="inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium shadow-sm transition"
+                    class="inline-flex shrink-0 items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-medium shadow-xs transition"
                     :class="a.primary ? 'bg-indigo-600 text-white hover:bg-indigo-500' : 'border border-gray-200 bg-white text-gray-700 hover:border-indigo-300 hover:text-indigo-700'"
                 >
                     <component :is="a.icon" class="h-4 w-4" /> {{ a.label }}
@@ -116,7 +116,7 @@ const statusColor = { paid: 'green', partial: 'amber', due: 'red' };
 
             <!-- KPIs -->
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2" :class="kpis.length > 4 ? 'xl:grid-cols-5' : 'xl:grid-cols-4'">
-                <div v-for="kpi in kpis" :key="kpi.label" class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+                <div v-for="kpi in kpis" :key="kpi.label" class="rounded-lg border border-gray-200 bg-white p-4 shadow-xs">
                     <p class="text-sm text-gray-500">{{ kpi.label }}</p>
                     <p class="mt-1 text-2xl font-semibold tabular-nums text-gray-900">{{ kpi.value }}</p>
                     <p v-if="kpi.change !== null && kpi.change !== undefined" class="mt-1 flex items-center gap-1 text-xs" :title="`Compared with ${data.previousLabel}`">
@@ -146,8 +146,8 @@ const statusColor = { paid: 'green', partial: 'amber', due: 'red' };
             <!-- Loading placeholders for the deferred panels -->
             <div v-if="details === undefined" class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-3" aria-busy="true" aria-label="Loading">
                 <div v-for="n in 3" :key="n" class="h-56 animate-pulse rounded-lg border border-gray-200 bg-white p-5">
-                    <div class="h-4 w-32 rounded bg-gray-100" />
-                    <div v-for="r in 4" :key="r" class="mt-5 h-3 rounded bg-gray-100" :style="{ width: `${90 - r * 12}%` }" />
+                    <div class="h-4 w-32 rounded-sm bg-gray-100" />
+                    <div v-for="r in 4" :key="r" class="mt-5 h-3 rounded-sm bg-gray-100" :style="{ width: `${90 - r * 12}%` }" />
                 </div>
             </div>
 

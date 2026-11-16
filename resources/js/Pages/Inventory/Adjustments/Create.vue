@@ -130,7 +130,7 @@ useUnsavedGuard(() => form.items.length > 0 && !form.processing && !form.wasSucc
                                         <div class="inline-flex rounded-md border border-gray-300 p-0.5">
                                             <button
                                                 type="button"
-                                                class="rounded p-1"
+                                                class="rounded-sm p-1"
                                                 :class="line.direction === 'in' ? 'bg-green-600 text-white' : 'text-gray-500'"
                                                 title="Add stock"
                                                 @click="line.direction = 'in'"
@@ -139,7 +139,7 @@ useUnsavedGuard(() => form.items.length > 0 && !form.processing && !form.wasSucc
                                             </button>
                                             <button
                                                 type="button"
-                                                class="rounded p-1"
+                                                class="rounded-sm p-1"
                                                 :class="line.direction === 'out' ? 'bg-red-600 text-white' : 'text-gray-500'"
                                                 title="Remove stock"
                                                 @click="line.direction = 'out'"
@@ -168,7 +168,7 @@ useUnsavedGuard(() => form.items.length > 0 && !form.processing && !form.wasSucc
                                     <span v-else class="text-xs text-gray-500">{{ money(line.avg_cost) }} (avg)</span>
                                 </td>
                                 <td class="py-2 pl-2">
-                                    <button type="button" class="rounded p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" @click="form.items.splice(i, 1)">
+                                    <button type="button" class="rounded-sm p-2 text-gray-400 hover:bg-gray-100 hover:text-red-600" @click="form.items.splice(i, 1)">
                                         <TrashIcon class="h-4 w-4" />
                                     </button>
                                 </td>

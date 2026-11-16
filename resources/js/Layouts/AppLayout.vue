@@ -131,7 +131,7 @@ router.on('navigate', () => (sidebarOpen.value = false));
         <div class="transition-all duration-200" :class="collapsed ? 'lg:pl-16' : 'lg:pl-64'">
             <!-- Topbar -->
             <header class="no-print sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-gray-200 bg-white/90 px-3 backdrop-blur sm:gap-3 sm:px-6">
-                <button class="rounded p-1 text-gray-500 hover:text-gray-700 lg:hidden" aria-label="Open menu" @click="sidebarOpen = true">
+                <button class="rounded-sm p-1 text-gray-500 hover:text-gray-700 lg:hidden" aria-label="Open menu" @click="sidebarOpen = true">
                     <Bars3Icon class="h-6 w-6" />
                 </button>
 
@@ -145,7 +145,7 @@ router.on('navigate', () => (sidebarOpen.value = false));
                 >
                     <MagnifyingGlassIcon class="h-4 w-4 shrink-0" />
                     <span class="hidden flex-1 text-left md:inline">Search…</span>
-                    <kbd class="hidden rounded border border-gray-200 px-1 font-sans text-[10px] text-gray-400 md:inline">{{ isMac ? '⌘' : 'Ctrl' }} K</kbd>
+                    <kbd class="hidden rounded-sm border border-gray-200 px-1 font-sans text-[10px] text-gray-400 md:inline">{{ isMac ? '⌘' : 'Ctrl' }} K</kbd>
                 </button>
 
                 <!-- Branch switcher -->
@@ -162,7 +162,7 @@ router.on('navigate', () => (sidebarOpen.value = false));
                     </select>
                     <span v-else class="hidden truncate text-sm text-gray-700 sm:inline">{{ branch.current.name }}</span>
                 </div>
-                <span v-else class="rounded bg-amber-50 px-2 py-1 text-xs text-amber-700">No branch</span>
+                <span v-else class="rounded-sm bg-amber-50 px-2 py-1 text-xs text-amber-700">No branch</span>
 
                 <NotificationBell />
 

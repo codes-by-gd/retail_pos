@@ -278,17 +278,17 @@ onUnmounted(() => {
             <!-- left: search -->
             <!-- phones/tablets: switch between items and the bill -->
             <div class="grid shrink-0 grid-cols-2 gap-1 rounded-lg bg-gray-200 p-1 text-sm font-medium lg:hidden" role="tablist">
-                <button type="button" role="tab" class="rounded-md py-1.5" :class="mobileView === 'items' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'" :aria-selected="mobileView === 'items'" @click="mobileView = 'items'">Items</button>
-                <button type="button" role="tab" class="rounded-md py-1.5" :class="mobileView === 'bill' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-600'" :aria-selected="mobileView === 'bill'" @click="mobileView = 'bill'">
+                <button type="button" role="tab" class="rounded-md py-1.5" :class="mobileView === 'items' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600'" :aria-selected="mobileView === 'items'" @click="mobileView = 'items'">Items</button>
+                <button type="button" role="tab" class="rounded-md py-1.5" :class="mobileView === 'bill' ? 'bg-white text-gray-900 shadow-xs' : 'text-gray-600'" :aria-selected="mobileView === 'bill'" @click="mobileView = 'bill'">
                     Bill <span v-if="cart.items.length" class="ml-1 rounded-full bg-indigo-600 px-1.5 text-[11px] text-white">{{ cart.count }}</span>
                 </button>
             </div>
-            <section class="min-h-0 flex-1 flex-col rounded-xl bg-white p-3 shadow-sm sm:p-4 lg:flex lg:basis-3/5" :class="mobileView === 'items' ? 'flex' : 'hidden'">
+            <section class="min-h-0 flex-1 flex-col rounded-xl bg-white p-3 shadow-xs sm:p-4 lg:flex lg:basis-3/5" :class="mobileView === 'items' ? 'flex' : 'hidden'">
                 <ProductSearch ref="search" :beep-on-scan="config.beep_on_scan" :popular-ids="popularIds" :branch-id="$page.props.branch?.current?.id" @add="addItem" />
             </section>
 
             <!-- right: bill -->
-            <section class="min-h-0 flex-1 flex-col rounded-xl bg-white shadow-sm lg:flex lg:flex-none lg:basis-2/5" :class="mobileView === 'bill' ? 'flex' : 'hidden'">
+            <section class="min-h-0 flex-1 flex-col rounded-xl bg-white shadow-xs lg:flex lg:flex-none lg:basis-2/5" :class="mobileView === 'bill' ? 'flex' : 'hidden'">
                 <div class="border-b border-gray-100"><CustomerPicker ref="customerPicker" :walk-in="walkIn" /></div>
 
                 <div class="min-h-0 flex-1 overflow-y-auto">
@@ -322,7 +322,7 @@ onUnmounted(() => {
                     <button type="button" class="act-btn" :disabled="!can('pos.discount') || cart.isEmpty" @click="modal = 'discount'"><ReceiptPercentIcon class="h-5 w-5" />Discount<kbd>F6</kbd></button>
                     <button type="button" class="act-btn" :disabled="cart.isEmpty" @click="hold"><PauseCircleIcon class="h-5 w-5" />Hold<kbd>F8</kbd></button>
                     <button type="button" class="act-btn" :disabled="cart.isEmpty" @click="clearBill"><TrashIcon class="h-5 w-5" />Clear</button>
-                    <button type="button" class="col-span-1 flex flex-col items-center justify-center rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow hover:bg-indigo-500 disabled:opacity-50"
+                    <button type="button" class="col-span-1 flex flex-col items-center justify-center rounded-lg bg-indigo-600 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50"
                         :disabled="cart.isEmpty" @click="openPay">
                         Pay<kbd class="!border-indigo-400 !bg-indigo-500 !text-indigo-100">F9</kbd>
                     </button>
@@ -385,6 +385,8 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+@reference "../../../css/app.css";
+
 .top-btn {
     @apply flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm text-gray-600 hover:bg-gray-100 hover:text-gray-900;
 }
@@ -395,6 +397,6 @@ onUnmounted(() => {
     @apply flex flex-col items-center justify-center gap-0.5 rounded-lg border border-gray-200 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40;
 }
 kbd {
-    @apply rounded border border-gray-300 bg-gray-50 px-1 font-mono text-[10px] text-gray-500;
+    @apply rounded-sm border border-gray-300 bg-gray-50 px-1 font-mono text-[10px] text-gray-500;
 }
 </style>

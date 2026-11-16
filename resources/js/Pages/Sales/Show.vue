@@ -30,7 +30,7 @@ const refundLabels = { cash: 'Cash refund', card: 'Card refund', upi: 'UPI refun
                 <button
                     v-if="can('sales.cancel') && sale.status === 'completed'"
                     type="button"
-                    class="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 shadow-sm hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
+                    class="inline-flex items-center gap-2 rounded-md border border-red-200 bg-white px-3 py-2 text-sm font-medium text-red-700 shadow-xs hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50"
                     :disabled="!!cancelBlocker"
                     :title="cancelBlocker ?? 'Cancel this bill'"
                     @click="cancelling = true"
@@ -38,7 +38,7 @@ const refundLabels = { cash: 'Cash refund', card: 'Card refund', upi: 'UPI refun
                     Cancel bill
                 </button>
                 <button v-for="f in [{ v: '80mm', l: 'Receipt' }, { v: 'a4', l: 'A4 invoice' }]" :key="f.v" type="button"
-                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50"
                     @click="printUrl(sale.print_url, f.v)">
                     <PrinterIcon class="h-4 w-4" /> {{ f.l }}
                 </button>

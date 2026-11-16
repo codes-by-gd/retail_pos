@@ -107,7 +107,7 @@ const submit = async () => {
                         v-model="invoiceNo"
                         type="text"
                         placeholder="Invoice number (scan or type), e.g. BR1/2627/00012"
-                        class="min-w-0 flex-1 rounded-md border-gray-300 text-sm uppercase shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        class="min-w-0 flex-1 rounded-md border-gray-300 text-sm uppercase shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
                     />
                     <PrimaryButton :disabled="!invoiceNo">Find</PrimaryButton>
                 </form>
@@ -134,7 +134,7 @@ const submit = async () => {
                                         class="w-20 rounded-md border-gray-300 py-1 text-center text-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     />
                                 </td>
-                                <td class="py-2 text-center"><input v-model="l.restock" type="checkbox" class="rounded border-gray-300 text-indigo-600" title="Untick for damaged pieces" /></td>
+                                <td class="py-2 text-center"><input v-model="l.restock" type="checkbox" class="rounded-sm border-gray-300 text-indigo-600" title="Untick for damaged pieces" /></td>
                             </tr>
                         </tbody>
                     </table>

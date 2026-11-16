@@ -1,5 +1,12 @@
 # 09 · Changelog
 
+## Framework upgrade (2026-11-16)
+- **Laravel 12 → 13** (Symfony 8, Guzzle 8), **Inertia 2 → 3** (server and Vue; config published with `resources/js/Pages`, `<title data-inertia>`), **Pest 4 → 5** (PHPUnit 13), **Tinker 2 → 3**, **brick/math 0.14 → 1.0** (`RoundingMode::HalfUp`/`Down`, `strippedOfTrailingZeros()`), Ziggy 2.7.
+- **Vite 7 → 8**, laravel-vite-plugin 3, @vitejs/plugin-vue 6.0.11, concurrently 10.
+- **Tailwind CSS 3 → 4**: CSS-first config (`resources/css/app.css`), dark-mode palettes moved to `resources/css/theme.css` (`@theme inline` with separate background and text colour keys — same colours as before), Vite plugin instead of PostCSS, renamed utilities (`shadow-xs`, `rounded-sm`, `outline-hidden`, `ring-black/5`, `bg-linear-to-*`), v3 border-colour and button-cursor defaults kept, `@reference` in Vue style blocks.
+- `composer outdated --direct` and `npm outdated` report nothing; `composer audit` / `npm audit` clean.
+- 228 tests on SQLite and MySQL; 32 pages × light/dark × desktop/phone, Ctrl+K and a full POS sale checked in Chrome after each step.
+
 ## Email (SMTP) & password emails (2026-11-16)
 - *Administration → Email*: SMTP settings in the app (password encrypted), provider quick-fill, **Send test email** with the real error; `.env` still works as a fallback.
 - Forgot password: shown only when email works, branded email, same answer for every address (no account discovery), nothing sent to inactive accounts, friendly error if sending fails.

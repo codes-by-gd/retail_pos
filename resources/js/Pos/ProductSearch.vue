@@ -133,7 +133,7 @@ defineExpose({ focus: () => input.value?.focus(), refreshQuick: loadQuick });
                 type="text"
                 autocomplete="off"
                 placeholder="Scan tag or search name, article no., SKU…  (F2)"
-                class="block w-full rounded-lg border-gray-300 py-3.5 pl-12 pr-24 text-base shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                class="block w-full rounded-lg border-gray-300 py-3.5 pl-12 pr-24 text-base shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
                 @input="debounced(term)"
                 @keydown.enter.prevent="onEnter"
                 @keydown.down.prevent="move(1)"
@@ -213,7 +213,9 @@ defineExpose({ focus: () => input.value?.focus(), refreshQuick: loadQuick });
 </template>
 
 <style scoped>
+@reference "../../css/app.css";
+
 .kbd {
-    @apply rounded border border-gray-300 bg-gray-50 px-1.5 py-0.5 font-mono text-[11px] text-gray-600;
+    @apply rounded-sm border border-gray-300 bg-gray-50 px-1.5 py-0.5 font-mono text-[11px] text-gray-600;
 }
 </style>

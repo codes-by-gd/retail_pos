@@ -27,7 +27,7 @@ const destroy = () => router.delete(route('quotations.destroy', props.quotation.
     <AppLayout :title="quotation.reference_no">
         <PageHeader :title="`Quotation ${quotation.reference_no}`" :description="`${date(quotation.date)} · by ${quotation.user}`">
             <template #actions>
-                <button type="button" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                <button type="button" class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50"
                     @click="printUrl(route('quotations.print', quotation.id))"><PrinterIcon class="h-4 w-4" /> Print</button>
                 <ButtonLink v-if="quotation.editable" :href="route('quotations.edit', quotation.id)" variant="secondary"><PencilSquareIcon class="h-4 w-4" /> Edit</ButtonLink>
                 <PrimaryButton v-if="can('pos.access') && quotation.status !== 'converted' && quotation.status !== 'rejected'" type="button" @click="convert">

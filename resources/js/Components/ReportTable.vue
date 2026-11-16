@@ -53,7 +53,7 @@ const hasTotals = computed(() => props.section.rows.length && Object.keys(props.
     <div>
         <div class="overflow-auto" :class="section.rows.length > 15 ? 'max-h-[75vh]' : ''">
             <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="sticky top-0 z-[1] bg-gray-50 shadow-[0_1px_0_rgb(var(--c-gray-200))]">
+                <thead class="sticky top-0 z-[1] bg-gray-50 shadow-[0_1px_0_var(--c-gray-200)]">
                     <tr>
                         <th
                             v-for="col in section.columns"
@@ -86,7 +86,7 @@ const hasTotals = computed(() => props.section.rows.length && Object.keys(props.
                         <td :colspan="section.columns.length" class="px-3 py-8 text-center text-gray-500">Nothing for these filters.</td>
                     </tr>
                 </tbody>
-                <tfoot v-if="hasTotals" class="sticky bottom-0 border-t-2 border-gray-200 bg-gray-50 font-semibold text-gray-900 shadow-[0_-1px_0_rgb(var(--c-gray-200))]">
+                <tfoot v-if="hasTotals" class="sticky bottom-0 border-t-2 border-gray-200 bg-gray-50 font-semibold text-gray-900 shadow-[0_-1px_0_var(--c-gray-200)]">
                     <tr>
                         <td
                             v-for="(col, ci) in section.columns"

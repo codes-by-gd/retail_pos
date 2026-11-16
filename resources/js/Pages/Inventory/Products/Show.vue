@@ -126,7 +126,7 @@ const destroy = () => router.delete(route('products.destroy', props.product.id))
                                 <span v-if="!cell(r, c)" class="text-gray-300">·</span>
                                 <span
                                     v-else
-                                    class="inline-block min-w-[2.5rem] rounded px-1.5 py-0.5"
+                                    class="inline-block min-w-[2.5rem] rounded-sm px-1.5 py-0.5"
                                     :class="stockOf(cell(r, c)) <= 0 ? 'bg-red-50 text-red-700' : stockOf(cell(r, c)) <= cell(r, c).reorder_level ? 'bg-amber-50 text-amber-800' : 'text-gray-900'"
                                     >{{ qty(stockOf(cell(r, c))) }}</span
                                 >

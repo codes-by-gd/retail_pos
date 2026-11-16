@@ -41,7 +41,7 @@ const notes = computed(() => ({
                 <ButtonLink :href="route(`${plural}.index`)" variant="secondary">Back</ButtonLink>
                 <a
                     :href="route(`${plural}.import.template`)"
-                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                    class="inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50"
                 >
                     <ArrowDownTrayIcon class="h-4 w-4" /> Download template
                 </a>

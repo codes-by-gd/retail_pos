@@ -149,4 +149,7 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-049 · SMTP settings in the app, encrypted — 2026-11-16
 **Decision:** shop owners configure email in *Administration → Email* instead of editing `.env`; the SMTP password is encrypted with `APP_KEY` and applied at runtime (`MailSettings::apply()` on boot). `.env` `MAIL_*` stays as a fallback for hosts that prefer it. Welcome links use a separate password broker (`invites`, 3 days) on the same token table so the normal reset link can stay short (60 min). The forgot-password answer is identical for every address.
 
+### D-050 · Tailwind 4 with the same colours — 2026-11-16
+**Decision:** migrated by hand instead of with the upgrade tool (it can't load our JS config). The v3 palette is frozen as hex values in `resources/css/theme.css`, so the shop's look didn't change (v4's default palette is OKLCH and slightly different). Tailwind 4's per-utility theme keys (`--color-*` vs `--text-color-*`) keep the separate light/dark mapping for backgrounds and text from D-044.
+
 ### Open questions

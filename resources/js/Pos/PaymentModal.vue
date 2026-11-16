@@ -120,7 +120,7 @@ defineExpose({ complete });
 
 <template>
     <Modal :show="show" max-width="2xl" :closeable="!processing" @close="emit('close')">
-        <div ref="root" tabindex="-1" class="grid grid-cols-1 gap-0 outline-none sm:grid-cols-2" @keydown.enter.prevent="complete">
+        <div ref="root" tabindex="-1" class="grid grid-cols-1 gap-0 outline-hidden sm:grid-cols-2" @keydown.enter.prevent="complete">
             <!-- left: totals & tenders -->
             <div class="bg-gray-50 p-6">
                 <p class="text-sm text-gray-500">Amount to pay</p>
@@ -129,10 +129,10 @@ defineExpose({ complete });
 
                 <div class="mt-5 space-y-2">
                     <!-- Two-line card so long labels / references never push the remove button out of view -->
-                    <div v-for="(p, i) in payments" :key="i" class="rounded-md bg-white p-2 shadow-sm">
+                    <div v-for="(p, i) in payments" :key="i" class="rounded-md bg-white p-2 shadow-xs">
                         <div class="flex items-start justify-between gap-2">
                             <span class="min-w-0 break-words text-sm font-medium text-gray-700">{{ p.label }}</span>
-                            <button type="button" class="shrink-0 rounded p-0.5 text-gray-400 hover:bg-red-50 hover:text-red-600" title="Remove" @click="payments.splice(i, 1)">
+                            <button type="button" class="shrink-0 rounded-sm p-0.5 text-gray-400 hover:bg-red-50 hover:text-red-600" title="Remove" @click="payments.splice(i, 1)">
                                 <XMarkIcon class="h-4 w-4" />
                             </button>
                         </div>
@@ -233,7 +233,9 @@ defineExpose({ complete });
 </template>
 
 <style scoped>
+@reference "../../css/app.css";
+
 .pay-btn {
-    @apply flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-800 shadow-sm hover:border-indigo-400 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-40;
+    @apply flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-800 shadow-xs hover:border-indigo-400 hover:bg-indigo-50 disabled:cursor-not-allowed disabled:opacity-40;
 }
 </style>

@@ -23,7 +23,7 @@ const icons = { Sales: ChartBarIcon, 'Inventory & purchases': ArchiveBoxIcon, 'A
                         v-for="r in g.reports"
                         :key="r.key"
                         :href="route('reports.show', r.key)"
-                        class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm transition hover:border-indigo-300 hover:shadow"
+                        class="rounded-lg border border-gray-200 bg-white p-4 shadow-xs transition hover:border-indigo-300 hover:shadow-sm"
                     >
                         <p class="font-medium text-gray-900">{{ r.title }}</p>
                         <p class="mt-1 text-sm text-gray-500">{{ r.description }}</p>

@@ -133,7 +133,7 @@ useUnsavedGuard(() => (form.isDirty || lines.value.length > (props.prefill?.item
                     </table>
                 </div>
                 <label class="mt-4 flex items-center gap-2 text-sm text-gray-700">
-                    <input v-model="form.update_cost_price" type="checkbox" class="rounded border-gray-300 text-indigo-600" />
+                    <input v-model="form.update_cost_price" type="checkbox" class="rounded-sm border-gray-300 text-indigo-600" />
                     Update each item's purchase price to this bill's rate
                 </label>
             </Card>

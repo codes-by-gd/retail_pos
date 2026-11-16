@@ -144,7 +144,7 @@ const badge = computed(() => (unread.value > 99 ? '99+' : String(unread.value)))
                             <span class="block text-sm font-medium text-gray-900">{{ t.title }}</span>
                             <span class="line-clamp-2 block text-xs text-gray-600">{{ t.body }}</span>
                         </a>
-                        <button type="button" class="self-start rounded p-0.5 text-gray-400 hover:text-gray-600" aria-label="Dismiss" @click="dismiss(t.id)"><XMarkIcon class="h-4 w-4" /></button>
+                        <button type="button" class="self-start rounded-sm p-0.5 text-gray-400 hover:text-gray-600" aria-label="Dismiss" @click="dismiss(t.id)"><XMarkIcon class="h-4 w-4" /></button>
                     </div>
                 </TransitionGroup>
             </div>

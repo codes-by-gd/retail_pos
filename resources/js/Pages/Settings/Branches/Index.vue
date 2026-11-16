@@ -103,10 +103,10 @@ const destroy = () => {
                 </template>
                 <template #actions="{ row }">
                     <div class="flex justify-end gap-1">
-                        <button class="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-indigo-600" title="Edit" @click="openEdit(row)">
+                        <button class="rounded-sm p-1.5 text-gray-400 hover:bg-gray-100 hover:text-indigo-600" title="Edit" @click="openEdit(row)">
                             <PencilSquareIcon class="h-4 w-4" />
                         </button>
-                        <button class="rounded p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600" title="Delete" @click="deleting = row">
+                        <button class="rounded-sm p-1.5 text-gray-400 hover:bg-gray-100 hover:text-red-600" title="Delete" @click="deleting = row">
                             <TrashIcon class="h-4 w-4" />
                         </button>
                     </div>

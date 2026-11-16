@@ -25,7 +25,7 @@ const submit = () => form.post(route('pos.register.open'));
 <template>
     <AppLayout title="POS">
         <div class="mx-auto max-w-xl">
-            <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+            <div class="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
                 <div class="flex items-center gap-3">
                     <ComputerDesktopIcon class="h-10 w-10 text-indigo-600" />
                     <div>

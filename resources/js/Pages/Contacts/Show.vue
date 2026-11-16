@@ -63,7 +63,7 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
             <template #actions>
                 <button
                     type="button"
-                    class="no-print inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+                    class="no-print inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-xs hover:bg-gray-50"
                     @click="printPage"
                 >
                     <PrinterIcon class="h-4 w-4" /> Print statement
@@ -71,7 +71,7 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
                 <button
                     v-if="can('payments.manage') && !contact.is_walk_in"
                     type="button"
-                    class="no-print inline-flex items-center gap-2 rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 shadow-sm hover:bg-indigo-100"
+                    class="no-print inline-flex items-center gap-2 rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-sm font-medium text-indigo-700 shadow-xs hover:bg-indigo-100"
                     @click="paying = true"
                 >
                     <BanknotesIcon class="h-4 w-4" /> {{ kind === 'customer' ? 'Receive payment' : 'Pay supplier' }}
@@ -84,7 +84,7 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
         </PageHeader>
 
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-xs">
                 <p class="text-sm text-gray-500">Balance</p>
                 <p
                     class="mt-1 text-3xl font-semibold tabular-nums"
@@ -177,7 +177,7 @@ const destroy = () => router.delete(route(`${plural.value}.destroy`, props.conta
                 <tbody class="divide-y divide-gray-100">
                     <tr v-for="b in unpaidBills" :key="b.id">
                         <td class="px-4 py-2"><Link :href="b.url" class="font-mono text-indigo-600 hover:text-indigo-800">{{ b.number }}</Link></td>
-                        <td class="px-4 py-2 text-gray-500">{{ date(b.date) }}<span v-if="b.overdue" class="ml-2 rounded bg-red-50 px-1.5 text-xs text-red-700">overdue</span></td>
+                        <td class="px-4 py-2 text-gray-500">{{ date(b.date) }}<span v-if="b.overdue" class="ml-2 rounded-sm bg-red-50 px-1.5 text-xs text-red-700">overdue</span></td>
                         <td class="px-4 py-2 text-right text-gray-500">of {{ money(b.total) }}</td>
                         <td class="px-4 py-2 text-right font-medium tabular-nums">{{ money(b.due) }}</td>
                     </tr>

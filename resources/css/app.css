@@ -1,6 +1,34 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import './theme.css';
+
+@plugin '@tailwindcss/forms';
+
+/* Files Tailwind scans for class names (besides the auto-detected ones) */
+@source '../views';
+@source '../../storage/framework/views/*.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+/* Dark mode is the "dark" class on <html> (composables/useTheme.js) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: Figtree, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Keep Tailwind v3 defaults the app was designed with */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);   /* v4 default is currentColor */
+    }
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;                                       /* v4 default is the arrow */
+    }
+}
 
 @media print {
     .no-print {
@@ -10,17 +38,17 @@
 
 /* Dark mode: form controls (the forms plugin hard-codes white backgrounds) */
 .dark :is(input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']), select, textarea) {
-    background-color: rgb(var(--surface));
-    color: rgb(var(--t-gray-900));
-    border-color: rgb(var(--c-gray-300));
+    background-color: var(--surface);
+    color: var(--t-gray-900);
+    border-color: var(--c-gray-300);
 }
 .dark :is(input[type='checkbox'], input[type='radio']):not(:checked) {
-    background-color: rgb(var(--c-gray-100));
-    border-color: rgb(var(--c-gray-400));
+    background-color: var(--c-gray-100);
+    border-color: var(--c-gray-400);
 }
 .dark input::placeholder,
 .dark textarea::placeholder {
-    color: rgb(var(--t-gray-400));
+    color: var(--t-gray-400);
 }
 .dark ::-webkit-calendar-picker-indicator {
     filter: invert(0.8);

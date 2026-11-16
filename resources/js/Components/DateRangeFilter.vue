@@ -39,14 +39,14 @@ watch([from, to], ([f, t]) => {
         <select
             :value="preset"
             aria-label="Period"
-            class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+            class="block w-full rounded-md border-gray-300 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
             @change="choose($event.target.value)"
         >
             <option v-for="o in options" :key="o.value" :value="o.value">{{ o.label }}</option>
         </select>
         <template v-if="preset === 'custom'">
-            <input v-model="from" type="date" aria-label="From" class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
-            <input v-model="to" type="date" :min="from" aria-label="To" class="block w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
+            <input v-model="from" type="date" aria-label="From" class="block w-full rounded-md border-gray-300 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500" />
+            <input v-model="to" type="date" :min="from" aria-label="To" class="block w-full rounded-md border-gray-300 text-sm shadow-xs focus:border-indigo-500 focus:ring-indigo-500" />
         </template>
     </div>
 </template>
