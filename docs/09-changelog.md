@@ -1,5 +1,12 @@
 # 09 · Changelog
 
+## Email (SMTP) & password emails (2026-11-16)
+- *Administration → Email*: SMTP settings in the app (password encrypted), provider quick-fill, **Send test email** with the real error; `.env` still works as a fallback.
+- Forgot password: shown only when email works, branded email, same answer for every address (no account discovery), nothing sent to inactive accounts, friendly error if sending fails.
+- Users: welcome email with a 3-day set-password link when creating staff; "Send password reset email" button.
+- All emails carry the shop's logo, name and address (published mail templates); email alerts use the same settings.
+- Verified through a real SMTP conversation (local test server); 228 tests (SQLite and MySQL).
+
 ## Production-readiness audit (2026-11-16)
 - `php artisan pos:install` sets up a live shop (first branch + Admin, masters, no demo data); `ProductionSeeder`; the demo seeder refuses to run in production.
 - Fixed: MySQL rollback of the Phase 6 index migration and the missing `down()` of the activity-log migration (full reset now works).

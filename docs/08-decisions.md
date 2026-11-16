@@ -146,4 +146,7 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-048 · Installer instead of seeding a live shop — 2026-11-16
 **Decision:** live shops are created with `php artisan pos:install` (masters + first branch + Admin) and upgraded with `ProductionSeeder`; `DatabaseSeeder` is demo-only and refuses to run in production, so demo users with known passwords can never reach a live system.
 
+### D-049 · SMTP settings in the app, encrypted — 2026-11-16
+**Decision:** shop owners configure email in *Administration → Email* instead of editing `.env`; the SMTP password is encrypted with `APP_KEY` and applied at runtime (`MailSettings::apply()` on boot). `.env` `MAIL_*` stays as a fallback for hosts that prefer it. Welcome links use a separate password broker (`invites`, 3 days) on the same token table so the normal reset link can stay short (60 min). The forgot-password answer is identical for every address.
+
 ### Open questions

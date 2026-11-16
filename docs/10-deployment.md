@@ -17,7 +17,7 @@ Commands are for **Ubuntu 24.04 LTS** with nginx + PHP-FPM; adapt package names 
 | **Cron → `php artisan schedule:run`** every minute | Daily alerts 21:45, nightly backup 23:30, loyalty expiry 00:30 | yes |
 | **Reverb** (`php artisan reverb:start`, kept alive by Supervisor) | Live notifications over WebSockets | recommended — without it alerts still work, checked every minute |
 | `mysqldump` (MySQL client) | Database backups | yes |
-| SMTP account | Email alerts, "forgot password" emails | optional |
+| SMTP account | Forgot password, welcome emails for staff, email alerts — set under *Administration → Email* | strongly recommended |
 | Queue worker | Not needed — nothing is queued (notifications and pushes are sent immediately) | no |
 
 **Where to host.** Billing needs the server to be reachable from every counter. Two good options:
@@ -118,7 +118,7 @@ VITE_REVERB_HOST="${REVERB_HOST}"
 VITE_REVERB_PORT="${REVERB_PORT}"
 VITE_REVERB_SCHEME="${REVERB_SCHEME}"
 
-# Email (optional — alerts by email, password reset)
+# Email — easier: set it in the app under Administration → Email (stored encrypted). Or here:
 MAIL_MAILER=smtp
 MAIL_HOST=smtp.example.com
 MAIL_PORT=587
@@ -361,7 +361,7 @@ Then check the [changelog](09-changelog.md) for anything to configure. **Rollbac
 
 1. Server set up (sections 2–5), HTTPS working, `/up` is green.
 2. `php artisan pos:install` done; Admin can log in.
-3. *Settings → Business*: address, GSTIN, logo, invoice prefix/footer/terms, receipt size, alert limits, loyalty rules.
+3. *Administration → Email*: SMTP account, **Send test email**; then *Settings → Business*: address, GSTIN, logo, invoice prefix/footer/terms, receipt size, alert limits, loyalty rules.
 4. *Branches* and *Registers* for every shop/counter; *Users* for every staff member with role, branches and PIN.
 5. *Catalog Setup*: check GST rates (garment 5 % ≤ ₹2,500, 18 % above — confirm with your CA), categories, brands, sizes/colours.
 6. Products: create or import CSV; enter **opening stock** per branch (Stock adjustments, reason "count") so stock and cost are right from day one.

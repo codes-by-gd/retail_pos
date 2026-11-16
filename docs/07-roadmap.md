@@ -114,5 +114,8 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 - [x] Audit (security, authorization, concurrency, migrations, caches, dependencies) — see [11 · Production readiness](11-production-readiness.md)
 - [x] Installer `pos:install`, security headers, error pages, deployment guide [10 · Deployment](10-deployment.md)
 
+## Email (2026-11-16)
+- [x] SMTP settings screen with test email; forgot password; welcome/set-password emails; admin "send reset email"; branded templates
+
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

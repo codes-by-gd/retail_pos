@@ -38,7 +38,7 @@
 | Loyalty points are a payment, not a discount | GST charged on full bill value (conservative) | By design (D-042) |
 | Points used are not restored on returns | Refund goes by the chosen method | By design (documented) |
 | No automated browser (e2e) tests in the repo | UI regressions are caught by manual / scripted checks | Keep running the Pest suite on MySQL before each release |
-| Email needs an SMTP account | No email alerts / password-reset emails without it | Admin resets passwords under *Users* |
+| Email needs an SMTP account | No forgot-password / welcome emails / email alerts until set | Set it under *Administration → Email* (test button); meanwhile admins set passwords under *Users* |
 
 ## Before go-live
 Follow the go-live checklist in [10 · Deployment §12](10-deployment.md#12-go-live-checklist) — especially: confirm GST rates with your accountant, enter opening stock and balances, test printers and scanners, and test one backup restore.

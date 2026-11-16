@@ -40,6 +40,7 @@ use App\Modules\Sales\Http\Controllers\SaleController;
 use App\Modules\Settings\Http\Controllers\BackupController;
 use App\Modules\Settings\Http\Controllers\BranchController;
 use App\Modules\Settings\Http\Controllers\BusinessSettingsController;
+use App\Modules\Settings\Http\Controllers\MailSettingsController;
 use App\Modules\Users\Http\Controllers\ActivityController;
 use App\Modules\Users\Http\Controllers\RoleController;
 use App\Modules\Users\Http\Controllers\UserController;
@@ -211,6 +212,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::post('/users/{user}/password-reset', [UserController::class, 'sendPasswordReset'])->middleware('throttle:10,1')->name('users.password-reset');
     });
     Route::middleware('can:roles.manage')->group(function () {
         Route::resource('roles', RoleController::class)->except('show');
@@ -252,6 +254,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/backups/{name}', [BackupController::class, 'destroy'])->name('backups.destroy')->where('name', '[A-Za-z0-9.\-]+');
         Route::get('/business', [BusinessSettingsController::class, 'edit'])->name('business.edit');
         Route::put('/business', [BusinessSettingsController::class, 'update'])->name('business.update');
+        Route::get('/email', [MailSettingsController::class, 'edit'])->name('mail.edit');
+        Route::put('/email', [MailSettingsController::class, 'update'])->name('mail.update');
+        Route::post('/email/test', [MailSettingsController::class, 'test'])->middleware('throttle:10,1')->name('mail.test');
         Route::post('/business/logo', [BusinessSettingsController::class, 'uploadLogo'])->name('business.logo');
         Route::delete('/business/logo', [BusinessSettingsController::class, 'removeLogo'])->name('business.logo.destroy');
         Route::resource('branches', BranchController::class)->only(['index', 'store', 'update', 'destroy']);

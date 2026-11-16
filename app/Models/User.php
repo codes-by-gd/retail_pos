@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Modules\Settings\Models\Branch;
+use App\Notifications\ResetPasswordNotification;
 use App\Support\Permissions;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
@@ -54,6 +55,12 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->hasRole(Permissions::ADMIN_ROLE);
+    }
+
+    /** Branded reset email (shop name, expiry). */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 
     public function scopeActive(Builder $query): Builder

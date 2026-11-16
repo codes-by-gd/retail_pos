@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Modules\Settings\Services\MailSettings;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
@@ -33,19 +35,27 @@ class PasswordResetLinkController extends Controller
             'email' => 'required|email',
         ]);
 
-        // We will send the password reset link to this user. Once we have attempted
-        // to send the link, we will examine the response then see the message we
-        // need to show to the user. Finally, we'll send out a proper response.
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
-
-        if ($status == Password::RESET_LINK_SENT) {
-            return back()->with('status', __($status));
+        if (! MailSettings::ready()) {
+            throw ValidationException::withMessages([
+                'email' => 'Email is not set up for this shop. Ask your administrator to reset your password under Users.',
+            ]);
         }
 
-        throw ValidationException::withMessages([
-            'email' => [trans($status)],
-        ]);
+        // Only active accounts get a link. The answer is the same whether or not the email exists,
+        // so the form can't be used to find out who has an account.
+        $user = User::where('email', $request->input('email'))->first();
+        if ($user?->is_active) {
+            try {
+                Password::sendResetLink($request->only('email'));
+            } catch (\Throwable $e) {
+                report($e);
+
+                throw ValidationException::withMessages([
+                    'email' => 'The email could not be sent right now. Please try again later or ask your administrator.',
+                ]);
+            }
+        }
+
+        return back()->with('status', 'If an account exists for that email, a link to reset the password is on its way. Check your inbox (and spam folder).');
     }
 }

@@ -43,6 +43,14 @@ class SettingsService
         'alerts.cash_difference' => 100,              // alert when a register closes this much short/excess
         'alerts.email_enabled' => false,              // also email users who chose email (needs MAIL_* in .env)
         'backup.keep_days' => 14,
+        'mail.enabled' => false,                      // use the SMTP settings below (Settings → Email) instead of .env
+        'mail.host' => null,
+        'mail.port' => 587,
+        'mail.encryption' => 'tls',                   // tls (STARTTLS) | ssl | none
+        'mail.username' => null,
+        'mail.password' => null,                      // encrypted with APP_KEY
+        'mail.from_address' => null,
+        'mail.from_name' => null,                     // empty = business name
         'loyalty.enabled' => true,                    // points for named customers
         'loyalty.earn_per' => 100,                    // ₹ of bill for 1 point
         'loyalty.point_value' => 1,                   // ₹ value of 1 point when redeemed

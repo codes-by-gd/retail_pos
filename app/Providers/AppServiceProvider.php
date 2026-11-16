@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\User;
+use App\Modules\Settings\Services\MailSettings;
 use App\Modules\Settings\Services\SettingsService;
 use App\Support\CurrentBranch;
 use App\Support\Permissions;
@@ -32,6 +33,9 @@ class AppServiceProvider extends ServiceProvider
         Password::defaults(fn () => $this->app->isProduction()
             ? Password::min(8)->letters()->numbers()->uncompromised()
             : Password::min(8));
+
+        // Outgoing email from Settings → Email (falls back to .env MAIL_*)
+        rescue(fn () => MailSettings::apply(), report: false);
 
         // Trusted reverse proxies (nginx / load balancer) for HTTPS and client-IP detection — config/app.php.
         TrustProxies::at(config('app.trusted_proxies'));

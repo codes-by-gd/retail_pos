@@ -4,6 +4,7 @@ namespace App\Modules\Notifications\Notifications;
 
 use App\Models\User;
 use App\Modules\Notifications\NotificationTypes;
+use App\Modules\Settings\Services\MailSettings;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -22,7 +23,7 @@ class AlertNotification extends Notification
 
     public function via(User $notifiable): array
     {
-        return settings('alerts.email_enabled') && $notifiable->email && $notifiable->wantsNotification($this->alertType, 'mail')
+        return settings('alerts.email_enabled') && MailSettings::ready() && $notifiable->email && $notifiable->wantsNotification($this->alertType, 'mail')
             ? ['database', 'mail']
             : ['database'];
     }
@@ -35,7 +36,7 @@ class AlertNotification extends Notification
 
     public function toMail(User $notifiable): MailMessage
     {
-        $mail = (new MailMessage)->subject(settings('business.name').': '.$this->title)
+        $mail = (new MailMessage)->salutation('— '.settings('business.name').' POS')->subject(settings('business.name').': '.$this->title)
             ->line($this->body)
             ->line('Alert type: '.NotificationTypes::label($this->alertType).($this->branch ? " · {$this->branch}" : ''));
 

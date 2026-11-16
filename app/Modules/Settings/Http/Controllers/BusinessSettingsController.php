@@ -4,6 +4,7 @@ namespace App\Modules\Settings\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\Settings\Http\Requests\BusinessSettingsRequest;
+use App\Modules\Settings\Services\MailSettings;
 use App\Support\Branding;
 use App\Support\Gst\IndianStates;
 use Illuminate\Http\RedirectResponse;
@@ -27,7 +28,7 @@ class BusinessSettingsController extends Controller
             ],
             'states' => IndianStates::options(),
             'logoUrl' => Branding::logoUrl(),
-            'mailConfigured' => ! in_array(config('mail.default'), ['log', 'array'], true),
+            'mailConfigured' => MailSettings::ready(),
         ]);
     }
 

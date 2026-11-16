@@ -11,6 +11,9 @@
 - ✅ Inactive users cannot log in; last login time recorded
 - ✅ Changes to users and branches are written to the audit log
 - ✅ POS lock screen & quick cashier switch with PIN (Phase 3)
+- ✅ **Forgot password** on the login page (shown only when email is set up): branded email with a 60-minute link; the answer never reveals whether an email has an account; inactive accounts get nothing
+- ✅ **Welcome email** when creating a user: "Email a welcome link so they set their own password" (link valid 3 days, `invites` password broker) instead of typing a password
+- ✅ **Send password reset email** on a user's edit page (`users.manage`; Admin accounts only by an Admin)
 - ✅ Audit log viewer (Phase 6): filters by user, record type, date and text; old → new values; logins and permission changes are logged (`activity.view`, route `activity.index`)
 - ✅ Per-user notification preferences (Phase 6) — see [Notifications](notifications.md)
 

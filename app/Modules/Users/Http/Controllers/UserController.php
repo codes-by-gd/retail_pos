@@ -5,11 +5,14 @@ namespace App\Modules\Users\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Modules\Settings\Models\Branch;
+use App\Modules\Settings\Services\MailSettings;
 use App\Modules\Users\Http\Requests\UserRequest;
+use App\Notifications\WelcomeNotification;
 use App\Support\Permissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Inertia\Inertia;
 use Inertia\Response;
 use Spatie\Permission\Models\Role;
@@ -57,13 +60,52 @@ class UserController extends Controller
 
     public function store(UserRequest $request): RedirectResponse
     {
-        DB::transaction(function () use ($request) {
+        $user = DB::transaction(function () use ($request) {
             $user = User::create($request->userAttributes());
             $user->syncRoles([$request->validated('role')]);
             $user->branches()->sync($request->validated('branch_ids'));
+
+            return $user;
         });
 
+        if ($request->boolean('send_invite')) {
+            try {
+                $token = Password::broker('invites')->createToken($user);
+                $user->notify(new WelcomeNotification($token, $request->user()->name));
+                activity()->causedBy($request->user())->performedOn($user)->log('Sent welcome email');
+            } catch (\Throwable $e) {
+                report($e);
+
+                return to_route('users.edit', $user)->with('error', 'User created, but the welcome email could not be sent: '.str($e->getMessage())->limit(200).' — use “Send password reset email” or set a password.');
+            }
+
+            return to_route('users.index')->with('success', "User created. A welcome email with a set-password link was sent to {$user->email}.");
+        }
+
         return to_route('users.index')->with('success', 'User created.');
+    }
+
+    /** Admin action: email the user a link to choose a new password (e.g. they forgot it). */
+    public function sendPasswordReset(Request $request, User $user): RedirectResponse
+    {
+        abort_if($user->isAdmin() && ! $request->user()->isAdmin(), 403, 'Only an Admin can do this for an Admin account.');
+        if (! MailSettings::ready()) {
+            return back()->with('error', 'Email is not set up (Administration → Email). Set a new password for the user instead.');
+        }
+        if (! $user->is_active) {
+            return back()->with('error', 'This user is inactive. Activate the account first.');
+        }
+
+        try {
+            $user->sendPasswordResetNotification(Password::broker()->createToken($user));
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->with('error', 'The email could not be sent: '.str($e->getMessage())->limit(200));
+        }
+        activity()->causedBy($request->user())->performedOn($user)->log('Sent password reset email');
+
+        return back()->with('success', "Password reset email sent to {$user->email}.");
     }
 
     public function edit(User $user): Response
@@ -117,6 +159,7 @@ class UserController extends Controller
             'roles' => Role::orderBy('name')->pluck('name'),
             'branches' => Branch::active()->orderBy('name')->get(['id', 'name', 'code']),
             'canAssignAdmin' => auth()->user()->isAdmin(),
+            'mailReady' => MailSettings::ready(),
         ];
     }
 }

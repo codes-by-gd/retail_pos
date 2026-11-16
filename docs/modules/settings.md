@@ -17,6 +17,7 @@
 - ✅ Card / UPI on or off at the POS (Phase 3) · ⏳ custom payment methods later
 - ⏳ Receipt / label template designer (P1, P3)
 - ✅ Alerts: large-discount % and cash-difference limits, email on/off (Phase 6; SMTP itself in `.env`) · ⏳ SMS later
+- ✅ **Email (SMTP)** (*Administration → Email*, `settings.mail.edit`): server, port, encryption (STARTTLS / SSL/TLS / none), username, password (stored encrypted with `APP_KEY`, never sent back to the page), from address and name; quick-fill for Gmail, Microsoft 365, Zoho (India), Amazon SES (Mumbai); **Send test email** shows the SMTP error if it fails. When switched off, `.env` `MAIL_*` is used. Applied at runtime by `MailSettings::apply()`
 - ✅ Database backups: back up now, nightly with retention, download/delete (Phase 6, route `settings.backups.index`)
 
 ## Screens

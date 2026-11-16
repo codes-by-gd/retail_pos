@@ -2,8 +2,10 @@
 
 namespace App\Modules\Users\Http\Requests;
 
+use App\Modules\Settings\Services\MailSettings;
 use App\Support\Permissions;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
@@ -27,7 +29,13 @@ class UserRequest extends FormRequest
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($user)],
             'phone' => ['nullable', 'string', 'max:20'],
-            'password' => [$creating ? 'required' : 'nullable', 'confirmed', Password::defaults()],
+            // New users can instead get a welcome email with a link to set their own password.
+            'send_invite' => ['nullable', 'boolean', function ($attr, $value, $fail) {
+                if ($value && ! MailSettings::ready()) {
+                    $fail('Email is not set up (Administration → Email), so a welcome email can\'t be sent. Set a password instead.');
+                }
+            }],
+            'password' => [$creating && ! $this->boolean('send_invite') ? 'required' : 'nullable', 'confirmed', Password::defaults()],
             'pin' => ['nullable', 'digits_between:4,6'],
             'is_active' => ['required', 'boolean'],
             'role' => [
@@ -56,6 +64,9 @@ class UserRequest extends FormRequest
 
         if ($this->filled('password')) {
             $data['password'] = $this->validated('password');
+        } elseif ($this->route('user') === null) {
+            // invited: unusable random password until they set their own from the email link
+            $data['password'] = Str::password(40);
         }
         if ($this->filled('pin')) {
             $data['pin'] = $this->validated('pin');

@@ -8,14 +8,21 @@ import SelectInput from '@/Components/SelectInput.vue';
 import TextInput from '@/Components/TextInput.vue';
 import Toggle from '@/Components/Toggle.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { Link, useForm } from '@inertiajs/vue3';
-import { computed } from 'vue';
+import { Link, router, useForm } from '@inertiajs/vue3';
+import SecondaryButton from '@/Components/SecondaryButton.vue';
+import { computed, ref } from 'vue';
 
 const props = defineProps({
     user: { type: Object, default: null },
     roles: { type: Array, required: true },
     branches: { type: Array, required: true },
     canAssignAdmin: { type: Boolean, default: false },
+    mailReady: { type: Boolean, default: false },
+});
+
+const sendingReset = ref(false);
+const sendReset = () => router.post(route('users.password-reset', props.user.id), {}, {
+    preserveScroll: true, onStart: () => (sendingReset.value = true), onFinish: () => (sendingReset.value = false),
 });
 
 const editing = computed(() => !!props.user);
@@ -30,6 +37,7 @@ const form = useForm({
     is_active: props.user?.is_active ?? true,
     role: props.user?.role ?? null,
     branch_ids: props.user?.branch_ids ?? [],
+    send_invite: !props.user && props.mailReady,
 });
 
 const roleOptions = computed(() => props.roles.filter((r) => r !== 'Admin' || props.canAssignAdmin));
@@ -61,17 +69,33 @@ useUnsavedGuard(() => form.isDirty && !form.processing && !form.wasSuccessful);
                     <FormField class="sm:col-span-2" label="Email (login)" :error="form.errors.email" required>
                         <TextInput v-model="form.email" type="email" autocomplete="off" />
                     </FormField>
-                    <FormField
-                        label="Password"
-                        :error="form.errors.password"
-                        :required="!editing"
-                        :hint="editing ? 'Leave blank to keep the current password.' : 'At least 8 characters.'"
-                    >
-                        <TextInput v-model="form.password" type="password" autocomplete="new-password" />
-                    </FormField>
-                    <FormField label="Confirm password" :error="form.errors.password_confirmation">
-                        <TextInput v-model="form.password_confirmation" type="password" autocomplete="new-password" />
-                    </FormField>
+                    <div v-if="!editing" class="sm:col-span-2">
+                        <Toggle
+                            v-model="form.send_invite"
+                            label="Email a welcome link so they set their own password"
+                            :description="mailReady ? 'The link works for 3 days. Or switch this off and type a password below.' : 'Email is not set up (Administration → Email) — set a password below.'"
+                        />
+                        <p v-if="form.errors.send_invite" class="mt-1 text-sm text-red-600">{{ form.errors.send_invite }}</p>
+                    </div>
+                    <template v-if="editing || !form.send_invite">
+                        <FormField
+                            label="Password"
+                            :error="form.errors.password"
+                            :required="!editing"
+                            :hint="editing ? 'Leave blank to keep the current password.' : 'At least 8 characters.'"
+                        >
+                            <TextInput v-model="form.password" type="password" autocomplete="new-password" />
+                        </FormField>
+                        <FormField label="Confirm password" :error="form.errors.password_confirmation">
+                            <TextInput v-model="form.password_confirmation" type="password" autocomplete="new-password" />
+                        </FormField>
+                    </template>
+                    <div v-if="editing" class="sm:col-span-2 flex flex-wrap items-center gap-3 rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-600">
+                        <span class="flex-1">Forgot their password? Email them a link to choose a new one.</span>
+                        <SecondaryButton type="button" :disabled="!mailReady || sendingReset || !user.is_active" :title="mailReady ? '' : 'Email is not set up'" @click="sendReset">
+                            {{ sendingReset ? 'Sending…' : 'Send password reset email' }}
+                        </SecondaryButton>
+                    </div>
                     <FormField
                         label="POS PIN"
                         :error="form.errors.pin"
