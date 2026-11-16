@@ -4,7 +4,9 @@
  * --surface for bg-white. ".dark" on <html> swaps them, so every page gets dark mode.
  * Tailwind 4 reads --color-* for colour utilities and --text-color-* for text-* (so text and backgrounds flip separately).
  * Values are the Tailwind v3 palette (hex), kept when moving to Tailwind 4 so the look is unchanged.
- * To add a palette (e.g. blue): add --c-blue-*/--t-blue-* in :root and .dark, and --color-blue-*/--text-color-blue-* in @theme.
+ * To add a palette (e.g. blue): add the --c-blue-N and --t-blue-N variables in :root and .dark,
+ * and the --color-blue-N and --text-color-blue-N keys in @theme (N = 50, 100 … 950).
+ * Never write a star followed by a slash inside this comment: it ends the comment and breaks the theme.
  */
 
 @theme inline {

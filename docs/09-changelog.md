@@ -1,5 +1,9 @@
 # 09 · Changelog
 
+## Fix: dark mode and styling after the Tailwind 4 upgrade (2026-11-16)
+- A note in `resources/css/theme.css` contained a star-slash, which ended the CSS comment early; the rest became invalid CSS and Tailwind dropped the theme — dark mode stopped working and pages (e.g. the login screen) lost their colours. `npm run build` showed it as "2 warnings while optimizing generated CSS".
+- Fixed the comment; new `tests/Unit/StylesheetTest.php` fails if a stylesheet comment is closed early or the theme blocks go missing. Build now has no warnings.
+
 ## Framework upgrade (2026-11-16)
 - Build requirement: **Node 20.19+ or 22.12+** (Vite 8 / Rolldown) — declared in `package.json` `engines`, `.nvmrc` (22) and `.npmrc` `engine-strict`, so an old Node fails early with a clear message.
 - **Laravel 12 → 13** (Symfony 8, Guzzle 8), **Inertia 2 → 3** (server and Vue; config published with `resources/js/Pages`, `<title data-inertia>`), **Pest 4 → 5** (PHPUnit 13), **Tinker 2 → 3**, **brick/math 0.14 → 1.0** (`RoundingMode::HalfUp`/`Down`, `strippedOfTrailingZeros()`), Ziggy 2.7.
