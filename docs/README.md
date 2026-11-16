@@ -15,6 +15,8 @@ A web-based Point of Sale and retail management system for a **clothing / appare
 | [07 · Roadmap](07-roadmap.md) | Build phases and their status |
 | [08 · Decision log](08-decisions.md) | Why things are the way they are |
 | [09 · Changelog](09-changelog.md) | What changed, phase by phase |
+| [10 · Deployment](10-deployment.md) | Installing on a server, HTTPS, background processes, backups, upgrades, counters, go-live checklist |
+| [11 · Production readiness](11-production-readiness.md) | Audit results, fixes and known limitations |
 | [Modules](modules/README.md) | One page per functional module: features, screens, rules, status |
 
 ## Keeping the docs current

@@ -65,6 +65,11 @@ return [
     |
     */
 
+    /*
+    | Reverse proxies whose X-Forwarded-* headers are trusted (comma-separated IPs, or "*" behind a managed load balancer).
+    */
+    'trusted_proxies' => env('TRUSTED_PROXIES', '127.0.0.1'),
+
     'timezone' => env('APP_TIMEZONE', 'Asia/Kolkata'),
 
     /*

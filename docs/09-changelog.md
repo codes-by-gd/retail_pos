@@ -1,5 +1,14 @@
 # 09 · Changelog
 
+## Production-readiness audit (2026-11-16)
+- `php artisan pos:install` sets up a live shop (first branch + Admin, masters, no demo data); `ProductionSeeder`; the demo seeder refuses to run in production.
+- Fixed: MySQL rollback of the Phase 6 index migration and the missing `down()` of the activity-log migration (full reset now works).
+- Security: SVG uploads blocked for product images; security headers on every response; configurable trusted proxies; stronger password policy in production; dashboard requires `dashboard.view`.
+- Friendly production error pages (403/404/500/503) and "page expired" message.
+- Concurrency check: simultaneous checkouts never oversell and keep invoice numbers unique and gap-free.
+- New docs: [10 · Deployment](10-deployment.md), [11 · Production readiness](11-production-readiness.md).
+- 220 tests (SQLite and MySQL).
+
 ## Real-time notifications & POS sounds (2026-11-16)
 - Live notifications over WebSockets (Laravel Reverb): instant bell updates, pop-up cards, optional chime and desktop notifications, "On this device" settings with a test alert; polling remains as fallback; pushes never delay a sale.
 - POS sounds for scan / not found / add / remove / warning / payment / sale complete / hold / error, with a speaker on/off button per counter.

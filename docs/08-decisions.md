@@ -143,4 +143,7 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-047 · POS sounds are synthesized and per counter — 2026-11-16
 **Decision:** Web Audio tones instead of audio files (no downloads, work offline); the on/off choice is stored per browser so each counter decides, with the business setting as the default.
 
+### D-048 · Installer instead of seeding a live shop — 2026-11-16
+**Decision:** live shops are created with `php artisan pos:install` (masters + first branch + Admin) and upgraded with `ProductionSeeder`; `DatabaseSeeder` is demo-only and refuses to run in production, so demo users with known passwords can never reach a live system.
+
 ### Open questions

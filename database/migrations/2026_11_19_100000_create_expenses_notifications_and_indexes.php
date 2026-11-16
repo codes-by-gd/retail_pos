@@ -65,12 +65,16 @@ return new class extends Migration
     {
         Schema::table('activity_log', fn (Blueprint $t) => $t->dropIndex(['created_at']));
         Schema::table('sales', fn (Blueprint $t) => $t->dropIndex(['status', 'due_amount']));
-        Schema::table('register_sessions', fn (Blueprint $t) => $t->dropIndex(['branch_id', 'opened_at']));
-        Schema::table('stock_movements', fn (Blueprint $t) => $t->dropIndex(['branch_id', 'created_at']));
-        Schema::table('purchase_returns', fn (Blueprint $t) => $t->dropIndex(['branch_id', 'date']));
-        Schema::table('purchases', fn (Blueprint $t) => $t->dropIndex(['branch_id', 'received_date']));
-        Schema::table('contact_payments', fn (Blueprint $t) => $t->dropIndex(['branch_id', 'date']));
-        Schema::table('sale_returns', fn (Blueprint $t) => $t->dropIndex(['branch_id', 'returned_at']));
+        // MySQL now uses these composite indexes for the branch_id foreign keys: give each FK its own index back first.
+        foreach (['register_sessions' => 'opened_at', 'stock_movements' => 'created_at', 'purchase_returns' => 'date',
+            'purchases' => 'received_date', 'contact_payments' => 'date', 'sale_returns' => 'returned_at'] as $table => $column) {
+            Schema::table($table, function (Blueprint $t) use ($table, $column) {
+                if (! Schema::hasIndex($table, ['branch_id'])) {
+                    $t->index('branch_id');
+                }
+                $t->dropIndex(['branch_id', $column]);
+            });
+        }
         Schema::table('users', fn (Blueprint $t) => $t->dropColumn('notification_preferences'));
         Schema::dropIfExists('notifications');
         Schema::dropIfExists('expenses');

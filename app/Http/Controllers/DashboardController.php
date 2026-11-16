@@ -3,14 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Modules\Reports\Services\DashboardService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class DashboardController extends Controller
 {
-    public function __invoke(Request $request, DashboardService $dashboard): Response
+    public function __invoke(Request $request, DashboardService $dashboard): Response|RedirectResponse
     {
+        // Roles without the dashboard land on the first screen they can use.
+        if (! $request->user()->can('dashboard.view')) {
+            return redirect()->route($request->user()->can('pos.access') ? 'pos.terminal' : 'notifications.index');
+        }
         $period = array_key_exists((string) $request->query('period'), DashboardService::PERIODS) ? (string) $request->query('period') : 'today';
         $allowed = current_branch()->allowedFor($request->user());
         $all = $request->query('branch') === 'all' && $allowed->count() > 1;

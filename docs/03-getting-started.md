@@ -80,6 +80,8 @@ DB_CONNECTION=mysql DB_DATABASE=pos_test DB_HOST=127.0.0.1 DB_USERNAME=root DB_P
 
 ## Production
 
+> Full guide: [10 · Deployment](10-deployment.md). For a live shop use `php artisan pos:install` — never the demo seeder.
+
 - **Scheduler (required for daily alerts and nightly backups)** — add one cron line:
   `* * * * * cd /path/to/pos && php artisan schedule:run >> /dev/null 2>&1`
   Jobs: `pos:daily-alerts` 21:45, `pos:backup` 23:30 (see `routes/console.php`). No queue worker is needed: notifications are sent immediately.

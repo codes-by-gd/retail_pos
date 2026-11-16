@@ -16,7 +16,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call([RolesAndPermissionsSeeder::class, DefaultCatalogSeeder::class, DefaultContactsSeeder::class, DefaultExpenseCategoriesSeeder::class]);
+        // Never put demo users (password "password") or fake sales into a live shop.
+        if (app()->isProduction()) {
+            $this->command?->error('DatabaseSeeder only creates DEMO data. In production use: php artisan pos:install (first time) or php artisan db:seed --class=ProductionSeeder --force.');
+
+            return;
+        }
+
+        $this->call(ProductionSeeder::class);
 
         $gstin = '24AABCR1234A1Z';
         settings()->set([

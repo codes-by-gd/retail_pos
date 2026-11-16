@@ -22,6 +22,7 @@ Laravel 12 + Vue 3 (Inertia) + Tailwind POS for a **clothing store** (one busine
 - Real-time: `Notifier` pushes `AlertPushed` via Reverb after the response (`defer`); never broadcast synchronously in a request path. Dev needs `php artisan reverb:start`. Sounds via `utils/sounds.js` (`play(name, area)`).
 - Loyalty points are a payment method (`points`), not a discount; all rules in `LoyaltyService`.
 - Reports: add to `ReportRegistry`, return typed `Section`s (screen + Excel/CSV/PDF for free). Compare DATE columns with `$f->dateRange()` — SQLite stores date casts as `Y-m-d 00:00:00`, so `BETWEEN 'd' AND 'd'` misses them. Bills count on bill date, returns on credit-note date.
+- Production: shops are created with `php artisan pos:install`; new masters/permissions must be added to `ProductionSeeder`'s seeders (idempotent). `DatabaseSeeder` is demo-only. Every migration needs a working `down()` (MySQL rollback is tested). Deployment: docs/10-deployment.md.
 - Run tests on MySQL too before committing a phase (see docs/03-getting-started.md). Commit locally per phase; never push.
 
 ## Before finishing a change

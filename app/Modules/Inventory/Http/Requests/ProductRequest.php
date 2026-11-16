@@ -48,7 +48,7 @@ class ProductRequest extends FormRequest
             'track_stock' => ['required', 'boolean'],
             'description' => ['nullable', 'string', 'max:2000'],
             'is_active' => ['required', 'boolean'],
-            'image' => ['nullable', 'image', 'max:2048'],
+            'image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],   // no SVG (can carry scripts)
             'remove_image' => ['nullable', 'boolean'],
 
             'variants' => ['required', 'array', 'min:1', 'max:200'],
