@@ -39,8 +39,12 @@ sudo apt install -y nginx mysql-server mysql-client supervisor git unzip curl \
 
 # Composer
 curl -sS https://getcomposer.org/installer | php && sudo mv composer.phar /usr/local/bin/composer
-# Node 22 (only needed to build the frontend)
+# Node 22 LTS (only needed to build the frontend) — Vite 8 needs Node 20.19+ or 22.12+
 curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash - && sudo apt install -y nodejs
+node -v    # must print v22.12 or newer (or v20.19+)
+# No root / shared hosting (CloudPanel, cPanel…): install per user with nvm instead
+#   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash && source ~/.bashrc
+#   nvm install 22 && nvm alias default 22      # the project's .nvmrc also says 22: `nvm use` in the project folder
 
 sudo mysql_secure_installation
 ```
@@ -353,6 +357,8 @@ Then check the [changelog](09-changelog.md) for anything to configure. **Rollbac
 | Backup fails: "mysqldump failed" | `mysql-client` installed; MySQL user has `PROCESS`; disk space |
 | Receipt prints with margins / the dialog | Printer paper size & margins in the driver; Chrome `--kiosk-printing` |
 | Logo / product images missing | `php artisan storage:link`; nginx serves `public/storage` |
+| `npm run build`: *"does not provide an export named 'styleText'"* or `npm ci`: *"Unsupported engine"* | Node is too old for Vite 8 — install Node 22 LTS (section 2), check `node -v`, then `rm -rf node_modules && npm ci && npm run build` |
+| Can't install Node on the server at all | Build on another machine with the same commit (`npm ci && npm run build`) and upload the `public/build` folder |
 | Times are wrong | `APP_TIMEZONE=Asia/Kolkata` and server timezone; `php artisan optimize` |
 
 ---

@@ -1,7 +1,7 @@
 # 03 · Getting started
 
 ## Requirements
-PHP 8.4 (extensions: pdo_mysql, bcmath, gd, intl, mbstring, zip), Composer 2, Node 22, MySQL 8.4.
+PHP 8.4 (extensions: pdo_mysql, bcmath, gd, intl, mbstring, zip), Composer 2, Node 22 LTS (minimum 20.19 / 22.12 — Vite 8), MySQL 8.4.
 
 ## First-time setup
 

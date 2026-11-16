@@ -1,6 +1,7 @@
 # 09 · Changelog
 
 ## Framework upgrade (2026-11-16)
+- Build requirement: **Node 20.19+ or 22.12+** (Vite 8 / Rolldown) — declared in `package.json` `engines`, `.nvmrc` (22) and `.npmrc` `engine-strict`, so an old Node fails early with a clear message.
 - **Laravel 12 → 13** (Symfony 8, Guzzle 8), **Inertia 2 → 3** (server and Vue; config published with `resources/js/Pages`, `<title data-inertia>`), **Pest 4 → 5** (PHPUnit 13), **Tinker 2 → 3**, **brick/math 0.14 → 1.0** (`RoundingMode::HalfUp`/`Down`, `strippedOfTrailingZeros()`), Ziggy 2.7.
 - **Vite 7 → 8**, laravel-vite-plugin 3, @vitejs/plugin-vue 6.0.11, concurrently 10.
 - **Tailwind CSS 3 → 4**: CSS-first config (`resources/css/app.css`), dark-mode palettes moved to `resources/css/theme.css` (`@theme inline` with separate background and text colour keys — same colours as before), Vite plugin instead of PostCSS, renamed utilities (`shadow-xs`, `rounded-sm`, `outline-hidden`, `ring-black/5`, `bg-linear-to-*`), v3 border-colour and button-cursor defaults kept, `@reference` in Vue style blocks.
