@@ -120,5 +120,8 @@ Each phase ends with working, tested features (`php artisan test`, `npm run buil
 ## Framework upgrade (2026-11-16)
 - [x] Laravel 13, Inertia 3, Pest 5, brick/math 1.0, Vite 8, Tailwind 4 — all packages on their latest major
 
+## Camera scanning (2026-11-16)
+- [x] Phone/tablet camera scanning on POS, returns, payments, pickers and product form; invoice/credit-note barcodes on prints
+
 ## Later / optional
 Loyalty points · gift vouchers · offline PWA · GST e-invoice (IRN) & e-way bill · WhatsApp/SMS receipts · direct ESC/POS printing · mobile app via API · batch & expiry UI.

@@ -74,7 +74,8 @@ const cashier = ref(page.props.auth.user.name);
 const toast = ref('');
 
 const totals = computed(() => cart.preview.totals);
-const anyModal = computed(() => !!modal.value || !!editing.value || locked.value || !!completed.value || showHelp.value);
+const cameraOpen = ref(false);
+const anyModal = computed(() => !!modal.value || !!editing.value || locked.value || !!completed.value || showHelp.value || cameraOpen.value);
 
 const flash = (msg, tone = 'warning') => {
     if (tone) play(tone);
@@ -284,7 +285,7 @@ onUnmounted(() => {
                 </button>
             </div>
             <section class="min-h-0 flex-1 flex-col rounded-xl bg-white p-3 shadow-xs sm:p-4 lg:flex lg:basis-3/5" :class="mobileView === 'items' ? 'flex' : 'hidden'">
-                <ProductSearch ref="search" :beep-on-scan="config.beep_on_scan" :popular-ids="popularIds" :branch-id="$page.props.branch?.current?.id" @add="addItem" />
+                <ProductSearch ref="search" :beep-on-scan="config.beep_on_scan" :popular-ids="popularIds" :branch-id="$page.props.branch?.current?.id" @add="addItem" @scanning="cameraOpen = $event" />
             </section>
 
             <!-- right: bill -->

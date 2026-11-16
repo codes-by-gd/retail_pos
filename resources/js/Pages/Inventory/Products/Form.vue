@@ -1,4 +1,5 @@
 <script setup>
+import ScanButton from '@/Components/ScanButton.vue';
 import { useUnsavedGuard } from '@/composables/useUnsavedGuard';
 import Card from '@/Components/Card.vue';
 import FormField from '@/Components/FormField.vue';
@@ -189,6 +190,11 @@ const margin = (v) => {
     if (!sp || !pp) return null;
     return (((sp - pp) / sp) * 100).toFixed(1);
 };
+/** Append a scanned barcode to a comma-separated list (no duplicates). */
+const addCode = (list, code) => {
+    const codes = String(list || '').split(',').map((c) => c.trim()).filter(Boolean);
+    return codes.includes(code) ? codes.join(', ') : [...codes, code].join(', ');
+};
 const err = (i, field) => form.errors[`variants.${i}.${field}`] ?? (field === 'barcodes' ? form.errors[`variants.${i}.barcodes.0`] : null);
 const rowError = (i) => form.errors[`variants.${i}.options`] ?? err(i, 'sku') ?? err(i, 'barcodes') ?? err(i, 'purchase_price') ?? err(i, 'mrp') ?? err(i, 'selling_price');
 
@@ -321,7 +327,10 @@ useUnsavedGuard(() => form.isDirty && !form.processing);
                         <TextInput v-model="single.sku" />
                     </FormField>
                     <FormField label="Barcode(s)" :error="err(0, 'barcodes')" hint="Comma separated; blank = auto EAN-13">
-                        <TextInput v-model="single.barcodes" placeholder="Scan or type" />
+                        <div class="flex gap-2">
+                            <TextInput v-model="single.barcodes" class="min-w-0 flex-1" placeholder="Scan or type" />
+                            <ScanButton title="Scan the barcode" @detected="(c) => (single.barcodes = addCode(single.barcodes, c))" />
+                        </div>
                     </FormField>
                     <FormField v-if="form.track_stock" label="Reorder level" :error="err(0, 'reorder_level')" hint="Low-stock alert at this quantity">
                         <TextInput v-model="single.reorder_level" type="number" :step="qtyStep" min="0" />
@@ -420,7 +429,7 @@ useUnsavedGuard(() => form.isDirty && !form.processing);
                                             <InputError :message="rowError(i)" class="max-w-[12rem] whitespace-normal font-normal" />
                                         </td>
                                         <td class="px-2 py-2"><TextInput v-model="v.sku" class="min-w-[7rem]" placeholder="auto" /></td>
-                                        <td class="px-2 py-2"><TextInput v-model="v.barcodes" class="min-w-[9rem]" placeholder="auto" /></td>
+                                        <td class="px-2 py-2"><div class="flex gap-1"><TextInput v-model="v.barcodes" class="min-w-[9rem]" placeholder="auto" /><ScanButton class="!px-2" title="Scan this size/colour's barcode" @detected="(c) => (v.barcodes = addCode(v.barcodes, c))" /></div></td>
                                         <td class="px-2 py-2"><TextInput v-model="v.purchase_price" type="number" step="0.01" min="0" class="min-w-[6.5rem]" /></td>
                                         <td class="px-2 py-2"><TextInput v-model="v.mrp" type="number" step="0.01" min="0" class="min-w-[6.5rem]" /></td>
                                         <td class="px-2 py-2"><TextInput v-model="v.selling_price" type="number" step="0.01" min="0" class="min-w-[6.5rem]" /></td>

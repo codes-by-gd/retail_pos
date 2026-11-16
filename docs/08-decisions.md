@@ -152,4 +152,7 @@ Short records of significant decisions. Newest last. Format: context → decisio
 ### D-050 · Tailwind 4 with the same colours — 2026-11-16
 **Decision:** migrated by hand instead of with the upgrade tool (it can't load our JS config). The v3 palette is frozen as hex values in `resources/css/theme.css`, so the shop's look didn't change (v4's default palette is OKLCH and slightly different). Tailwind 4's per-utility theme keys (`--color-*` vs `--text-color-*`) keep the separate light/dark mapping for backgrounds and text from D-044.
 
+### D-051 · Camera scanning in the browser, WASM fallback self-hosted — 2026-11-16
+**Decision:** use the browser's `BarcodeDetector` where available and the `barcode-detector` ponyfill (ZXing → WebAssembly) elsewhere, lazy-loaded and bundled with the app (no CDN, works on a LAN, nothing sent to third parties). Camera reads accept only exact barcode/SKU matches; a tag in view counts once. Document numbers are printed as Code 128 so returns and exchange vouchers can be scanned too. **Trade-off:** ~950 KB download the first time a phone without a native detector opens the camera (cached afterwards); HTTPS is mandatory.
+
 ### Open questions

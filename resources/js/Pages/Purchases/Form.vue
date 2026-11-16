@@ -104,7 +104,7 @@ useUnsavedGuard(() => (form.isDirty || lines.value.length > (props.prefill?.item
             </Card>
 
             <Card title="Items received" description="Rates excluding GST, as on the supplier's bill.">
-                <VariantPicker placeholder="Search item, article no. or scan a tag…" @select="add" />
+                <VariantPicker scan-mode="continuous" placeholder="Search item, article no. or scan a tag…" @select="add" />
                 <InputError :message="form.errors.items" class="mt-2" />
                 <div v-if="lines.length" class="mt-4 overflow-x-auto">
                     <table class="min-w-full text-sm">

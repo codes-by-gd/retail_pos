@@ -27,6 +27,7 @@
         <tr><td colspan="2">Against invoice: {{ $return->sale->invoice_no }} ({{ $return->sale->sold_at->format('d/m/Y') }})</td></tr>
         <tr><td colspan="2">Customer: {{ $return->sale->customer_name }}{{ $return->sale->customer_gstin ? ' · GSTIN '.$return->sale->customer_gstin : '' }}</td></tr>
     </table>
+    @if ($docBarcode)<div class="doc-barcode center">{!! $docBarcode !!}</div>@endif
     <hr>
     <table>
         <tr class="bold"><td>Item</td><td class="right">Qty</td><td class="right">Taxable</td><td class="right">Amount</td></tr>

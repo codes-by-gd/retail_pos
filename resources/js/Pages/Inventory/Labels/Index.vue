@@ -145,7 +145,7 @@ const print = () => window.print();
 
             <div class="grid grid-cols-1 gap-6 xl:grid-cols-3">
                 <Card title="Items" class="xl:col-span-2">
-                    <VariantPicker :show-stock="true" autofocus @select="add" />
+                    <VariantPicker scan-mode="continuous" :show-stock="true" autofocus @select="add" />
                     <table v-if="lines.length" class="mt-4 min-w-full text-sm">
                         <thead class="text-left text-xs font-semibold uppercase tracking-wide text-gray-500">
                             <tr>

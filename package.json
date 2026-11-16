@@ -24,6 +24,7 @@
     "dependencies": {
         "@heroicons/vue": "^2.2.0",
         "@vueuse/core": "^15.0.0",
+        "barcode-detector": "^3.2.4",
         "chart.js": "^4.6.1",
         "jsbarcode": "^3.12.3",
         "laravel-echo": "^2.6.3",

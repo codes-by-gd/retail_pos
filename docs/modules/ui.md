@@ -21,6 +21,12 @@ Tailwind palettes `gray, indigo, red, amber, green, pink` are CSS variables in `
 ## Forms
 - `useUnsavedGuard(() => dirty)` asks before leaving a form with unsaved changes (links, back button, closing the tab). Used on product, purchase, purchase order, quotation, contact, user, stock adjustment and transfer forms.
 
+## Camera barcode scanning
+- `<ScanButton mode="single|continuous" title="…" :feedback="{ text, ok }" @detected="code => …" />` next to any barcode input; it opens `CameraScanner.vue` (full-screen overlay, torch, switch camera, Done). `VariantPicker` has it built in (`scan-mode="continuous"` for bulk screens).
+- `utils/barcodeScanner.js`: native `BarcodeDetector` when the browser has it (Android Chrome/Edge), otherwise the `barcode-detector` ponyfill (ZXing WebAssembly, ~950 KB) **lazy-loaded and served from our own build** — iPhone/iPad Safari, Firefox, desktop Linux. Add `?scanner=wasm` to a URL to force the fallback for testing.
+- A camera read only ever accepts an **exact** barcode/SKU match. The same code is ignored while it stays in view; the camera stops on close, page change and when the tab is hidden.
+- Requires a secure origin (HTTPS or localhost); the overlay explains blocked permission / no camera / no HTTPS. The overlay is always dark (fixed colours, independent of the theme).
+
 ## Sounds
 `utils/sounds.js` plays short synthesized tones per area, each with its own per-device switch: `pos` (speaker button on the POS) and `alerts` (Notifications → On this device). Toggle switches use a literal white knob (`bg-[#fff]`) so they stay visible in dark mode.
 

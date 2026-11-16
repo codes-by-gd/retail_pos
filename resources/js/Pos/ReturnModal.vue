@@ -1,4 +1,5 @@
 <script setup>
+import ScanButton from '@/Components/ScanButton.vue';
 import FormField from '@/Components/FormField.vue';
 import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
@@ -109,6 +110,7 @@ const submit = async () => {
                         placeholder="Invoice number (scan or type), e.g. BR1/2627/00012"
                         class="min-w-0 flex-1 rounded-md border-gray-300 text-sm uppercase shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
                     />
+                    <ScanButton title="Scan the invoice barcode" hint="Point at the barcode at the bottom of the receipt" @detected="(c) => ((invoiceNo = c), lookup())" />
                     <PrimaryButton :disabled="!invoiceNo">Find</PrimaryButton>
                 </form>
 

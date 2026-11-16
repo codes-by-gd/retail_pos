@@ -1,5 +1,12 @@
 # 09 · Changelog
 
+## Phone & tablet camera scanning (2026-11-16)
+- Camera button on the POS search, returns (invoice), payment dialog (credit note), item pickers (receive goods, adjustments, transfers, labels, quotations, purchase orders) and the product barcode field; continuous mode for bulk screens.
+- Native `BarcodeDetector` with a self-hosted ZXing WebAssembly fallback (iPhone/iPad, Firefox), lazy-loaded; EAN-13/8, UPC, Code 128, Code 39, QR.
+- Receipts, A4 invoices and credit notes print their number as a Code 128 barcode.
+- Fix: in item pickers, pressing Enter right after typing could pick a result of a half-typed search (same fix as the POS earlier).
+- Verified with a fake camera feed of real tags in Chrome: POS (phone layout), product form and returns; 232 tests (SQLite and MySQL).
+
 ## Fix: dark mode and styling after the Tailwind 4 upgrade (2026-11-16)
 - A note in `resources/css/theme.css` contained a star-slash, which ended the CSS comment early; the rest became invalid CSS and Tailwind dropped the theme — dark mode stopped working and pages (e.g. the login screen) lost their colours. `npm run build` showed it as "2 warnings while optimizing generated CSS".
 - Fixed the comment; new `tests/Unit/StylesheetTest.php` fails if a stylesheet comment is closed early or the theme blocks go missing. Build now has no warnings.

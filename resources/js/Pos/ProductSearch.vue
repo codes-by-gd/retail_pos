@@ -8,6 +8,7 @@ import { MagnifyingGlassIcon, QrCodeIcon } from '@heroicons/vue/24/outline';
 import { useDebounceFn } from '@vueuse/core';
 import axios from 'axios';
 import { computed, onMounted, ref } from 'vue';
+import ScanButton from '@/Components/ScanButton.vue';
 import { play } from '@/utils/sounds';
 
 const props = defineProps({
@@ -15,7 +16,7 @@ const props = defineProps({
     popularIds: { type: Array, default: () => [] },
     branchId: { type: Number, default: null },
 });
-const emit = defineEmits(['add']);
+const emit = defineEmits(['add', 'scanning']);
 
 const term = ref('');
 const results = ref([]);
@@ -89,7 +90,7 @@ const recentList = computed(() => recentIds.value.map((id) => quick.value[id]).f
 const popularList = computed(() => props.popularIds.map((id) => quick.value[id]).filter((v) => v && !recentIds.value.includes(v.id)).slice(0, 12));
 onMounted(loadQuick);
 
-const pick = (variant, scanned = false) => {
+const pick = (variant, scanned = false, focus = true) => {
     if (!scanned) play('add');
     emit('add', variant);
     remember(variant.id);
@@ -97,7 +98,25 @@ const pick = (variant, scanned = false) => {
     term.value = '';
     results.value = [];
     message.value = '';
-    input.value?.focus();
+    if (focus) input.value?.focus();
+};
+
+/* ---------- phone / tablet camera ---------- */
+const cameraFeedback = ref(null);
+/** A camera read only ever adds an exact barcode / SKU match (never a fuzzy search result). */
+const onCameraCode = async (code) => {
+    const list = await search(code);
+    const exact = list.find((v) => v.sku.toLowerCase() === code.toLowerCase() || v.barcodes.includes(code));
+    term.value = '';
+    results.value = [];
+    if (exact) {
+        play('scan');
+        pick(exact, true, false);
+        cameraFeedback.value = { ok: true, text: `Added: ${exact.name ?? exact.product_name}${exact.track_stock && exact.stock <= 0 ? ' (no stock recorded)' : ''}` };
+    } else {
+        play('notfound');
+        cameraFeedback.value = { ok: false, text: `No item with barcode “${code}”` };
+    }
 };
 
 const onEnter = async () => {
@@ -125,7 +144,8 @@ defineExpose({ focus: () => input.value?.focus(), refreshQuick: loadQuick });
 
 <template>
     <div class="flex h-full flex-col">
-        <div class="relative">
+        <div class="flex gap-2">
+        <div class="relative min-w-0 flex-1">
             <MagnifyingGlassIcon class="pointer-events-none absolute left-4 top-1/2 h-6 w-6 -translate-y-1/2 text-gray-400" />
             <input
                 ref="input"
@@ -133,7 +153,7 @@ defineExpose({ focus: () => input.value?.focus(), refreshQuick: loadQuick });
                 type="text"
                 autocomplete="off"
                 placeholder="Scan tag or search name, article no., SKU…  (F2)"
-                class="block w-full rounded-lg border-gray-300 py-3.5 pl-12 pr-24 text-base shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
+                class="block w-full rounded-lg border-gray-300 py-3.5 pl-12 pr-12 text-base sm:pr-28 shadow-xs focus:border-indigo-500 focus:ring-indigo-500"
                 @input="debounced(term)"
                 @keydown.enter.prevent="onEnter"
                 @keydown.down.prevent="move(1)"
@@ -142,8 +162,20 @@ defineExpose({ focus: () => input.value?.focus(), refreshQuick: loadQuick });
             />
             <span class="absolute right-4 top-1/2 flex -translate-y-1/2 items-center gap-1 text-xs text-gray-400">
                 <template v-if="loading">Searching…</template>
-                <template v-else><QrCodeIcon class="h-4 w-4" /> Scan ready</template>
+                <template v-else><QrCodeIcon class="h-4 w-4" /> <span class="hidden sm:inline">Scan ready</span></template>
             </span>
+        </div>
+        <ScanButton
+            class="!px-4"
+            mode="continuous"
+            title="Scan items with the camera"
+            hint="Point at the tag's barcode — each item is added to the bill"
+            :feedback="cameraFeedback"
+            :beep="false"
+            @detected="onCameraCode"
+            @open="(cameraFeedback = null), emit('scanning', true)"
+            @close="emit('scanning', false)"
+        />
         </div>
         <p v-if="message" class="mt-2 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800">{{ message }}</p>
 

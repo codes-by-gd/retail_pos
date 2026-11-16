@@ -1,4 +1,5 @@
 <script setup>
+import ScanButton from '@/Components/ScanButton.vue';
 import Modal from '@/Components/Modal.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
@@ -217,6 +218,7 @@ defineExpose({ complete });
                             class="min-w-0 flex-1 rounded-md border-gray-300 py-1.5 text-sm uppercase focus:border-indigo-500 focus:ring-indigo-500"
                             @keydown.enter.prevent.stop="addExchange"
                         />
+                        <ScanButton title="Scan the credit note" hint="Point at the barcode on the credit note" @detected="(c) => ((cnNumber = c), addExchange())" />
                         <SecondaryButton :disabled="!cnNumber" @click="addExchange"><ReceiptRefundIcon class="h-4 w-4" /></SecondaryButton>
                     </div>
                 </div>

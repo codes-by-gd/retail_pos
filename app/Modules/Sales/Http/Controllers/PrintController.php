@@ -11,6 +11,8 @@ use App\Support\AmountInWords;
 use App\Support\Gst\IndianStates;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Picqer\Barcode\BarcodeGenerator;
+use Picqer\Barcode\BarcodeGeneratorSVG;
 
 /** Printable invoice (thermal 58/80 mm or A4 tax invoice) and credit note. */
 class PrintController extends Controller
@@ -26,6 +28,7 @@ class PrintController extends Controller
             'payments' => $sale->payments->map(fn ($p) => ['label' => SalePayment::LABELS[$p->method] ?? $p->method, 'amount' => $p->amount, 'reference' => $p->reference]),
             'hsnSummary' => $this->hsnSummary($sale->items),
             'words' => AmountInWords::rupees($sale->grand_total),
+            'docBarcode' => self::barcode($sale->invoice_no),
             'pointsBalance' => ($sale->points_earned || $sale->points_redeemed) ? app(LoyaltyService::class)->balance($sale->customer_id) : null,
             'placeOfSupply' => IndianStates::name($sale->place_of_supply).' ('.$sale->place_of_supply.')',
         ]);
@@ -40,6 +43,7 @@ class PrintController extends Controller
             ...$this->common($request, $saleReturn->branch),
             'return' => $saleReturn,
             'words' => AmountInWords::rupees($saleReturn->total),
+            'docBarcode' => self::barcode($saleReturn->credit_note_no),
         ]);
     }
 
@@ -69,5 +73,14 @@ class PrintController extends Controller
                 'sgst' => $g->sum(fn ($i) => (float) $i->sgst),
                 'igst' => $g->sum(fn ($i) => (float) $i->igst),
             ])->values()->all();
+    }
+
+    /** Code 128 barcode (SVG) of a document number, so returns / exchange vouchers can be scanned. Never breaks the print. */
+    public static function barcode(string $value): ?string
+    {
+        $svg = rescue(fn () => (new BarcodeGeneratorSVG)->getBarcode($value, BarcodeGenerator::TYPE_CODE_128, 1, 34), null, false);
+
+        // inline in HTML: drop the XML prolog/doctype; bars may stretch to the paper width
+        return $svg ? str_replace('<svg ', '<svg preserveAspectRatio="none" role="img" aria-label="'.e($value).'" ', preg_replace('/^.*?(?=<svg)/s', '', $svg)) : null;
     }
 }

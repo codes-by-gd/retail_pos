@@ -314,6 +314,7 @@ Then check the [changelog](09-changelog.md) for anything to configure. **Rollbac
 ## 8. Counters: PCs, printers, scanners
 
 - **Browser:** Chrome or Edge, kept updated. One login per counter; cashiers switch with their PIN on the lock screen.
+- **Phone / tablet camera scanning:** works in the browser on **HTTPS only** (the camera is blocked on http://). On first use the phone asks for camera permission — allow it. Android Chrome uses the built-in scanner; iPhone Safari loads the bundled WebAssembly scanner from `/build` (no internet service needed).
 - **Barcode scanners:** USB/Bluetooth in *keyboard* mode with an Enter suffix. The POS keeps the search box focused.
 - **Receipt printers (58/80 mm thermal):** install the vendor driver, set it as the **default printer**, paper size 80 mm (or 58 mm) × receipt, margins none. Set the receipt size under *Settings → POS*.
 - **Print without the dialog:** start Chrome with `--kiosk-printing` (Windows shortcut: `chrome.exe --kiosk-printing https://pos.example.com/pos`). Receipts then go straight to the default printer.

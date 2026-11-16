@@ -99,7 +99,7 @@ useUnsavedGuard(() => form.items.length > 0 && !form.processing && !form.wasSucc
             </Card>
 
             <Card title="Items">
-                <VariantPicker autofocus @select="add" />
+                <VariantPicker scan-mode="continuous" autofocus @select="add" />
                 <InputError :message="form.errors.items" class="mt-2" />
 
                 <div v-if="form.items.length" class="mt-4 overflow-x-auto">

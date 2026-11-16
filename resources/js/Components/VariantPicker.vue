@@ -10,11 +10,15 @@ import { useDebounceFn } from '@vueuse/core';
 import axios from 'axios';
 import { ref } from 'vue';
 import { money, qty } from '@/utils/format';
+import { play } from '@/utils/sounds';
+import ScanButton from '@/Components/ScanButton.vue';
 
 const props = defineProps({
     placeholder: { type: String, default: 'Scan barcode or search item name / SKU…' },
     autofocus: { type: Boolean, default: false },
     showStock: { type: Boolean, default: true },
+    /** Camera button: "continuous" keeps scanning (receiving goods, counts), "single" closes after one item. */
+    scanMode: { type: String, default: 'single' },
 });
 const emit = defineEmits(['select']);
 
@@ -26,6 +30,7 @@ const active = ref(0);
 const error = ref('');
 const input = ref(null);
 let requestId = 0;
+let resultsFor = ''; // the text the current results belong to
 
 const search = async (q) => {
     const id = ++requestId;
@@ -39,6 +44,7 @@ const search = async (q) => {
         const { data } = await axios.get(route('variants.search'), { params: { q } });
         if (id !== requestId) return results.value; // a newer search is running
         results.value = data.data;
+        resultsFor = q;
         active.value = 0;
         open.value = true;
         error.value = '';
@@ -49,19 +55,35 @@ const search = async (q) => {
 };
 const debouncedSearch = useDebounceFn(search, 200);
 
-const choose = (item) => {
+const choose = (item, focus = true) => {
     emit('select', item);
     term.value = '';
     results.value = [];
     open.value = false;
-    input.value?.focus();
+    if (focus) input.value?.focus();
+};
+
+/* ---------- phone / tablet camera: exact barcode / SKU only ---------- */
+const cameraFeedback = ref(null);
+const onCameraCode = async (code) => {
+    const list = await search(code);
+    open.value = false;
+    const exact = list.find((i) => i.sku === code || i.barcodes.includes(code));
+    if (exact) {
+        choose(exact, false);
+        cameraFeedback.value = { ok: true, text: `Added: ${exact.name}` };
+    } else {
+        play('notfound');
+        cameraFeedback.value = { ok: false, text: `No item with barcode “${code}”` };
+    }
 };
 
 const onEnter = async () => {
     // Scanners type fast and press Enter — search immediately and take an exact match.
     const q = term.value.trim();
     if (!q) return;
-    const list = open.value && results.value.length ? results.value : await search(q);
+    // never use the results of a half-typed search for the full code (typed fast + Enter)
+    const list = open.value && results.value.length && resultsFor === q ? results.value : await search(q);
     const exact = list.find((i) => i.sku === q || i.barcodes.includes(q));
     if (exact) return choose(exact);
     if (list[active.value]) return choose(list[active.value]);
@@ -80,6 +102,8 @@ defineExpose({ focus: () => input.value?.focus() });
 
 <template>
     <div class="relative">
+        <div class="flex gap-2">
+        <div class="relative min-w-0 flex-1">
         <MagnifyingGlassIcon class="pointer-events-none absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
         <input
             ref="input"
@@ -98,6 +122,10 @@ defineExpose({ focus: () => input.value?.focus() });
             @focus="results.length && (open = true)"
         />
         <span v-if="loading" class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">Searching…</span>
+        </div>
+        <ScanButton :mode="scanMode" :title="scanMode === 'continuous' ? 'Scan items with the camera' : 'Scan an item with the camera'" :feedback="cameraFeedback"
+            @detected="onCameraCode" @open="cameraFeedback = null" />
+        </div>
         <p v-if="error" class="mt-1 text-xs text-red-600">{{ error }}</p>
 
         <ul

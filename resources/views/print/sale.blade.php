@@ -88,6 +88,7 @@
     @php($savings = $sale->items->sum(fn ($i) => $i->mrp ? max(0, ((float) $i->mrp - (float) $i->unit_price) * (float) $i->quantity) : 0) + (float) $sale->line_discount_total + (float) $sale->bill_discount_total)
     @if ($savings > 0)<hr><div class="center bold">You saved ₹{{ $money($savings) }} today!</div>@endif
     <hr>
+    @if ($docBarcode)<div class="doc-barcode center">{!! $docBarcode !!}<div class="small">{{ $sale->invoice_no }}</div></div>@endif
     <div class="center small">
         @if ($invoice['footer'])<div>{{ $invoice['footer'] }}</div>@endif
     </div>
@@ -109,6 +110,7 @@
             <td style="border:0" class="right">
                 <div class="bold" style="font-size:16px">{{ $title }}</div>
                 <div>No: <b>{{ $sale->invoice_no }}</b></div>
+                @if ($docBarcode)<div class="doc-barcode doc-barcode-a4">{!! $docBarcode !!}</div>@endif
                 <div>Date: {{ $sale->sold_at->format('d M Y, h:i A') }}</div>
                 <div>Place of supply: {{ $placeOfSupply }}</div>
             </td>
